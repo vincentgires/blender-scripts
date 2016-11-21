@@ -1,0 +1,15 @@
+condition node
+
+convertir automatiquement les différent types. 1.0 = True par exemple.
+
+ Round float with "step" 0.0 0.00 0.000
+ wiggle
+ random
+
+
+
+color palette:
+noir ou rien si couleur n'existe pas
+
+
+faire un debug qui prend tout en compte avec un custom socket
