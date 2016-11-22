@@ -42,16 +42,16 @@ bl_info = {
 import bpy
 
 
-from custom_tools import object
-from custom_tools import rendering
-from custom_tools import material
-from custom_tools import lighting
-from custom_tools import animation
-from custom_tools import look_through
-from custom_tools import node
-from custom_tools import image
-from custom_tools import cache
-from custom_tools import sequencer
+from custom_tools.tools import object
+from custom_tools.tools import rendering
+from custom_tools.tools import material
+from custom_tools.tools import lighting
+from custom_tools.tools import animation
+from custom_tools.tools import look_through
+from custom_tools.tools import node
+from custom_tools.tools import image
+from custom_tools.tools import cache
+from custom_tools.tools import sequencer
 
 
 
