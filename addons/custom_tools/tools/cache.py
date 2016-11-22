@@ -40,25 +40,3 @@ class VIEW3D_custom_panel_cache(bpy.types.Panel):
         layout.operator("ptcache.bake_all", text="Update All To Frame").bake = False
 
 
-
-## OPERATOR ##
-##############
-
-
-
-
-
-## REGISTRATION ##
-##################
-
-
-
-
-def register():
-    bpy.utils.register_module(__name__)
-
-def unregister():
-    bpy.utils.unregister_module(__name__)
-
-if __name__ == "__main__":
-    register()

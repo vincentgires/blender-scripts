@@ -177,15 +177,3 @@ class custom_tools_swap_search_and_replace(bpy.types.Operator):
         
         return{'FINISHED'}
 
-## REGISTRATION ##
-##################
-
-
-def register():
-    bpy.utils.register_module(__name__)
-
-def unregister():
-    bpy.utils.unregister_module(__name__)
-
-if __name__ == "__main__":
-    register()

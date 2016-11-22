@@ -131,5 +131,6 @@ def unregister():
         km.keymap_items.remove(kmi)
     KEYMAPS.clear()
 
+
 if __name__ == "__main__":
     register()
