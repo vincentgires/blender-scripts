@@ -109,7 +109,7 @@ class property_collection_display_layers(bpy.types.PropertyGroup):
     wire = bpy.props.BoolProperty(name="Wire", default=False, update=display_toggle_callback)
     
     
-class multilight_properties(bpy.types.PropertyGroup):
+class display_layers_properties(bpy.types.PropertyGroup):
     
     bpy.types.Object.display_layer = bpy.props.IntProperty(
         name = "Layer ID",
