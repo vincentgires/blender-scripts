@@ -305,16 +305,3 @@ def send_value_link(link, value):
             # update connected target nodes
             link.to_node.update()
 
-
-"""
-def register():
-    bpy.utils.register_module(__name__)
-
-def unregister():
-    bpy.utils.unregister_module(__name__)
-
-if __name__ == "__main__":
-    register()
-"""    
-    
-print ("---")

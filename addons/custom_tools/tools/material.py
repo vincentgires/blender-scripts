@@ -27,6 +27,7 @@ import bpy
 ## PANEL ##
 ###########
 
+
 class VIEW3D_custom_panel_material(bpy.types.Panel):
     bl_label = "Material"
     bl_space_type = "VIEW_3D"
@@ -42,8 +43,6 @@ class VIEW3D_custom_panel_material(bpy.types.Panel):
 
 ## OPERATOR ##
 ##############
-
-
 
 
 class custom_tools_set_meterial(bpy.types.Operator):
@@ -81,21 +80,3 @@ class custom_tools_set_meterial(bpy.types.Operator):
         return context.window_manager.invoke_props_dialog(self)
         #return context.window_manager.invoke_search_popup(self)
 
-
-
-
-
-## REGISTRATION ##
-##################
-
-
-
-
-def register():
-    bpy.utils.register_module(__name__)
-
-def unregister():
-    bpy.utils.unregister_module(__name__)
-
-if __name__ == "__main__":
-    register()

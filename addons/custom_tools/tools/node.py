@@ -23,6 +23,7 @@
 import bpy, bgl, blf
 import math
 
+
 ## PROPERTIES ##
 ################
 
@@ -695,17 +696,3 @@ class custom_tools_compo_node_transform_grab(bpy.types.Operator):
         context.window_manager.modal_handler_add(self)
         return {'RUNNING_MODAL'}
 
-
-## REGISTRATION ##
-##################
-
-
-def register():
-    bpy.utils.register_module(__name__)
-
-def unregister():
-    bpy.utils.unregister_module(__name__)
-
-if __name__ == "__main__":
-    register()
-    
