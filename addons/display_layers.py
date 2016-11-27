@@ -236,6 +236,7 @@ class layers_add(bpy.types.Operator):
     bl_idname = "add_layer_from_collection.btn"
     bl_label = "Add"
     bl_description = "Add layer"
+    bl_options = {'REGISTER', 'UNDO'}
     
     def execute(self, context):
         my_item = context.scene.display_layers_collection.add()
@@ -249,6 +250,7 @@ class layers_remove(bpy.types.Operator):
     bl_idname = "remove_layer_from_collection.btn"
     bl_label = "Remove"
     bl_description = "Remove layer"
+    bl_options = {'REGISTER', 'UNDO'}
     
     def execute(self, context):
         index = context.scene.display_layers_collection_index
@@ -271,6 +273,7 @@ class layers_up(bpy.types.Operator):
     bl_idname = "up_layer_from_collection.btn"
     bl_label = "Up"
     bl_description = "Up layer"
+    bl_options = {'REGISTER', 'UNDO'}
     
     @classmethod
     def poll(cls, context):
@@ -291,6 +294,7 @@ class layers_down(bpy.types.Operator):
     bl_idname = "down_layer_from_collection.btn"
     bl_label = "Down"
     bl_description = "Down layer"
+    bl_options = {'REGISTER', 'UNDO'}
     
     @classmethod
     def poll(cls, context):
@@ -311,6 +315,7 @@ class layers_assignSelectedObjects(bpy.types.Operator):
     bl_idname = "assign_layer.btn"
     bl_label = "Assign"
     bl_description = "Assign layer to selected objects"
+    bl_options = {'REGISTER', 'UNDO'}
     
     @classmethod
     def poll(cls, context):
@@ -333,6 +338,7 @@ class layers_removeSelectedObjects(bpy.types.Operator):
     bl_idname = "remove_layer.btn"
     bl_label = "Remove"
     bl_description = "Remove selected objects from layer"
+    bl_options = {'REGISTER', 'UNDO'}
     
     @classmethod
     def poll(cls, context):
@@ -356,6 +362,7 @@ class layers_select_objects(bpy.types.Operator):
     bl_idname = "select_objects.btn"
     bl_label = "Select"
     bl_description = "Select objects"
+    bl_options = {'REGISTER', 'UNDO'}
     
     @classmethod
     def poll(cls, context):
@@ -376,6 +383,7 @@ class layers_select_objects(bpy.types.Operator):
     bl_idname = "clear_display_layers_collection.btn"
     bl_label = "Clear"
     bl_description = "Clear layers"
+    bl_options = {'REGISTER', 'UNDO'}
     
     @classmethod
     def poll(cls, context):
