@@ -62,6 +62,7 @@ class SEQUENCER_debug(bpy.types.Panel):
     bl_label = "Debug"
     bl_space_type = "SEQUENCE_EDITOR"
     bl_region_type = "UI"
+    bl_category = "Debug"
 
     def draw(self, context):
         layout = self.layout
