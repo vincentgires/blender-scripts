@@ -326,7 +326,8 @@ class SEQUENCER_check_sequence(bpy.types.Panel):
 	bl_label = "Check Sequence"
 	bl_space_type = "SEQUENCE_EDITOR"
 	bl_region_type = "UI"
-	#bl_category = "Check Sequence"
+	bl_category = "Custom"
+	bl_options = {'DEFAULT_CLOSED'}
   
 	def draw(self, context):
 		layout = self.layout
@@ -345,7 +346,8 @@ class SEQUENCER_compare_sequence(bpy.types.Panel):
 	bl_label = "Compare Strips"
 	bl_space_type = "SEQUENCE_EDITOR"
 	bl_region_type = "UI"
-	#bl_category = "Compare Strips"
+	bl_category = "Custom"
+	bl_options = {'DEFAULT_CLOSED'}
 
 	def draw(self, context):
 		layout = self.layout
