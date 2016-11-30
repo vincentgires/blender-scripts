@@ -28,7 +28,7 @@ import bpy, os
 ###########
 
 
-class IMAGE_EDITOR_filepath(bpy.types.Panel):
+class SEQUENCER_CUSTOM_UI(bpy.types.Panel):
     bl_label = "Custom"
     bl_space_type = "SEQUENCE_EDITOR"
     bl_region_type = "UI"
@@ -38,7 +38,7 @@ class IMAGE_EDITOR_filepath(bpy.types.Panel):
     def draw(self, context):
         layout = self.layout
         
-        layout.operator("filepath_search_and_replace_nodes.btn")
+        layout.operator("open_strip_as_movie_clip.btn")
 
 
 
@@ -48,7 +48,7 @@ class IMAGE_EDITOR_filepath(bpy.types.Panel):
 
 
 class custom_tools_open_strip_as_movie_clip(bpy.types.Operator):
-    bl_idname = "filepath_search_and_replace_nodes.btn"
+    bl_idname = "open_strip_as_movie_clip.btn"
     bl_label = "Open strip as movie clip"
     
     @classmethod
