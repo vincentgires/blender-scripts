@@ -44,6 +44,15 @@ else:
 import bpy
      
 
+
+class MOVIE_ASSEMBLY_properties(bpy.types.PropertyGroup):
+    
+    # SEQUENCES
+    project = bpy.props.StringProperty(
+        name = "Project"
+    )
+
+
 '''
 ## CALL BACK ##
 ###############
@@ -280,10 +289,12 @@ except:
 
 def register():
     bpy.utils.register_module(__name__)
+    bpy.types.Scene.movie_assembly = bpy.props.PointerProperty(type=MOVIE_ASSEMBLY_properties)
     
     
 def unregister():
     bpy.utils.unregister_module(__name__)
+    del bpy.types.Scene.movie_assembly
     
 if __name__ == "__main__":
     register()

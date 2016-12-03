@@ -11,10 +11,7 @@ class SEQUENCER_movie_assembly(bpy.types.Panel):
     
     def draw(self, context):
         layout = self.layout
-        
-        for i in context.user_preferences.addons[addon_name].preferences.project_settings:
-            print (i)
-        #layout.props_enum(self, material_item)
+        layout.prop_search(context.scene.movie_assembly, "project", context.user_preferences.addons[addon_name].preferences, "project_settings")
         
 
 class SEQUENCER_strip_version(bpy.types.Panel):
