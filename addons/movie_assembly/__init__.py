@@ -42,16 +42,21 @@ else:
     logging.debug('Imported files as modules')
     
 import bpy
-     
+
+addon_name = os.path.basename(os.path.dirname(__file__))
+
+
+def get_item_from_projects(self, context):
+    addon_prefs = context.user_preferences.addons[addon_name].preferences
+    return [(str(index), item.name, '', index) for index, item in enumerate(addon_prefs.project_settings)]
 
 
 class MOVIE_ASSEMBLY_properties(bpy.types.PropertyGroup):
     
-    # SEQUENCES
-    project = bpy.props.StringProperty(
+    project_id = bpy.props.EnumProperty(
+        items = get_item_from_projects,
         name = "Project"
     )
-
 
 '''
 ## CALL BACK ##

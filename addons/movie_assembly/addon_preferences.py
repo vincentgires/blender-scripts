@@ -4,6 +4,7 @@ import sys, os, logging
 addon_name = os.path.basename(os.path.dirname(__file__))
 
 
+
 class MOVIE_ASSEMBLY_Project_Settings(bpy.types.PropertyGroup):
     
     name = bpy.props.StringProperty(
