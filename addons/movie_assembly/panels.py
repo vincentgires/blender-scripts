@@ -7,17 +7,20 @@ class SEQUENCER_movie_assembly(bpy.types.Panel):
     bl_label = "Movie Assembly"
     bl_space_type = "SEQUENCE_EDITOR"
     bl_region_type = "UI"
+    bl_category = "Movie Assembly"
     
     
     def draw(self, context):
         layout = self.layout
-        layout.prop_search(context.scene.movie_assembly, "project", context.user_preferences.addons[addon_name].preferences, "project_settings")
         
+        layout.prop(context.scene.movie_assembly, "project_id")
+
 
 class SEQUENCER_strip_version(bpy.types.Panel):
     bl_label = "Version"
     bl_space_type = "SEQUENCE_EDITOR"
     bl_region_type = "UI"
+    bl_category = "Movie Assembly"
     
     '''
     #@staticmethod
