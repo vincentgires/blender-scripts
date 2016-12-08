@@ -11,26 +11,27 @@ bl_info = {
     "category": "Sequencer"}
 
 
-import bpy, sys, logging
+import bpy, sys, os, logging
 
-#sys.path.append("C:/SOFT/eclipse/java-mars/plugins/org.python.pydev_4.4.0.201510052309/pysrc/")
-sys.path.append("/home/vincent/.p2/pool/plugins/org.python.pydev_5.3.1.201610311318/pysrc/")
-try:
-    import pydevd
-except:
-    pass
 
-'''
-class SEQUENCER_debug(bpy.types.Panel):
-    bl_label = "Debug"
-    bl_space_type = "SEQUENCE_EDITOR"
-    bl_region_type = "UI"
-
+class DEBUG_Addon_Preferences(bpy.types.AddonPreferences):
+    bl_idname = __name__
+    
+    pydevd_dir = bpy.props.StringProperty(
+        name = 'pydevd directory',
+        subtype = 'DIR_PATH'
+    )
+    
     def draw(self, context):
         layout = self.layout
-        layout.operator("debug_connect_to_eclipse.btn")
-        layout.operator("debug_disconnect_to_eclipse.btn")
-'''
+        layout.prop(self, 'pydevd_dir')
+        
+
+
+
+
+
+
 
 def draw_debug_panel(layout):
     layout.operator("debug_connect_to_eclipse.btn")
@@ -74,7 +75,14 @@ class DEBUG_connect_to_eclipse(bpy.types.Operator):
     bl_label = "Connect to Eclipse/Pydev debugger"
     
     def execute(self, context):
-        pydevd.settrace(stdoutToServer=True, stderrToServer=True, suspend=False)
+        user_preferences = context.user_preferences
+        addon_prefs = user_preferences.addons[__name__].preferences
+        sys.path.append(addon_prefs.pydevd_dir)
+        try:
+            import pydevd
+            pydevd.settrace(stdoutToServer=True, stderrToServer=True, suspend=False)
+        except:
+            pass
         
         return{'FINISHED'}
 
@@ -83,7 +91,14 @@ class DEBUG_disconnect_to_eclipse(bpy.types.Operator):
     bl_label = "Disconnect Eclipse/Pydev debugger"
     
     def execute(self, context):
-        pydevd.stoptrace()
+        user_preferences = context.user_preferences
+        addon_prefs = user_preferences.addons[__name__].preferences
+        sys.path.append(addon_prefs.pydevd_dir)
+        try:
+            import pydevd
+            pydevd.stoptrace()
+        except:
+            pass
         
         return{'FINISHED'}
 
