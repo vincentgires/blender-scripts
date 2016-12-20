@@ -136,22 +136,26 @@ class IMAGE_EDITOR_custom_panel_compositor_node(bpy.types.Panel):
     
     
     def draw(self, context):
+        scene = context.scene
         layout = self.layout
-        active_node = context.scene.node_tree.nodes.active
         
-        layout.label(active_node.name)
-        
-        layout.operator("get_mask_from_compositor_node.btn")
-        layout.operator("get_image_from_compositor_node.btn")
-        layout.operator("create_mask_node.btn")
-        
-        box = layout.box()
-        box.label("Color Picker")
-        box.prop_search(context.scene, "color_picker_image", bpy.data, "images", icon='IMAGE_DATA')
-        for input in active_node.inputs:
-            if not input.links:
-                op = box.operator("compo_node_color_picker.btn", icon="EYEDROPPER", text=input.name)
-                op.input_name = input.name
+        if scene.node_tree:
+            if scene.node_tree.nodes.active:
+                active_node = scene.node_tree.nodes.active
+                
+                layout.label(active_node.name)
+                
+                layout.operator("get_mask_from_compositor_node.btn")
+                layout.operator("get_image_from_compositor_node.btn")
+                layout.operator("create_mask_node.btn")
+                
+                box = layout.box()
+                box.label("Color Picker")
+                box.prop_search(context.scene, "color_picker_image", bpy.data, "images", icon='IMAGE_DATA')
+                for input in active_node.inputs:
+                    if not input.links:
+                        op = box.operator("compo_node_color_picker.btn", icon="EYEDROPPER", text=input.name)
+                        op.input_name = input.name
         
         
 class IMAGE_EDITOR_custom_panel_material_node(bpy.types.Panel):
