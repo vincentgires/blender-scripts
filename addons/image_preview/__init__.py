@@ -35,21 +35,6 @@ import bpy, bpy.utils.previews
 from image_preview import ui
 
 
-def get_image_paths_from_file():
-    data = bpy.data
-    
-    image_paths = []
-    for image in data.images:
-        if os.path.exists(image.filepath):
-            image_paths.append(image.filepath)
-            
-    return image_paths
-
-
-#def clean_image_preview(self, context):
-    #preview_images['images'].clear()
-
-
 def update_image_preview(self, context):
     data = bpy.data
     scene = context.scene
@@ -57,34 +42,27 @@ def update_image_preview(self, context):
     wm = context.window_manager
     
     if space.type == 'IMAGE_EDITOR':
-        logging.debug('callback in IMAGE_EDITOR space')
         image_path = wm.image_preview
         image_path = os.path.normpath(image_path)
         image = data.images.load(filepath=image_path, check_existing=True)
         space.image = image
     
-    #elif space.type == 'SEQUENCE_EDITOR':
-        #logging.debug('callback in SEQUENCE_EDITOR space')
-        #bpy.ops.image_viewer.qt_event_loop('INVOKE_DEFAULT')
+    else:
+        bpy.ops.image_viewer.qt_event_loop('INVOKE_DEFAULT')
 
 
 def get_enum_previews_from_file(self, context):
     '''EnumProperty callback'''
     
     enum_items = []
+
+    if context is None:
+        return enum_items
     
-    # Get the preview collection (defined in register function)
     pcoll = preview_images['images']
-    if pcoll:
-        #preview_images['images'].clear()
-        return pcoll.my_previews
+    for index, image in enumerate(bpy.data.images):
+        enum_items.append((image.filepath, image.filepath, '', image.preview.icon_id, index))
     
-    image_paths = get_image_paths_from_file()
-    for index, filepath in enumerate(image_paths):
-        basename, filename = os.path.split(filepath)
-        thumb = pcoll.load(filepath, filepath, 'IMAGE')
-        enum_items.append((filepath, filename, filepath, thumb.icon_id, index))
-        
     pcoll.my_previews = enum_items
     return pcoll.my_previews
 
