@@ -40,15 +40,15 @@ def update_image_preview(self, context):
     scene = context.scene
     space = context.space_data
     wm = context.window_manager
+    image_path = wm.image_preview
+    image_path = os.path.normpath(image_path)
     
     if space.type == 'IMAGE_EDITOR':
-        image_path = wm.image_preview
-        image_path = os.path.normpath(image_path)
         image = data.images.load(filepath=image_path, check_existing=True)
         space.image = image
     
     else:
-        bpy.ops.image_viewer.qt_event_loop('INVOKE_DEFAULT')
+        bpy.ops.image_viewer.qt_event_loop('INVOKE_DEFAULT', filepath=image_path)
 
 
 def get_enum_previews_from_file(self, context):
@@ -61,7 +61,8 @@ def get_enum_previews_from_file(self, context):
     
     pcoll = preview_images['images']
     for index, image in enumerate(bpy.data.images):
-        enum_items.append((image.filepath, image.filepath, '', image.preview.icon_id, index))
+        if image.type == 'IMAGE':
+            enum_items.append((image.filepath, image.filepath, '', image.preview.icon_id, index))
     
     pcoll.my_previews = enum_items
     return pcoll.my_previews
