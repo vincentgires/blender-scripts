@@ -35,10 +35,10 @@ import sys, os, logging
 if 'bpy' in locals():
     import importlib
     importlib.reload(addon_preferences)
-    importlib.reload(panels)
+    importlib.reload(ui)
     logging.debug('Reloaded files as modules')
 else:
-    from movie_assembly import addon_preferences, panels
+    from movie_assembly import addon_preferences, ui
     logging.debug('Imported files as modules')
     
 import bpy
