@@ -41,7 +41,6 @@ if config.MODULE_PATH:
             from qt_integration import qt_window
             from qt_integration import ui
         except:
-            print('klkj')
             logging.error("Can't find the PyQt5 module")
 else:
     logging.error("No MODULE_PATH is configured in config.py")
@@ -87,7 +86,7 @@ class QT_WINDOW_EventLoopOp(bpy.types.Operator):
         
         # run modal
         wm = context.window_manager
-        self._timer = wm.event_timer_add(0.05, context.window)
+        self._timer = wm.event_timer_add(1/60, context.window)
         context.window_manager.modal_handler_add(self)
         
         return {'RUNNING_MODAL'}
