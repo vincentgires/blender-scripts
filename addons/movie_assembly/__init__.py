@@ -18,7 +18,7 @@
 
 
 bl_info = {
-    "name": "MovieAssembly",
+    "name": "Movie Assembly",
     "author": "Vincent Gires",
     "description": "---",
     "version": (0, 0, 1),
@@ -48,12 +48,13 @@ addon_name = os.path.basename(os.path.dirname(__file__))
 
 def get_item_from_projects(self, context):
     addon_prefs = context.user_preferences.addons[addon_name].preferences
-    return [(str(index), item.name, '', index) for index, item in enumerate(addon_prefs.project_settings)]
+    return [(str(index), item.name, '', index) for \
+        index, item in enumerate(addon_prefs.projects)]
 
 
-class MOVIE_ASSEMBLY_properties(bpy.types.PropertyGroup):
+class MovieAssemblyProperties(bpy.types.PropertyGroup):
     
-    project_id = bpy.props.EnumProperty(
+    project_index = bpy.props.EnumProperty(
         items = get_item_from_projects,
         name = "Project"
     )
@@ -294,7 +295,8 @@ except:
 
 def register():
     bpy.utils.register_module(__name__)
-    bpy.types.Scene.movie_assembly = bpy.props.PointerProperty(type=MOVIE_ASSEMBLY_properties)
+    bpy.types.Scene.movie_assembly = \
+        bpy.props.PointerProperty(type=MovieAssemblyProperties)
     
     
 def unregister():
