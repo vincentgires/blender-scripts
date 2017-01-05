@@ -36,19 +36,6 @@ bl_info = {
     "category": "Node"}
 
 
-#########
-#### TODO
-
-'''
-
-- /!\ pas oublier de retirer les bpy.app.handlers clear du script dans register
-- connecter un output vector vers un value math node par exemple > bug. Checker le type?
-    (ne pas permettre de le connecter?)
-    (convertir vector to color / value r ou moyenne?)
-- simplifier le code avec une methode get_object()?
-
-'''
-
 
 # NODES
 from data_nodes.nodes import bool
@@ -98,12 +85,12 @@ class NODE_UTILS_properties(bpy.types.PropertyGroup):
 
 class ColorPalette_ColorProperty(bpy.types.PropertyGroup):
     color = bpy.props.FloatVectorProperty(
-                                            name = "Color",
-                                            subtype = "COLOR",
-                                            size = 4, # 4 = RGBA
-                                            soft_min=0.0, soft_max=1.0,
-                                            default = (0.5,0.5,0.5,1.0)
-                                        )
+        name = "Color",
+        subtype = "COLOR",
+        size = 4, # 4 = RGBA
+        soft_min=0.0, soft_max=1.0,
+        default = (0.5,0.5,0.5,1.0)
+    )
 
 # Color palette collection
 class ColorPalette_collectionProperty(bpy.types.PropertyGroup):
@@ -197,19 +184,9 @@ node_categories = [
 
 def register():
     bpy.utils.register_module(__name__)
-    
-    try:
-        nodeitems_utils.register_node_categories("NODE_UTILS", node_categories)
-    except:
-        pass
-
+    nodeitems_utils.register_node_categories("NODE_UTILS", node_categories)
     bpy.types.Scene.ColorPalette_collection = \
         bpy.props.CollectionProperty(type=ColorPalette_collectionProperty)
-    
-    '''bpy.app.handlers.frame_change_post.clear()
-    bpy.app.handlers.scene_update_post.clear()
-    bpy.app.handlers.render_pre.clear()
-    bpy.app.handlers.render_post.clear()'''
     
     bpy.app.handlers.frame_change_post.append(frame_change)
     bpy.app.handlers.scene_update_post.append(scene_update)
