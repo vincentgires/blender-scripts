@@ -56,7 +56,7 @@ class QT_WINDOW_EventLoopOp(bpy.types.Operator):
     
     def modal(self, context, event):
         wm = context.window_manager
-        if self.window.widget_close:
+        if self.widget.widget_close:
             logging.debug('cancel modal operator')
             wm.event_timer_remove(self._timer)
             return {"CANCELLED"}
@@ -64,7 +64,6 @@ class QT_WINDOW_EventLoopOp(bpy.types.Operator):
             logging.debug('process the events for Qt window')
             self.event_loop.processEvents()
             self.app.sendPostedEvents(None, 0)
-            
         
         return {'PASS_THROUGH'}
 
@@ -73,20 +72,20 @@ class QT_WINDOW_EventLoopOp(bpy.types.Operator):
         logging.debug('execute operator')
         
         self.app = QtWidgets.QApplication.instance()
-        ''' instance() gives the possibility to have multiple windows and close it one by one '''
-        if self.app is None:
+        # instance() gives the possibility to have multiple windows and close it one by one
+        if not self.app:
             self.app = QtWidgets.QApplication(['blender'])
         self.event_loop = QtCore.QEventLoop()
         
-        self.window = qt_window.EXAMPLE_Widget()
-        self.window.context = context
+        self.widget = qt_window.EXAMPLE_Widget()
+        self.widget.context = context
         
         logging.debug(self.app)
-        logging.debug(self.window)
+        logging.debug(self.widget)
         
         # run modal
         wm = context.window_manager
-        self._timer = wm.event_timer_add(1/60, context.window)
+        self._timer = wm.event_timer_add(1/120, context.window)
         context.window_manager.modal_handler_add(self)
         
         return {'RUNNING_MODAL'}
