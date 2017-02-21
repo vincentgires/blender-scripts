@@ -39,18 +39,11 @@ class VIEW3D_custom_panel_lighting_tools(bpy.types.Panel):
     
     def draw(self, context):
         layout = self.layout
-        
-        object_aim_btn = layout.operator("aim_normal.btn", icon="MAN_TRANS")
-        object_look_through_btn = layout.operator("look_through.btn", icon="FORWARD")
-        
-        if context.scene.objects.active:
-            object_aim_btn.object_name = context.scene.objects.active.name
-            object_look_through_btn.object_name = context.scene.objects.active.name
-        
-        layout.label(text="Local Camera:")
-        layout.prop(context.space_data, "camera", text="")
-        layout.prop(context.space_data, "lock_camera", "Lock to view")
-
+        col = layout.column(align=True)
+        object_aim_btn = col.operator("aim_normal.btn", icon="MAN_TRANS")
+        object_aim_btn.object_name = context.scene.objects.active.name
+        object_look_through_btn = col.operator("look_through.btn", icon="FORWARD")
+        object_look_through_btn.object_name = context.scene.objects.active.name
 
 class VIEW3D_custom_panel_lighting_lights(bpy.types.Panel):
     bl_label = "Lights"
@@ -69,7 +62,8 @@ class VIEW3D_custom_panel_lighting_lights(bpy.types.Panel):
         #############
         if scene.world:
             box = layout.box()
-            row = box.row()
+            col = box.column(align=True)
+            row = col.row(align=True)
             
             row.label(scene.world.name)
             row.label("", icon="WORLD")
@@ -77,7 +71,7 @@ class VIEW3D_custom_panel_lighting_lights(bpy.types.Panel):
             if scene.world.use_nodes:
                 for node in scene.world.node_tree.nodes:
                     if node.type == "BACKGROUND":
-                        row = box.row()
+                        row = col.row(align=True)
                         
                         ### COLOR ###
                         if not node.inputs["Color"].is_linked:
@@ -103,31 +97,30 @@ class VIEW3D_custom_panel_lighting_lights(bpy.types.Panel):
             if obj.type == "LAMP":
                 box = layout.box()
                 
-                row = box.row()
+                col = box.column(align=True)
+                row = col.row(align=True)
                 
                 if obj == context.active_object:
                     row.label("", icon="TRIA_RIGHT")
                 
                 light_select_btn = row.operator("select_light.btn", text=obj.name, emboss=False)
                 light_select_btn.light_name = obj.name
-                
                 light_aim_btn = row.operator("aim_normal.btn", text="", icon="MAN_TRANS", emboss=False)
                 light_aim_btn.object_name = obj.name
-                
                 look_through_btn = row.operator("look_through.btn", text="", icon="FORWARD", emboss=False)
                 look_through_btn.object_name = obj.name
                 
                 row.prop(obj.data, "type", expand=False, icon="LAMP_"+obj.data.type, text="", icon_only=True, emboss=False)
                 
                 if obj.data.type == "AREA":
-                    row = box.row()
+                    row = col.row(align=True)
                     row.prop(obj.data, "size", text="X", emboss=False)
                     row.prop(obj.data, "size_y", text="Y", emboss=False)
                 else:
-                    box.prop(obj.data, "shadow_soft_size", text="Size", emboss=False)
+                    col.prop(obj.data, "shadow_soft_size", text="Size", emboss=False)
                 
                 if obj.data.type == "SPOT":
-                    row = box.row()
+                    row = col.row(align=True)
                     row.prop(obj.data, "spot_size", text="Spot Size", slider=True, emboss=True)
                     row.prop(obj.data, "spot_blend", text="Blend", slider=True, emboss=True)
                     
@@ -135,7 +128,7 @@ class VIEW3D_custom_panel_lighting_lights(bpy.types.Panel):
                 if obj.data.use_nodes:
                     for node in obj.data.node_tree.nodes:
                         if node.type == "EMISSION":
-                            row = box.row()
+                            row = col.row(align=True)
                             
                             ### COLOR ###
                             if not node.inputs["Color"].is_linked:
@@ -150,8 +143,8 @@ class VIEW3D_custom_panel_lighting_lights(bpy.types.Panel):
                                 row.label("Connected")
                                 
                 else:
-                    box.prop(obj.data, "use_nodes")
-                    box.prop(obj.data, "color")
+                    col.prop(obj.data, "use_nodes")
+                    col.prop(obj.data, "color")
             
             
             
@@ -172,14 +165,15 @@ class VIEW3D_custom_panel_lighting_lights(bpy.types.Panel):
         # display in tool shelf
         for material in emission_material:
             box = layout.box()
-            row = box.row()
+            col = box.column(align=True)
+            row = col.row(align=True)
             row.label(material.name)
             row.label("", icon="MATERIAL")
             
             node_tree = material.node_tree
             for node in node_tree.nodes:
                 if node.type == "EMISSION":
-                    row = box.row()
+                    row = col.row(align=True)
                     
                     ### COLOR ###
                     if not node.inputs["Color"].is_linked:
