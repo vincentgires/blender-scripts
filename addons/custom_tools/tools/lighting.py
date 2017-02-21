@@ -81,12 +81,12 @@ class VIEW3D_custom_panel_lighting_lights(bpy.types.Panel):
                             
                         ### STRENGHT ###
                         if not node.inputs["Strength"].is_linked:
-                            row.prop(node.inputs["Strength"], "default_value", text="Strength", emboss=False)
+                            row.prop(node.inputs["Strength"], "default_value", text="Strength")
                         else:
                             row.label("Connected")
             else:
-                box.prop(context.scene.world, "use_nodes")
-                box.prop(scene.world, "horizon_color", text="")
+                col.prop(context.scene.world, "use_nodes")
+                col.prop(scene.world, "horizon_color", text="")
         
         
         
@@ -103,26 +103,26 @@ class VIEW3D_custom_panel_lighting_lights(bpy.types.Panel):
                 if obj == context.active_object:
                     row.label("", icon="TRIA_RIGHT")
                 
-                light_select_btn = row.operator("select_light.btn", text=obj.name, emboss=False)
+                light_select_btn = row.operator("select_light.btn", text=obj.name)
                 light_select_btn.light_name = obj.name
-                light_aim_btn = row.operator("aim_normal.btn", text="", icon="MAN_TRANS", emboss=False)
+                light_aim_btn = row.operator("aim_normal.btn", text="", icon="MAN_TRANS")
                 light_aim_btn.object_name = obj.name
-                look_through_btn = row.operator("look_through.btn", text="", icon="FORWARD", emboss=False)
+                look_through_btn = row.operator("look_through.btn", text="", icon="FORWARD")
                 look_through_btn.object_name = obj.name
                 
-                row.prop(obj.data, "type", expand=False, icon="LAMP_"+obj.data.type, text="", icon_only=True, emboss=False)
+                row.prop(obj.data, "type", expand=False, icon="LAMP_"+obj.data.type, text="", icon_only=True)
                 
                 if obj.data.type == "AREA":
                     row = col.row(align=True)
-                    row.prop(obj.data, "size", text="X", emboss=False)
-                    row.prop(obj.data, "size_y", text="Y", emboss=False)
+                    row.prop(obj.data, "size", text="X")
+                    row.prop(obj.data, "size_y", text="Y")
                 else:
-                    col.prop(obj.data, "shadow_soft_size", text="Size", emboss=False)
+                    col.prop(obj.data, "shadow_soft_size", text="Size")
                 
                 if obj.data.type == "SPOT":
                     row = col.row(align=True)
-                    row.prop(obj.data, "spot_size", text="Spot Size", slider=True, emboss=True)
-                    row.prop(obj.data, "spot_blend", text="Blend", slider=True, emboss=True)
+                    row.prop(obj.data, "spot_size", text="Spot Size", slider=True)
+                    row.prop(obj.data, "spot_blend", text="Blend", slider=True)
                     
                 
                 if obj.data.use_nodes:
@@ -138,7 +138,7 @@ class VIEW3D_custom_panel_lighting_lights(bpy.types.Panel):
                                 
                             ### STRENGHT ###
                             if not node.inputs["Strength"].is_linked:
-                                row.prop(node.inputs["Strength"], "default_value", text="", emboss=False)
+                                row.prop(node.inputs["Strength"], "default_value", text="")
                             else:
                                 row.label("Connected")
                                 
@@ -183,7 +183,7 @@ class VIEW3D_custom_panel_lighting_lights(bpy.types.Panel):
                         
                     ### STRENGHT ###
                     if not node.inputs["Strength"].is_linked:
-                        row.prop(node.inputs["Strength"], "default_value", text="", emboss=False)
+                        row.prop(node.inputs["Strength"], "default_value", text="")
                     else:
                         row.label("Connected")
         
