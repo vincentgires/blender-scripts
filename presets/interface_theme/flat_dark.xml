@@ -258,11 +258,13 @@
                    vertex="#657780"
                    vertex_select="#ff7c00"
                    vertex_size="3"
+                   vertex_bevel="#00a5ff"
                    vertex_unreferenced="#000000"
                    edge_select="#cb7027"
                    edge_seam="#db2512"
                    edge_sharp="#00ffff"
                    edge_crease="#cc0099"
+                   edge_bevel="#00a5ff"
                    edge_facesel="#4b4b4b"
                    freestyle_edge_mark="#7fff7f"
                    face="#00000036"
@@ -348,6 +350,7 @@
                         vertex="#000000"
                         vertex_select="#ff8500"
                         vertex_size="6"
+                        vertex_bevel="#000000"
                         vertex_unreferenced="#000000"
                         handle_free="#000000"
                         handle_auto="#909000"
@@ -544,6 +547,7 @@
                         vertex="#32adec"
                         vertex_select="#be6925"
                         vertex_size="3"
+                        vertex_bevel="#000000"
                         vertex_unreferenced="#000000"
                         face="#a47c5b0a"
                         face_select="#a47c5b3c"
@@ -1003,24 +1007,24 @@
                        handle_vertex_size="4">
         <space>
           <ThemeSpaceGeneric back="#262626"
-                             title="#000000"
+                             title="#8b8b8b"
                              text="#000000"
                              text_hi="#ffffff"
                              header="#323232"
                              header_text="#000000"
                              header_text_hi="#ffffff"
-                             button="#3b3b3bff"
+                             button="#3b3b3b42"
                              button_title="#979797"
-                             button_text="#acacac"
+                             button_text="#b3b3b3"
                              button_text_hi="#ffffff"
-                             tab_active="#464646"
-                             tab_inactive="#393939"
-                             tab_back="#404040ff"
-                             tab_outline="#323232">
+                             tab_active="#3b3b3b"
+                             tab_inactive="#1f1f1f"
+                             tab_back="#2d2d2dff"
+                             tab_outline="#1f1f1f">
             <panelcolors>
               <ThemePanelColors header="#00000019"
                                 back="#72727280"
-                                show_header="FALSE"
+                                show_header="TRUE"
                                 show_back="FALSE">
               </ThemePanelColors>
             </panelcolors>
