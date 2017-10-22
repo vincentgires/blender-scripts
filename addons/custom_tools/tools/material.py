@@ -23,46 +23,43 @@
 import bpy
 
 
-
 ## PANEL ##
 ###########
 
 
-class VIEW3D_custom_panel_material(bpy.types.Panel):
-    bl_label = "Material"
-    bl_space_type = "VIEW_3D"
-    bl_region_type = "TOOLS"
-    bl_category = "Custom"
-    
+class View3dCustomPanelMaterial(bpy.types.Panel):
+    bl_label = 'Material'
+    bl_space_type = 'VIEW_3D'
+    bl_region_type = 'TOOLS'
+    bl_category = 'Custom'
     
     def draw(self, context):
         layout = self.layout
-        layout.operator("set_material.btn")
-        
+        layout.operator('scene.customtools_set_material')
 
 
 ## OPERATOR ##
 ##############
 
 
-class custom_tools_set_meterial(bpy.types.Operator):
-    bl_idname = "set_material.btn"
-    bl_label = "Set material"
+class CustomToolsSetMeterial(bpy.types.Operator):
+    bl_idname = 'scene.customtools_set_material'
+    bl_label = 'Set material'
     
     apply = bpy.props.EnumProperty(
-        items = (
+        items=(
             ('selected', 'Selected', 'Selected object'),
             ('active', 'Active', 'Active object'),
-        ),
-        name = "Apply"
-    )
+            ),
+        name='Apply'
+        )
     
     
     def item_cb(self, context):
         return [(mat.name, mat.name, '') for mat in self.material_item]
     
-    material_enum = bpy.props.EnumProperty(items=item_cb, name="Material")
-    material_item = bpy.props.CollectionProperty(type=bpy.types.PropertyGroup, name="number")
+    material_enum = bpy.props.EnumProperty(items=item_cb, name='Material')
+    material_item = bpy.props.CollectionProperty(type=bpy.types.PropertyGroup, name='number')
     
     def execute(self, context):
         if len(self.material_item) > 0:

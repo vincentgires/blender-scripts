@@ -20,51 +20,45 @@
 # www.vincentgires.com
 
 
-import bpy, os
-
+import bpy
+import os
 
 
 ## PANEL ##
 ###########
 
 
-class SEQUENCER_CUSTOM_UI(bpy.types.Panel):
-    bl_label = "Custom"
-    bl_space_type = "SEQUENCE_EDITOR"
-    bl_region_type = "UI"
-    bl_category = "Custom"
-    
+class SequencerCustomPanel(bpy.types.Panel):
+    bl_label = 'Custom'
+    bl_space_type = 'SEQUENCE_EDITOR'
+    bl_region_type = 'UI'
+    bl_category = 'Custom'
     
     def draw(self, context):
         layout = self.layout
-        
-        layout.operator("open_strip_as_movie_clip.btn")
-
-
+        layout.operator('scene.customtools_open_strip_as_movie_clip')
 
 
 ## OPERATOR ##
 ##############
 
 
-class custom_tools_open_strip_as_movie_clip(bpy.types.Operator):
-    bl_idname = "open_strip_as_movie_clip.btn"
-    bl_label = "Open strip as movie clip"
+class CustomToolsOpenStripAsMovieClip(bpy.types.Operator):
+    bl_idname = 'scene.customtools_open_strip_as_movie_clip'
+    bl_label = 'Open strip as movie clip'
     
     @classmethod
     def poll(cls, context):
         if context.scene.sequence_editor and context.scene.sequence_editor.active_strip:
-            if context.scene.sequence_editor.active_strip.type == "MOVIE":
+            if context.scene.sequence_editor.active_strip.type == 'MOVIE':
                 return True
         else:
             return False
     
     def execute(self, context):
-        
         strip = context.scene.sequence_editor.active_strip
         movie = bpy.data.movieclips.load(filepath = strip.filepath)
         movie.frame_start = strip.frame_start
-        
         
         return{'FINISHED'}
     

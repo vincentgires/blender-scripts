@@ -23,44 +23,39 @@
 import bpy
 
 
-
 ## PANEL ##
 ###########
 
 
-
-class VIEW3D_custom_panel_animation(bpy.types.Panel):
-    bl_label = "Animation"
-    bl_space_type = "VIEW_3D"
-    bl_region_type = "TOOLS"
-    bl_category = "Custom"
+class View3dCustomPanelAnimation(bpy.types.Panel):
+    bl_label = 'Animation'
+    bl_space_type = 'VIEW_3D'
+    bl_region_type = 'TOOLS'
+    bl_category = 'Custom'
     
     
     def draw(self, context):
         layout = self.layout
         
-        layout.label("Pose")
-        layout.operator("reset_pose.btn")
-        layout.operator("pose_to_empty.btn")
+        layout.label('Pose')
+        layout.operator('scene.customtools_reset_pose')
+        layout.operator('scene.customtools_pose_to_empty')
         
-        layout.label("Action")
+        layout.label('Action')
         row = layout.row()
-        row.operator("set_actions_fake.btn")
-        row.operator("remove_actions_fake.btn")
-        layout.operator("delete_actions.btn")
+        row.operator('scene.customtools_set_actions_fake')
+        row.operator('scene.customtools_remove_actions_fake')
+        layout.operator('scene.customtools_delete_actions')
         
-
 
 ## OPERATOR ##
 ##############
 
 
-
-
-class custom_tools_reset_pose(bpy.types.Operator):
-    bl_idname = "reset_pose.btn"
-    bl_label = "Reset pose"
-    bl_description = "Reset location/rotation/scale properties"
+class CustomToolsResetPose(bpy.types.Operator):
+    bl_idname = 'scene.customtools_reset_pose'
+    bl_label = 'Reset pose'
+    bl_description = 'Reset location/rotation/scale properties'
     
     @classmethod
     def poll(cls, context):
@@ -78,20 +73,20 @@ class custom_tools_reset_pose(bpy.types.Operator):
         return{'FINISHED'}
 
 
-
-class custom_tools_set_actions_fake(bpy.types.Operator):
-    bl_idname = "set_actions_fake.btn"
-    bl_label = "Fake actions"
+class CustomToolsSetActionsFake(bpy.types.Operator):
+    bl_idname = 'scene.customtools_set_actions_fake'
+    bl_label = 'Fake actions'
     
     def execute(self, context):
         for action in bpy.data.actions:
             action.use_fake_user = True
         
         return{'FINISHED'}
-    
-class custom_tools_remove_actions_fake(bpy.types.Operator):
-    bl_idname = "remove_actions_fake.btn"
-    bl_label = "Free actions"
+
+
+class CustomToolsRemoveActionsFake(bpy.types.Operator):
+    bl_idname = 'scene.customtools_remove_actions_fake'
+    bl_label = 'Free actions'
     
     def execute(self, context):
         for action in bpy.data.actions:
@@ -99,10 +94,11 @@ class custom_tools_remove_actions_fake(bpy.types.Operator):
         
         return{'FINISHED'}
 
-class custom_tools_delete_actions(bpy.types.Operator):
-    bl_idname = "delete_actions.btn"
-    bl_label = "Delete actions"
-    bl_description = "Delete actions with no users"
+
+class CustomToolsDeleteActions(bpy.types.Operator):
+    bl_idname = 'scene.customtools_delete_actions'
+    bl_label = 'Delete actions'
+    bl_description = 'Delete actions with no users'
     
     def execute(self, context):
         for action in bpy.data.actions:
@@ -112,10 +108,9 @@ class custom_tools_delete_actions(bpy.types.Operator):
         return{'FINISHED'}
 
 
-
-class custom_tools_pose_to_empty(bpy.types.Operator):
-    bl_idname = "pose_to_empty.btn"
-    bl_label = "Pose to empty"
+class CustomToolsPoseToEmpty(bpy.types.Operator):
+    bl_idname = 'scene.customtools_pose_to_empty'
+    bl_label = 'Pose to empty'
     
     @classmethod
     def poll(cls, context):
@@ -142,7 +137,6 @@ class custom_tools_pose_to_empty(bpy.types.Operator):
         context.scene.objects.active = active_armature
         active_armature.select = True
         bpy.ops.object.mode_set(mode='POSE')
-        
         
         return{'FINISHED'}
 

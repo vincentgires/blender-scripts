@@ -26,17 +26,16 @@ import bpy
 ## PANEL ##
 ###########
 
-class VIEW3D_custom_panel_cache(bpy.types.Panel):
-    bl_label = "Cache"
-    bl_space_type = "VIEW_3D"
-    bl_region_type = "TOOLS"
-    bl_category = "Custom"
-    
+class View3dCustomPanelCache(bpy.types.Panel):
+    bl_label = 'Cache'
+    bl_space_type = 'VIEW_3D'
+    bl_region_type = 'TOOLS'
+    bl_category = 'Custom'
     
     def draw(self, context):
         layout = self.layout
-        layout.operator("ptcache.bake_all", text="Bake All Dynamics").bake = True
-        layout.operator("ptcache.free_bake_all", text="Free All Bakes")
-        layout.operator("ptcache.bake_all", text="Update All To Frame").bake = False
+        layout.operator('ptcache.bake_all', text='Bake All Dynamics').bake = True
+        layout.operator('ptcache.free_bake_all', text='Free All Bakes')
+        layout.operator('ptcache.bake_all', text='Update All To Frame').bake = False
 
 
