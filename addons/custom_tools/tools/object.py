@@ -33,14 +33,16 @@ class View3dCustomPanelTools(bpy.types.Panel):
     
     def draw(self, context):
         layout = self.layout
-        layout.operator('scene.customtools_reset_objects')
         
-        row = layout.row(align=True)
+        col = layout.column(align=True)
+        col.operator('scene.customtools_reset_objects')
+        
+        row = col.row(align=True)
         row.label('Name')
         row.operator('scene.customtools_hide_name', text='Hide')
         row.operator('scene.customtools_show_name', text='Show')
         
-        row = layout.row(align=True)
+        row = col.row(align=True)
         row.label('Wire')
         row.operator('scene.customtools_hide_wire', text='Hide')
         row.operator('scene.customtools_show_wire', text='Show')

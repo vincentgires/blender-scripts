@@ -35,13 +35,15 @@ class View3dCustomPanelLookThrough(bpy.types.Panel):
         
         layout.prop(context.space_data, 'lock_camera', 'Lock to view')
         
-        layout.operator('scene.customtools_look_through_selected')
-        layout.operator('scene.customtools_look_through_render')
+        col = layout.column(align=True)
+        col.operator('scene.customtools_look_through_selected')
+        col.operator('scene.customtools_look_through_render')
         
-        layout.operator('scene.customtools_set_active_camera', icon='CAMERA_DATA')
-        layout.operator('scene.customtools_remove_local_camera')
+        col = layout.column(align=True)
+        col.operator('scene.customtools_set_active_camera', icon='CAMERA_DATA')
+        col.operator('scene.customtools_remove_local_camera')
         
-        row = layout.row(align=False)
+        row = layout.row(align=True)
         row.alignment = 'EXPAND'
         row.operator('scene.customtools_layers_to_view')
         row.operator('scene.customtools_view_to_layers')
