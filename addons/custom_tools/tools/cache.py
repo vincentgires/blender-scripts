@@ -34,8 +34,9 @@ class View3dCustomPanelCache(bpy.types.Panel):
     
     def draw(self, context):
         layout = self.layout
-        layout.operator('ptcache.bake_all', text='Bake All Dynamics').bake = True
-        layout.operator('ptcache.free_bake_all', text='Free All Bakes')
-        layout.operator('ptcache.bake_all', text='Update All To Frame').bake = False
+        col = layout.column(align=True)
+        col.operator('ptcache.bake_all', text='Bake All Dynamics').bake = True
+        col.operator('ptcache.free_bake_all', text='Free All Bakes')
+        col.operator('ptcache.bake_all', text='Update All To Frame').bake = False
 
 

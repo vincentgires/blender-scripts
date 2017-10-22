@@ -37,15 +37,17 @@ class View3dCustomPanelAnimation(bpy.types.Panel):
     def draw(self, context):
         layout = self.layout
         
-        layout.label('Pose')
-        layout.operator('scene.customtools_reset_pose')
-        layout.operator('scene.customtools_pose_to_empty')
+        col = layout.column(align=True)
+        col.label('Pose')
+        col.operator('scene.customtools_reset_pose')
+        col.operator('scene.customtools_pose_to_empty')
         
-        layout.label('Action')
-        row = layout.row()
+        col = layout.column(align=True)
+        col.label('Action')
+        row = col.row(align=True)
         row.operator('scene.customtools_set_actions_fake')
         row.operator('scene.customtools_remove_actions_fake')
-        layout.operator('scene.customtools_delete_actions')
+        col.operator('scene.customtools_delete_actions')
         
 
 ## OPERATOR ##

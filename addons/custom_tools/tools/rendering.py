@@ -35,8 +35,9 @@ class View3dCustomPanelRendering(bpy.types.Panel):
     
     def draw(self, context):
         layout = self.layout
-        layout.operator('scene.customtools_set_object_id')
-        layout.operator('scene.customtools_set_material_id')
+        col = layout.column(align=True)
+        col.operator('scene.customtools_set_object_id')
+        col.operator('scene.customtools_set_material_id')
 
 
 ## OPERATOR ##
