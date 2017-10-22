@@ -23,47 +23,40 @@
 import bpy
 
 
-## 3D VIEW TOOLS BUTTONS ##
-class VIEW3D_look_through_panel(bpy.types.Panel):
-    bl_label = "Look Through"
-    bl_space_type = "VIEW_3D"
-    bl_region_type = "TOOLS"
-    bl_category = "Custom"
-    bl_context = "objectmode"
+class View3dCustomPanelLookThrough(bpy.types.Panel):
+    bl_label = 'Look Through'
+    bl_space_type = 'VIEW_3D'
+    bl_region_type = 'TOOLS'
+    bl_category = 'Custom'
+    bl_context = 'objectmode'
     
     def draw(self, context):
-        
         layout = self.layout
         
-        layout.prop(context.space_data, "lock_camera", "Lock to view")
+        layout.prop(context.space_data, 'lock_camera', 'Lock to view')
         
-        layout.operator("look_through_selected.btn")
-        layout.operator("look_through_render.btn")
+        layout.operator('scene.customtools_look_through_selected')
+        layout.operator('scene.customtools_look_through_render')
         
-        layout.operator("set_active_camera.btn", icon="CAMERA_DATA")
-        layout.operator("remove_local_camera.btn")
+        layout.operator('scene.customtools_set_active_camera', icon='CAMERA_DATA')
+        layout.operator('scene.customtools_remove_local_camera')
         
         row = layout.row(align=False)
         row.alignment = 'EXPAND'
-        row.operator("layers_to_view.btn")
-        row.operator("view_to_layers.btn")
-        
-        
+        row.operator('scene.customtools_layers_to_view')
+        row.operator('scene.customtools_view_to_layers')
         
 
-class look_through_selected(bpy.types.Operator):
-    bl_idname = "look_through_selected.btn"
-    bl_label = "Look through selected"
-    bl_description = "Look Through selected light, camera or object"
+class CustomToolsLookThroughSelected(bpy.types.Operator):
+    bl_idname = 'scene.customtools_look_through_selected'
+    bl_label = 'Look through selected'
+    bl_description = 'Look Through selected light, camera or object'
     
     @classmethod
     def poll(cls, context):
         return (context.object is not None)
     
     def execute(self, context):
-        
-        # look through selected
-        
         context.space_data.lock_camera_and_layers = False # needs to be False to active local camera
         
         active_scene = context.scene
@@ -73,30 +66,27 @@ class look_through_selected(bpy.types.Operator):
         bpy.ops.view3d.object_as_camera()
         context.scene.camera = active_camera # restore render camera
         
-        
         return{'FINISHED'}
 
 
-class look_through_render(bpy.types.Operator):
-    bl_idname = "look_through_render.btn"
-    bl_label = "Look through render"
-    bl_description = "Look Through render camera, could be different than the local camera"
+class CustomToolsLookThroughRender(bpy.types.Operator):
+    bl_idname = 'scene.customtools_look_through_render'
+    bl_label = 'Look through render'
+    bl_description = 'Look Through render camera, could be different than the local camera'
     
     def execute(self, context):
-        
-        # look through render camera
         active_scene = bpy.context.scene
         active_camera = bpy.context.scene.camera
         context.space_data.camera = active_camera
-        bpy.ops.view3d.viewnumpad(type="CAMERA")
-        
+        bpy.ops.view3d.viewnumpad(type='CAMERA')
         
         return{'FINISHED'}
-    
-class setActiveCamera_Button(bpy.types.Operator):
-    bl_idname = "set_active_camera.btn"
-    bl_label = "Set active camera"
-    bl_description = "Set selected to active camera for the rendering"
+
+
+class CustomToolsSetActiveCamera(bpy.types.Operator):
+    bl_idname = 'scene.customtools_set_active_camera'
+    bl_label = 'Set active camera'
+    bl_description = 'Set selected to active camera for the rendering'
     
     @classmethod
     def poll(cls, context):
@@ -126,51 +116,45 @@ class setActiveCamera_Button(bpy.types.Operator):
         
         return{'FINISHED'}
 
-class layers_to_view_Button(bpy.types.Operator):
-    bl_idname = "layers_to_view.btn"
-    bl_label = "Layers to view"
-    bl_description = "Set visible layers from render visible layers"
-    
+
+class CustomToolsLayersToView(bpy.types.Operator):
+    bl_idname = 'scene.customtools_layers_to_view'
+    bl_label = 'Layers to view'
+    bl_description = 'Set visible layers from render visible layers'
 
     def execute(self, context):
-        
         layer_cpt = 0
         for layer in context.scene.layers:
             context.space_data.layers[layer_cpt] = layer
             layer_cpt += 1
         
-        
         return{'FINISHED'}
-    
-    
-class view_to_layers_Button(bpy.types.Operator):
-    bl_idname = "view_to_layers.btn"
-    bl_label = "View to layers"
-    bl_description = "Set visible layers to render visible layers"
-    
 
+
+class CustomToolsViewToLayers(bpy.types.Operator):
+    bl_idname = 'scene.customtools_view_to_layers'
+    bl_label = 'View to layers'
+    bl_description = 'Set visible layers to render visible layers'
+    
     def execute(self, context):
-        
         layer_cpt = 0
         for layer in context.space_data.layers:
             context.scene.layers[layer_cpt] = layer
             layer_cpt += 1
         
-        
         return{'FINISHED'}
-    
 
-class remove_local_camera_Button(bpy.types.Operator):
-    bl_idname = "remove_local_camera.btn"
-    bl_label = "Remove local camera"
-    bl_description = "Remove local camera in the viewer"
+
+class CustomToolsRemoveLocalCamera(bpy.types.Operator):
+    bl_idname = 'scene.customtools_remove_local_camera'
+    bl_label = 'Remove local camera'
+    bl_description = 'Remove local camera in the viewer'
     
     @classmethod
     def poll(cls, context):
         return (context.space_data.camera is not None)
     
     def execute(self, context):
-        
         context.space_data.camera = None
         return{'FINISHED'}
 

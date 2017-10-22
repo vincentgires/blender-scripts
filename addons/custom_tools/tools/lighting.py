@@ -20,43 +20,42 @@
 # www.vincentgires.com
 
 
-
-
-import bpy, mathutils, math
+import bpy
+import mathutils
+import math
 from bpy_extras import view3d_utils
-
 
 
 ## PANEL ##
 ###########
 
-class VIEW3D_custom_panel_lighting_tools(bpy.types.Panel):
-    bl_label = "Tools"
-    bl_space_type = "VIEW_3D"
-    bl_region_type = "TOOLS"
-    bl_category = "Lighting"
-    
+
+class View3dCustomPanelLightingTools(bpy.types.Panel):
+    bl_label = 'Tools'
+    bl_space_type = 'VIEW_3D'
+    bl_region_type = 'TOOLS'
+    bl_category = 'Lighting'
     
     def draw(self, context):
         layout = self.layout
         col = layout.column(align=True)
-        object_aim_btn = col.operator("aim_normal.btn", icon="MAN_TRANS")
+        object_aim_btn = col.operator('scene.customtools_aim_normal', icon='MAN_TRANS')
         object_aim_btn.object_name = context.scene.objects.active.name
-        object_look_through_btn = col.operator("look_through.btn", icon="FORWARD")
+        object_look_through_btn = col.operator('scene.customtools_look_through', icon='FORWARD')
         object_look_through_btn.object_name = context.scene.objects.active.name
 
-class VIEW3D_custom_panel_lighting_lights(bpy.types.Panel):
-    bl_label = "Lights"
-    bl_space_type = "VIEW_3D"
-    bl_region_type = "TOOLS"
-    bl_category = "Lighting"
-    
+
+class View3dCustomPanelLightingLights(bpy.types.Panel):
+    bl_label = 'Lights'
+    bl_space_type = 'VIEW_3D'
+    bl_region_type = 'TOOLS'
+    bl_category = 'Lighting'
     
     def draw(self, context):
         scene = context.scene
         layout = self.layout
         
-        layout.operator("select_all_lights.btn")
+        layout.operator('scene.customtools_select_all_lights')
         
         ### WORLD ###
         #############
@@ -66,86 +65,82 @@ class VIEW3D_custom_panel_lighting_lights(bpy.types.Panel):
             row = col.row(align=True)
             
             row.label(scene.world.name)
-            row.label("", icon="WORLD")
+            row.label('', icon='WORLD')
             
             if scene.world.use_nodes:
                 for node in scene.world.node_tree.nodes:
-                    if node.type == "BACKGROUND":
+                    if node.type == 'BACKGROUND':
                         row = col.row(align=True)
                         
                         ### COLOR ###
-                        if not node.inputs["Color"].is_linked:
-                            row.prop(node.inputs["Color"], "default_value", text="")
+                        if not node.inputs['Color'].is_linked:
+                            row.prop(node.inputs['Color'], 'default_value', text='')
                         else:
-                            row.label("Connected")
+                            row.label('Connected')
                             
                         ### STRENGHT ###
-                        if not node.inputs["Strength"].is_linked:
-                            row.prop(node.inputs["Strength"], "default_value", text="Strength")
+                        if not node.inputs['Strength'].is_linked:
+                            row.prop(node.inputs['Strength'], 'default_value', text='Strength')
                         else:
-                            row.label("Connected")
+                            row.label('Connected')
             else:
-                col.prop(context.scene.world, "use_nodes")
-                col.prop(scene.world, "horizon_color", text="")
-        
-        
-        
+                col.prop(context.scene.world, 'use_nodes')
+                col.prop(scene.world, 'horizon_color', text='')
         
         ### LAMPS ###
         #############
         for obj in scene.objects:
-            if obj.type == "LAMP":
+            if obj.type == 'LAMP':
                 box = layout.box()
                 
                 col = box.column(align=True)
                 row = col.row(align=True)
                 
                 if obj == context.active_object:
-                    row.label("", icon="TRIA_RIGHT")
+                    row.label('', icon='TRIA_RIGHT')
                 
-                light_select_btn = row.operator("select_light.btn", text=obj.name)
+                light_select_btn = row.operator('scene.customtools_select_light', text=obj.name)
                 light_select_btn.light_name = obj.name
-                light_aim_btn = row.operator("aim_normal.btn", text="", icon="MAN_TRANS")
+                light_aim_btn = row.operator('scene.customtools_aim_normal', text='', icon='MAN_TRANS')
                 light_aim_btn.object_name = obj.name
-                look_through_btn = row.operator("look_through.btn", text="", icon="FORWARD")
+                look_through_btn = row.operator('scene.customtools_look_through', text='', icon='FORWARD')
                 look_through_btn.object_name = obj.name
                 
-                row.prop(obj.data, "type", expand=False, icon="LAMP_"+obj.data.type, text="", icon_only=True)
+                row.prop(obj.data, 'type', expand=False, icon='LAMP_'+obj.data.type, text='', icon_only=True)
                 
-                if obj.data.type == "AREA":
+                if obj.data.type == 'AREA':
                     row = col.row(align=True)
-                    row.prop(obj.data, "size", text="X")
-                    row.prop(obj.data, "size_y", text="Y")
+                    row.prop(obj.data, 'size', text='X')
+                    row.prop(obj.data, 'size_y', text='Y')
                 else:
-                    col.prop(obj.data, "shadow_soft_size", text="Size")
+                    col.prop(obj.data, 'shadow_soft_size', text='Size')
                 
-                if obj.data.type == "SPOT":
+                if obj.data.type == 'SPOT':
                     row = col.row(align=True)
-                    row.prop(obj.data, "spot_size", text="Spot Size", slider=True)
-                    row.prop(obj.data, "spot_blend", text="Blend", slider=True)
+                    row.prop(obj.data, 'spot_size', text='Spot Size', slider=True)
+                    row.prop(obj.data, 'spot_blend', text='Blend', slider=True)
                     
                 
                 if obj.data.use_nodes:
                     for node in obj.data.node_tree.nodes:
-                        if node.type == "EMISSION":
+                        if node.type == 'EMISSION':
                             row = col.row(align=True)
                             
                             ### COLOR ###
-                            if not node.inputs["Color"].is_linked:
-                                row.prop(node.inputs["Color"], "default_value", text="")
+                            if not node.inputs['Color'].is_linked:
+                                row.prop(node.inputs['Color'], 'default_value', text='')
                             else:
-                                row.label("Connected")
+                                row.label('Connected')
                                 
                             ### STRENGHT ###
-                            if not node.inputs["Strength"].is_linked:
-                                row.prop(node.inputs["Strength"], "default_value", text="")
+                            if not node.inputs['Strength'].is_linked:
+                                row.prop(node.inputs['Strength'], 'default_value', text='')
                             else:
-                                row.label("Connected")
+                                row.label('Connected')
                                 
                 else:
-                    col.prop(obj.data, "use_nodes")
-                    col.prop(obj.data, "color")
-            
+                    col.prop(obj.data, 'use_nodes')
+                    col.prop(obj.data, 'color')
             
             
         ### EMISSION MATERIAL ###
@@ -157,10 +152,9 @@ class VIEW3D_custom_panel_lighting_lights(bpy.types.Panel):
             if material.use_nodes:
                 node_tree = material.node_tree
                 for node in node_tree.nodes:
-                    if node.type == "EMISSION":
+                    if node.type == 'EMISSION':
                         emission_material.append(material)
                         break
-        
         
         # display in tool shelf
         for material in emission_material:
@@ -168,43 +162,39 @@ class VIEW3D_custom_panel_lighting_lights(bpy.types.Panel):
             col = box.column(align=True)
             row = col.row(align=True)
             row.label(material.name)
-            row.label("", icon="MATERIAL")
+            row.label('', icon='MATERIAL')
             
             node_tree = material.node_tree
             for node in node_tree.nodes:
-                if node.type == "EMISSION":
+                if node.type == 'EMISSION':
                     row = col.row(align=True)
                     
                     ### COLOR ###
-                    if not node.inputs["Color"].is_linked:
-                        row.prop(node.inputs["Color"], "default_value", text="")
+                    if not node.inputs['Color'].is_linked:
+                        row.prop(node.inputs['Color'], 'default_value', text='')
                     else:
-                        row.label("Connected")
+                        row.label('Connected')
                         
                     ### STRENGHT ###
-                    if not node.inputs["Strength"].is_linked:
-                        row.prop(node.inputs["Strength"], "default_value", text="")
+                    if not node.inputs['Strength'].is_linked:
+                        row.prop(node.inputs['Strength'], 'default_value', text='')
                     else:
-                        row.label("Connected")
-        
-        
-                    
-            
-            
-                
+                        row.label('Connected')
+
+
 ## OPERATOR ##
 ##############
 
 
-class custom_tools_select_all_lights(bpy.types.Operator):
-    bl_idname = "select_all_lights.btn"
-    bl_label = "Select all lights"
-    bl_description = "Select all lights of the scene"
+class CustomToolsSelectAllLights(bpy.types.Operator):
+    bl_idname = 'scene.customtools_select_all_lights'
+    bl_label = 'Select all lights'
+    bl_description = 'Select all lights of the scene'
     
     
     def execute(self, context):
         for obj in context.scene.objects:
-            if obj.type == "LAMP":
+            if obj.type == 'LAMP':
                 obj.select = True
             else:
                 obj.select = False
@@ -212,11 +202,10 @@ class custom_tools_select_all_lights(bpy.types.Operator):
         return{'FINISHED'}
 
 
-
-class custom_tools_select_light(bpy.types.Operator):
-    bl_idname = "select_light.btn"
-    bl_label = "Select light"
-    bl_description = "Select light from the tool shelf"
+class CustomToolsSelectLight(bpy.types.Operator):
+    bl_idname = 'scene.customtools_select_light'
+    bl_label = 'Select light'
+    bl_description = 'Select light from the tool shelf'
     
     # Properties
     light_name = bpy.props.StringProperty()
@@ -237,13 +226,8 @@ class custom_tools_select_light(bpy.types.Operator):
         return{'FINISHED'}
 
 
-
-
-
-
-
 def aim_normal(context, event, object_name, ray_max=1000.0, offset=-1):
-    """Run this function on left mouse, execute the ray cast"""
+    '''Run this function on left mouse, execute the ray cast'''
     
     object = context.scene.objects[object_name]
     
@@ -260,7 +244,7 @@ def aim_normal(context, event, object_name, ray_max=1000.0, offset=-1):
     ray_target = ray_origin + (view_vector * ray_max)
     
     def visible_objects_and_duplis():
-        """Loop over (object, matrix) pairs (mesh only)"""
+        '''Loop over (object, matrix) pairs (mesh only)'''
 
         for obj in context.visible_objects:
             if obj.type == 'MESH':
@@ -276,20 +260,20 @@ def aim_normal(context, event, object_name, ray_max=1000.0, offset=-1):
             obj.dupli_list_clear()
 
     def obj_ray_cast(obj, matrix):
-        """Wrapper for ray casting that moves the ray into object space"""
+        '''Wrapper for ray casting that moves the ray into object space'''
 
         # get the ray relative to the object
         matrix_inv = matrix.inverted()
         ray_origin_obj = matrix_inv * ray_origin
         ray_target_obj = matrix_inv * ray_target
         ray_direction_obj = ray_target_obj - ray_origin_obj
-        """# cast the ray
+        '''# cast the ray
         hit, normal, face_index = obj.ray_cast(ray_origin_obj, ray_target_obj)
 
         if face_index != -1:
             return hit, normal, face_index
         else:
-            return None, None, None"""
+            return None, None, None'''
         # cast the ray
         success, location, normal, face_index = obj.ray_cast(ray_origin_obj, ray_direction_obj)
 
@@ -354,13 +338,16 @@ def aim_normal(context, event, object_name, ray_max=1000.0, offset=-1):
                     
                     # scale
                     object.scale = origin_scale
-    
-def set_header(context, offset):
-    context.area.header_text_set("Aim tool | Move the mouse to align to the normal | Offset with Wheel Up-Down : "+str(offset))
 
-class custom_tools_aim_normal(bpy.types.Operator):
-    bl_idname = "aim_normal.btn"
-    bl_label = "Aim"
+
+def set_header(context, offset):
+    context.area.header_text_set(
+        'Aim tool | Move the mouse to align to the normal | Offset with Wheel Up-Down : '+str(offset))
+
+
+class CustomToolsAimNormal(bpy.types.Operator):
+    bl_idname = 'scene.customtools_aim_normal'
+    bl_label = 'Aim'
     
     # Properties
     object_name = bpy.props.StringProperty()
@@ -375,27 +362,27 @@ class custom_tools_aim_normal(bpy.types.Operator):
     def modal(self, context, event):
         
         w = context.window_manager.windows[0]
-        w.cursor_modal_set("CROSSHAIR")
+        w.cursor_modal_set('CROSSHAIR')
         
         context.area.tag_redraw()
         
         object = context.scene.objects.active
         
-        if event.type == "MOUSEMOVE":
+        if event.type == 'MOUSEMOVE':
             aim_normal(context, event, self.object_name, offset = self.offset)
             set_header(context, self.offset)
         
-        elif event.type == "WHEELUPMOUSE":
+        elif event.type == 'WHEELUPMOUSE':
             self.offset += 0.5
             aim_normal(context, event, self.object_name, offset = self.offset)
             set_header(context, self.offset)
         
-        elif event.type == "WHEELDOWNMOUSE":
+        elif event.type == 'WHEELDOWNMOUSE':
             self.offset -= 0.5
             aim_normal(context, event, self.object_name, offset = self.offset)
             set_header(context, self.offset)
         
-        elif event.type in ("LEFTMOUSE", "RET", "NUMPAD_ENTER"):
+        elif event.type in ('LEFTMOUSE', 'RET', 'NUMPAD_ENTER'):
             
             w.cursor_modal_restore()
             context.area.header_text_set()
@@ -403,15 +390,13 @@ class custom_tools_aim_normal(bpy.types.Operator):
             return {'FINISHED'}
         
         
-        elif event.type in ("RIGHTMOUSE", "ESC"):
+        elif event.type in ('RIGHTMOUSE', 'ESC'):
             object.matrix_world = self.matrix_save
             w.cursor_modal_restore()
             context.area.header_text_set()
             
             return {'CANCELLED'}
         
-
-
         return {'RUNNING_MODAL'}
     
     
@@ -423,19 +408,15 @@ class custom_tools_aim_normal(bpy.types.Operator):
             context.window_manager.modal_handler_add(self)
             return {'RUNNING_MODAL'}
         else:
-            self.report({'WARNING'}, "VIEW_3D Editor not found, cannot run operator")
+            self.report({'WARNING'}, 'VIEW_3D Editor not found, cannot run operator')
             return {'CANCELLED'}
 
 
-
-
-
-class custom_tools_look_through(bpy.types.Operator):
-    bl_idname = "look_through.btn"
-    bl_label = "Look through"
-    bl_description = "Look Through selected light, camera or object"
+class CustomToolsLookThrough(bpy.types.Operator):
+    bl_idname = 'scene.customtools_look_through'
+    bl_label = 'Look through'
+    bl_description = 'Look Through selected light, camera or object'
     
-    # Properties
     object_name = bpy.props.StringProperty()
     
     @classmethod
@@ -443,7 +424,6 @@ class custom_tools_look_through(bpy.types.Operator):
         return (context.object is not None)
     
     def execute(self, context):
-        
         context.space_data.lock_camera_and_layers = False # needs to be False to active local camera
         
         active_scene = context.scene
@@ -451,7 +431,6 @@ class custom_tools_look_through(bpy.types.Operator):
         
         context.space_data.camera = bpy.data.objects[self.object_name]
         bpy.ops.view3d.viewnumpad(type='CAMERA')
-        
         
         return{'FINISHED'}
 

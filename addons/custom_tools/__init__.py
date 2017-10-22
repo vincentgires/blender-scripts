@@ -17,30 +17,20 @@
 # ##### END GPL LICENSE BLOCK #####
 
 
-
-
-### A FAIRE :
-### - To EMPTY EN rotation object
-### - trouver comment mettre les keymap du node editor dans fichier node.py et pas init.py
-
-
-
 bl_info = {
-    "name": "Custom tools",
-    "author": "Vincent Gires",
-    "description": "---",
-    "version": (0, 0, 1),
-    "blender": (2, 7, 6),
-    "location": "Tool shelves (3D View, Image Editor)",
-    "warning": "",
-    "wiki_url": "",
-    "tracker_url": "",
-    "category": "3D View"}
-
+    'name': 'Custom tools',
+    'author': 'Vincent Gires',
+    'description': '---',
+    'version': (0, 0, 1),
+    'blender': (2, 7, 6),
+    'location': 'Tool shelves (3D View, Image Editor)',
+    'warning': '',
+    'wiki_url': '',
+    'tracker_url': '',
+    'category': '3D View'}
 
 
 import bpy
-
 
 from custom_tools.tools import object
 from custom_tools.tools import rendering
@@ -54,38 +44,34 @@ from custom_tools.tools import cache
 from custom_tools.tools import sequencer
 
 
-
-
 ## HEADER ##
 ############
 
 
 def header_color_management(self, context):
     layout = self.layout
-    layout.operator("reset_exposure.btn", emboss=False, text="Exposure")
-    layout.prop(context.scene.view_settings, "exposure", emboss=False, text="")
-    layout.operator("reset_gamma.btn", emboss=False, text="Gamma")
-    layout.prop(context.scene.view_settings, "gamma", emboss=False, text="")
+    layout.operator('scene.reset_exposure', emboss=False, text='Exposure')
+    layout.prop(context.scene.view_settings, 'exposure', emboss=False, text='')
+    layout.operator('scene.reset_gamma', emboss=False, text='Gamma')
+    layout.prop(context.scene.view_settings, 'gamma', emboss=False, text='')
 
 
 ## OPERATOR ##
 ##############
 
 
-class custom_tools_reset_exposure(bpy.types.Operator):
-    bl_idname = "reset_exposure.btn"
-    bl_label = "Reset Exposure"
-    
+class CustomToolsResetExposure(bpy.types.Operator):
+    bl_idname = 'scene.reset_exposure'
+    bl_label = 'Reset Exposure'
     
     def execute(self, context):
         context.scene.view_settings.exposure = 0
         
         return{'FINISHED'}
 
-class custom_tools_reset_gamma(bpy.types.Operator):
-    bl_idname = "reset_gamma.btn"
-    bl_label = "Reset Gamma"
-    
+class CustomToolsResetGamma(bpy.types.Operator):
+    bl_idname = 'scene.reset_gamma'
+    bl_label = 'Reset Gamma'
     
     def execute(self, context):
         context.scene.view_settings.gamma = 1
@@ -93,12 +79,8 @@ class custom_tools_reset_gamma(bpy.types.Operator):
         return{'FINISHED'}
 
 
-
-
-
 ## REGISTRATION ##
 ##################
-
 
 
 KEYMAPS = list()
@@ -110,18 +92,15 @@ def register():
     ### KEYMAPS ###
     kc = bpy.context.window_manager.keyconfigs.addon
     
-    km = kc.keymaps.new(name="Node Editor", space_type="NODE_EDITOR")
-    kmi = km.keymap_items.new("node.double_click", "ACTIONMOUSE", "DOUBLE_CLICK")
+    km = kc.keymaps.new(name='Node Editor', space_type='NODE_EDITOR')
+    kmi = km.keymap_items.new('node.double_click', 'ACTIONMOUSE', 'DOUBLE_CLICK')
     KEYMAPS.append((km, kmi))
     
-    km = kc.keymaps.new(name="Window", space_type="EMPTY")
-    kmi = km.keymap_items.new("compo_node_transform_grab.call", "G", "PRESS")
+    km = kc.keymaps.new(name='Window', space_type='EMPTY')
+    kmi = km.keymap_items.new('compo_node_transform_grab.call', 'G', 'PRESS')
     KEYMAPS.append((km, kmi))
-    
-    
-    
-    
-    
+
+
 def unregister():
     bpy.utils.unregister_module(__name__)
     bpy.types.INFO_HT_header.remove(header_color_management)
@@ -132,5 +111,5 @@ def unregister():
     KEYMAPS.clear()
 
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     register()

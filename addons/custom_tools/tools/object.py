@@ -19,46 +19,43 @@
 # Author : Vincent Gires
 # www.vincentgires.com
 
-
 import bpy
-
 
 
 ## PANEL ##
 ###########
 
-class VIEW3D_custom_panel_tools(bpy.types.Panel):
-    bl_label = "Tools"
-    bl_space_type = "VIEW_3D"
-    bl_region_type = "TOOLS"
-    bl_category = "Custom"
-    
+class View3dCustomPanelTools(bpy.types.Panel):
+    bl_label = 'Tools'
+    bl_space_type = 'VIEW_3D'
+    bl_region_type = 'TOOLS'
+    bl_category = 'Custom'
     
     def draw(self, context):
         layout = self.layout
-        layout.operator("reset_object.btn")
+        layout.operator('scene.customtools_reset_objects')
         
         row = layout.row(align=True)
-        row.label("Name")
-        row.operator("hide_name.btn", text="Hide")
-        row.operator("show_name.btn", text="Show")
+        row.label('Name')
+        row.operator('scene.customtools_hide_name', text='Hide')
+        row.operator('scene.customtools_show_name', text='Show')
         
         row = layout.row(align=True)
-        row.label("Wire")
-        row.operator("hide_wire.btn", text="Hide")
-        row.operator("show_wire.btn", text="Show")
+        row.label('Wire')
+        row.operator('scene.customtools_hide_wire', text='Hide')
+        row.operator('scene.customtools_show_wire', text='Show')
         
-        layout.operator("reset_view.btn")
+        layout.operator('scene.customtools_reset_view')
 
 
 ## OPERATOR ##
 ##############
 
 
-class custom_tools_reset_object(bpy.types.Operator):
-    bl_idname = "reset_object.btn"
-    bl_label = "Reset object"
-    bl_description = "Reset location/rotation/scale properties"
+class CustomToolsResetObjects(bpy.types.Operator):
+    bl_idname = 'scene.customtools_reset_objects'
+    bl_label = 'Reset objects'
+    bl_description = 'Reset location/rotation/scale properties'
     
     @classmethod
     def poll(cls, context):
@@ -76,10 +73,10 @@ class custom_tools_reset_object(bpy.types.Operator):
         return{'FINISHED'}
 
 
-class custom_tools_show_name(bpy.types.Operator):
-    bl_idname = "show_name.btn"
-    bl_label = "Show name"
-    bl_description = "Show name"
+class CustomToolsShowName(bpy.types.Operator):
+    bl_idname = 'scene.customtools_show_name'
+    bl_label = 'Show name'
+    bl_description = 'Show name'
     
     @classmethod
     def poll(cls, context):
@@ -90,11 +87,12 @@ class custom_tools_show_name(bpy.types.Operator):
             obj.show_name = True
         
         return{'FINISHED'}
-    
-class custom_tools_hide_name(bpy.types.Operator):
-    bl_idname = "hide_name.btn"
-    bl_label = "Hide name"
-    bl_description = "Hide name"
+
+
+class CustomToolsHideName(bpy.types.Operator):
+    bl_idname = 'scene.customtools_hide_name'
+    bl_label = 'Hide name'
+    bl_description = 'Hide name'
     
     @classmethod
     def poll(cls, context):
@@ -106,10 +104,11 @@ class custom_tools_hide_name(bpy.types.Operator):
         
         return{'FINISHED'}
 
-class custom_tools_show_wire(bpy.types.Operator):
-    bl_idname = "show_wire.btn"
-    bl_label = "Show wire"
-    bl_description = "Show wire"
+
+class CustomToolsShowWire(bpy.types.Operator):
+    bl_idname = 'scene.customtools_show_wire'
+    bl_label = 'Show wire'
+    bl_description = 'Show wire'
     
     @classmethod
     def poll(cls, context):
@@ -121,11 +120,12 @@ class custom_tools_show_wire(bpy.types.Operator):
             obj.show_all_edges = True
         
         return{'FINISHED'}
-    
-class custom_tools_hide_wire(bpy.types.Operator):
-    bl_idname = "hide_wire.btn"
-    bl_label = "Hide wire"
-    bl_description = "Hide wire"
+
+
+class CustomToolsHideWire(bpy.types.Operator):
+    bl_idname = 'scene.customtools_hide_wire'
+    bl_label = 'Hide wire'
+    bl_description = 'Hide wire'
     
     @classmethod
     def poll(cls, context):
@@ -139,13 +139,11 @@ class custom_tools_hide_wire(bpy.types.Operator):
         return{'FINISHED'}
 
 
-class custom_tools_reset_view(bpy.types.Operator):
-    bl_idname = "reset_view.btn"
-    bl_label = "Reset view"
-    
+class CustomToolsResetView(bpy.types.Operator):
+    bl_idname = 'scene.customtools_reset_view'
+    bl_label = 'Reset view'
     
     def execute(self, context):
-        
         print (dir(context.space_data.region_3d))
         print (context.space_data.region_3d.view_rotation)
         print (context.space_data.region_3d.perspective_matrix)

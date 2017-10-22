@@ -23,34 +23,30 @@
 import bpy
 
 
-
 ## PANEL ##
 ###########
 
 
-class VIEW3D_custom_panel_render(bpy.types.Panel):
-    bl_label = "Rendering"
-    bl_space_type = "VIEW_3D"
-    bl_region_type = "TOOLS"
-    bl_category = "Custom"
-    
+class View3dCustomPanelRendering(bpy.types.Panel):
+    bl_label = 'Rendering'
+    bl_space_type = 'VIEW_3D'
+    bl_region_type = 'TOOLS'
+    bl_category = 'Custom'
     
     def draw(self, context):
         layout = self.layout
-        
-        layout.operator("set_object_id.btn")
-        layout.operator("set_material_id.btn")
-
+        layout.operator('scene.customtools_set_object_id')
+        layout.operator('scene.customtools_set_material_id')
 
 
 ## OPERATOR ##
 ##############
 
 
-class custom_tools_set_object_id(bpy.types.Operator):
-    bl_idname = "set_object_id.btn"
-    bl_label = "Set object ID"
-    bl_description = "Set incremental object ID on all mesh objects in the scene"
+class CustomToolsSetObjectId(bpy.types.Operator):
+    bl_idname = 'scene.customtools_set_object_id'
+    bl_label = 'Set object ID'
+    bl_description = 'Set incremental object ID on all mesh objects in the scene'
     
     @classmethod
     def poll(cls, context):
@@ -60,17 +56,16 @@ class custom_tools_set_object_id(bpy.types.Operator):
     def execute(self, context):
         cpt = 1
         for obj in context.scene.objects:
-            if obj.type == "MESH":
+            if obj.type == 'MESH':
                 obj.pass_index = cpt
                 cpt = cpt + 1
         
         return{'FINISHED'}
 
-class custom_tools_set_material_id(bpy.types.Operator):
-    bl_idname = "set_material_id.btn"
-    bl_label = "Set material ID"
-    bl_description = "Set incremental material ID on all materials of the file"
-    
+class CustomToolsSetMaterialId(bpy.types.Operator):
+    bl_idname = 'scene.customtools_set_material_id'
+    bl_label = 'Set material ID'
+    bl_description = 'Set incremental material ID on all materials of the file'
     
     @classmethod
     def poll(cls, context):
