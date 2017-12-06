@@ -1,9 +1,22 @@
+bl_info = {
+    'name': 'Box',
+    'author': "Vincent Gires",
+    'version': (0, 1),
+    'blender': (2, 7, 0),
+    'location': 'View3D > Add > Mesh',
+    'description': 'Creates box/shelf/cabinet.',
+    'warning': '',
+    'wiki_url': '',
+    'tracker_url': '',
+    'category': 'Add Mesh'}
+
+
 import bpy
 
-data = bpy.data
-objects = data.objects
 
 def create_cube(name='Cube'):
+    context = bpy.context
+    data = bpy.data
     
     verts = [(0.5, 0.5, -0.5),
              (0.5, -0.5, -0.5),
@@ -29,7 +42,7 @@ def create_cube(name='Cube'):
     mesh = data.meshes.new('Mesh')
     mesh.from_pydata(verts, [], faces)
     object = data.objects.new(name, mesh)
-    bpy.context.scene.objects.link(object)
+    context.scene.objects.link(object)
     
     return object
 
@@ -68,24 +81,68 @@ def create_panels(width, length, height, thickness):
     
     return panels
 
-
 def create_box(name, width, length, height, thickness):
+    context = bpy.context
+    data = bpy.data
     
     panels = create_panels(width, length, height, thickness)
-    
-    empty = objects.new('Empty', None)
+    empty = data.objects.new('Empty', None)
     empty.name = name
-    bpy.context.scene.objects.link(empty)
+    context.scene.objects.link(empty)
     
     for p in panels:
         p.parent = empty
 
-create_box(
-    name='Box',
-    width=30,
-    length=70,
-    height=10,
-    thickness=1.8
-    )
+
+class AddBox(bpy.types.Operator):
+    '''Add a box/shelf/cabinet mesh.'''
+    bl_idname = "mesh.create_box"
+    bl_label = "Add box"
+    bl_description = "Create a box/shelf/cabinet mesh."
+    bl_options = {'REGISTER', 'UNDO'}
+ 
+    # edit - Whether to add or update.
+    width = bpy.props.FloatProperty(
+        name='Width',
+        default=30)
+    length = bpy.props.FloatProperty(
+        name='Lenght',
+        default=70)
+    height = bpy.props.FloatProperty(
+        name='Height',
+        default=10)
+    thickness = bpy.props.FloatProperty(
+        name='Thickness',
+        default=1.8)
+ 
+    def execute(self, context):
+        create_box(
+            name='Box',
+            width=self.width,
+            length=self.length,
+            height=self.height,
+            thickness=self.thickness
+            )
+ 
+        return {'FINISHED'}
+ 
+    def invoke(self, context, event):
+        self.execute(context)
+        return {'FINISHED'}
 
 
+def menu_add_box(self, context):
+    self.layout.operator(AddBox.bl_idname, text='Box', icon='MESH_CUBE')
+ 
+ 
+def register():
+    bpy.utils.register_module(__name__)
+    bpy.types.INFO_MT_mesh_add.append(menu_add_box)
+ 
+ 
+def unregister():
+    bpy.utils.unregister_module(__name__)
+    bpy.types.INFO_MT_mesh_add.remove(menu_add_box)
+ 
+if __name__ == "__main__":
+    register()
