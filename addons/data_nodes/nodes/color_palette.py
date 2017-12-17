@@ -1,69 +1,50 @@
-# ##### BEGIN GPL LICENSE BLOCK #####
-#
-#  This program is free software; you can redistribute it and/or
-#  modify it under the terms of the GNU General Public License
-#  as published by the Free Software Foundation; either version 2
-#  of the License, or (at your option) any later version.
-#
-#  This program is distributed in the hope that it will be useful,
-#  but WITHOUT ANY WARRANTY; without even the implied warranty of
-#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#  GNU General Public License for more details.
-#
-#  You should have received a copy of the GNU General Public License
-#  along with this program; if not, write to the Free Software Foundation,
-#  Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
-#
-# ##### END GPL LICENSE BLOCK #####
-
-
 import bpy
 from bpy.types import NodeTree, Node, NodeSocket
-from data_nodes.functions import send_value
+from data_nodes.utils import send_value
 
 
-class template_ColorPalette_collection_UL(bpy.types.UIList):
-    def draw_item(self, context, layout, data, item, icon, active_data, active_propname, index):
+class TemplateColorPaletteCollectionUL(bpy.types.UIList):
+    def draw_item(self, context, layout, data, item,
+                  icon, active_data, active_propname, index):
         
         layout.prop(item, "name", text="", emboss=False)
         
         row = layout.row(align=True)
-        for color_item in item.colorCollection:
+        for color_item in item.color_collection:
             row.prop(color_item, "color", text="")
 
 
 class ColorPalette(Node):
-    
     '''Color Palette node'''
     bl_idname = 'ColorPaletteNodeType'
     bl_label = 'Color Palette'
     
-    
-    # === Callbacks ===
-    
     def update_props(self, context):
         self.update()
     
-    # === Custom Properties ===
-    settings = bpy.props.BoolProperty(name = "Settings", default = True)
-    palette_id = bpy.props.IntProperty(name = "Palette ID", default = 0, update = update_props)
+    settings = bpy.props.BoolProperty(
+        name='Settings',
+        default = True)
+    
+    palette_id = bpy.props.IntProperty(
+        name='Palette ID',
+        default=0,
+        update=update_props)
     
     def init(self, context):
         self.outputs.new('NodeSocketColor', "Color")
         self.outputs.new('NodeSocketColor', "Color")
         self.outputs.new('NodeSocketColor', "Color")
-        for palette in bpy.context.scene.ColorPalette_collection:
-            for color in palette.colorCollection:
-                if ( len(self.outputs) <= len(palette.colorCollection) ):
+        for palette in bpy.context.scene.colorpalette_collection:
+            for color in palette.color_collection:
+                if len(self.outputs) <= len(palette.color_collection):
                     self.outputs.new('NodeSocketColor', "Color")
     
-    
-    
     def update(self):
-        
-        if bpy.context.scene.ColorPalette_collection:
-            palette = bpy.context.scene.ColorPalette_collection[self.palette_id]
-            palette_color = palette.colorCollection
+        scene = bpy.context.scene
+        if scene.colorpalette_collection:
+            palette = scene.colorpalette_collection[self.palette_id]
+            palette_color = palette.color_collection
             
             # send data value to connected nodes
             for index, output in enumerate(self.outputs):
@@ -78,20 +59,17 @@ class ColorPalette(Node):
                             link.to_socket.default_value = palette_color[index].color
                             # update connected target nodes
                             link.to_node.update()
-        
-        
     
-                 
-    # Additional buttons displayed on the node.
     def draw_buttons(self, context, layout):
-        
         
         if self.settings:
             row = layout.row()
             row.prop(self, "settings", text="", icon="TRIA_DOWN", emboss=False)
             
             row = layout.row()
-            row.template_list("template_ColorPalette_collection_UL", "", context.scene, "ColorPalette_collection", self, "palette_id")
+            row.template_list(
+                "TemplateColorPaletteCollectionUL", "",
+                context.scene, "colorpalette_collection", self, "palette_id")
             
             col = row.column(align=True)
             col.operator("color_palette_add_item.btn", icon='ZOOMIN', text="")
@@ -102,21 +80,15 @@ class ColorPalette(Node):
             row.prop(self, "settings", text="", icon="TRIA_RIGHT", emboss=False)
         
         
-        if context.scene.ColorPalette_collection:
-            palette = context.scene.ColorPalette_collection[self.palette_id]
+        if context.scene.colorpalette_collection:
+            palette = context.scene.colorpalette_collection[self.palette_id]
             
             row = layout.row(align=True)
             row.operator("color_palette_add_color.btn", text="", icon="ZOOMIN")
-            for color_item in palette.colorCollection:
+            for color_item in palette.color_collection:
                 row.prop(color_item, "color", text="")
             row.operator("color_palette_remove_color.btn", text="", icon="ZOOMOUT")
             row.operator("color_palette_clear_color.btn", text="", icon="X")
-    
-    
-    # Detail buttons in the sidebar.
-    """def draw_buttons_ext(self, context, layout):
-        pass"""
-
     
     def draw_label(self):
         return "Color Palette"
@@ -128,7 +100,7 @@ class ColorPalette(Node):
 #################
 
 
-class custom_nodes_add_palette_item(bpy.types.Operator):
+class CustomNodesAddPaletteItem(bpy.types.Operator):
     bl_idname = "color_palette_add_item.btn"
     bl_label = "Palette add item"
     
@@ -145,16 +117,16 @@ class custom_nodes_add_palette_item(bpy.types.Operator):
     def execute(self, context):
         node = context.node
         
-        palette_collection = context.scene.ColorPalette_collection
+        palette_collection = context.scene.colorpalette_collection
         p = palette_collection.add()
         p.name = str(len(palette_collection))
-        p.colorCollection.add()
-        p.colorCollection.add()
-        p.colorCollection.add()
+        p.color_collection.add()
+        p.color_collection.add()
+        p.color_collection.add()
         node.palette_id = len(palette_collection)-1
         return{'FINISHED'}
     
-class custom_nodes_remove_palette_item(bpy.types.Operator):
+class CustomNodesRemovePaletteItem(bpy.types.Operator):
     bl_idname = "color_palette_remove_item.btn"
     bl_label = "Palette remove item"
     
@@ -168,7 +140,7 @@ class custom_nodes_remove_palette_item(bpy.types.Operator):
     def execute(self, context):
         node = context.node
         
-        palette_collection = context.scene.ColorPalette_collection
+        palette_collection = context.scene.colorpalette_collection
         palette_collection.remove(node.palette_id)
         if node.palette_id > 0:
             node.palette_id -= 1
@@ -176,7 +148,7 @@ class custom_nodes_remove_palette_item(bpy.types.Operator):
         return{'FINISHED'}
 
 
-class custom_nodes_add_palette_color(bpy.types.Operator):
+class CustomNodesAddPaletteColor(bpy.types.Operator):
     bl_idname = "color_palette_add_color.btn"
     bl_label = "Palette add color"
     
@@ -190,17 +162,17 @@ class custom_nodes_add_palette_color(bpy.types.Operator):
     def execute(self, context):
         node = context.node
         
-        palette = context.scene.ColorPalette_collection[node.palette_id]
-        palette.colorCollection.add()
+        palette = context.scene.colorpalette_collection[node.palette_id]
+        palette.color_collection.add()
         
         # SOCKETS
-        if ( len(node.outputs) <= len(palette.colorCollection)-1 ):
+        if ( len(node.outputs) <= len(palette.color_collection)-1 ):
             node.outputs.new('NodeSocketColor', "Color")
         
         return{'FINISHED'}
 
 
-class custom_nodes_remove_palette_color(bpy.types.Operator):
+class CustomNodesRemovePaletteColor(bpy.types.Operator):
     bl_idname = "color_palette_remove_color.btn"
     bl_label = "Palette remove color"
     
@@ -214,14 +186,14 @@ class custom_nodes_remove_palette_color(bpy.types.Operator):
     def execute(self, context):
         node = context.node
         
-        palette = context.scene.ColorPalette_collection[node.palette_id]
-        palette.colorCollection.remove( len(palette.colorCollection)-1 )
+        palette = context.scene.colorpalette_collection[node.palette_id]
+        palette.color_collection.remove( len(palette.color_collection)-1 )
         
         
         return{'FINISHED'}
 
 
-class custom_nodes_clear_palette_color(bpy.types.Operator):
+class CustomNodesClearPaletteColor(bpy.types.Operator):
     bl_idname = "color_palette_clear_color.btn"
     bl_label = "Palette clear color"
     
@@ -235,8 +207,8 @@ class custom_nodes_clear_palette_color(bpy.types.Operator):
     def execute(self, context):
         node = context.node
         
-        palette = context.scene.ColorPalette_collection[node.palette_id]
-        palette.colorCollection.clear()
+        palette = context.scene.colorpalette_collection[node.palette_id]
+        palette.color_collection.clear()
             
         return{'FINISHED'}
 

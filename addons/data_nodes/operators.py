@@ -1,37 +1,18 @@
-# ##### BEGIN GPL LICENSE BLOCK #####
-#
-#  This program is free software; you can redistribute it and/or
-#  modify it under the terms of the GNU General Public License
-#  as published by the Free Software Foundation; either version 2
-#  of the License, or (at your option) any later version.
-#
-#  This program is distributed in the hope that it will be useful,
-#  but WITHOUT ANY WARRANTY; without even the implied warranty of
-#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#  GNU General Public License for more details.
-#
-#  You should have received a copy of the GNU General Public License
-#  along with this program; if not, write to the Free Software Foundation,
-#  Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
-#
-# ##### END GPL LICENSE BLOCK #####
-
-
 import bpy
-import math, mathutils
+import math
+import mathutils
 
-# FUNCTIONS
-from data_nodes.functions import *
+from data_nodes.utils import *
 
 
 ## OPERATOR ##
 ##############
 
 
-class custom_nodes_update(bpy.types.Operator):
-    bl_idname = "update_custom_node.btn"
+class DataNodesUpdate(bpy.types.Operator):
+    bl_idname = "update_data_node.btn"
     bl_label = "Update nodes"
-    bl_description = "Force update custom nodes"
+    bl_description = "Force update data nodes"
     
     @classmethod
     def poll(cls, context):
@@ -49,8 +30,8 @@ class custom_nodes_update(bpy.types.Operator):
         return{'FINISHED'}
 
 
-class custom_nodes_get_object(bpy.types.Operator):
-    bl_idname = "get_object_to_custom_node.btn"
+class DataNodesGetObject(bpy.types.Operator):
+    bl_idname = "get_object_to_data_node.btn"
     bl_label = "Get object"
     bl_description = "Get selected object from scene"
     
@@ -69,7 +50,7 @@ class custom_nodes_get_object(bpy.types.Operator):
         return{'FINISHED'}
 
 
-class custom_nodes_remove_input_sockets(bpy.types.Operator):
+class DataNodesRemoveInputSockets(bpy.types.Operator):
     bl_idname = "remove_input_sockets.btn"
     bl_label = "Remove input sockets"
     bl_description = "Remove input sockets"
@@ -89,7 +70,7 @@ class custom_nodes_remove_input_sockets(bpy.types.Operator):
             
         return{'FINISHED'}
     
-class custom_nodes_remove_output_sockets(bpy.types.Operator):
+class DataNodesRemoveOutputSockets(bpy.types.Operator):
     bl_idname = "remove_output_sockets.btn"
     bl_label = "Remove output sockets"
     bl_description = "Remove output sockets"
@@ -110,8 +91,8 @@ class custom_nodes_remove_output_sockets(bpy.types.Operator):
         return{'FINISHED'}
 
 
-class custom_nodes_add_output_socket(bpy.types.Operator):
-    bl_idname = "add_output_socket_to_custom_node.btn"
+class DataNodesDddOutputSocket(bpy.types.Operator):
+    bl_idname = "add_output_socket_to_data_node.btn"
     bl_label = "Add output socket"
     bl_description = "Add output socket to the node"
     
@@ -119,7 +100,7 @@ class custom_nodes_add_output_socket(bpy.types.Operator):
     def poll(cls, context):
         tree_type = context.space_data.tree_type
         node_tree = ['ShaderNodeTree', 'CompositorNodeTree', 'DataNodeTree']
-        return tree_type in node_tree and context.node.attributeProperty
+        return tree_type in node_tree and context.node.attribute_property
     
     def execute(self, context):
         node = context.node
@@ -129,45 +110,45 @@ class custom_nodes_add_output_socket(bpy.types.Operator):
         data_path = "bpy.data."+node.data_enum + "['"+node.data_item+"']"
         data_path = eval(data_path)
         try:
-            attribute = eval("data_path"+"."+node.attributeProperty)
+            attribute = eval("data_path"+"."+node.attribute_property)
         except:
             attribute = None
         
         if attribute is not None:
             
             if isinstance(attribute, str):
-                node.outputs.new('NodeSocketString', node.attributeProperty)
+                node.outputs.new('NodeSocketString', node.attribute_property)
                 
             elif isinstance(attribute, bool):
-                node.outputs.new('NodeSocketBool', node.attributeProperty)
+                node.outputs.new('NodeSocketBool', node.attribute_property)
                 
             elif isinstance(attribute, int):
-                node.outputs.new('NodeSocketInt', node.attributeProperty)
+                node.outputs.new('NodeSocketInt', node.attribute_property)
                 
             elif isinstance(attribute, float):
-                node.outputs.new('NodeSocketFloat', node.attributeProperty)
+                node.outputs.new('NodeSocketFloat', node.attribute_property)
                 
             elif isinstance(attribute, mathutils.Color):
-                node.outputs.new('NodeSocketColor', node.attributeProperty)
+                node.outputs.new('NodeSocketColor', node.attribute_property)
                 
             elif isinstance(attribute, mathutils.Vector):
-                node.outputs.new('NodeSocketVector', node.attributeProperty)
+                node.outputs.new('NodeSocketVector', node.attribute_property)
                 
             elif isinstance(attribute, mathutils.Euler):
-                node.outputs.new('NodeSocketVector', node.attributeProperty)
+                node.outputs.new('NodeSocketVector', node.attribute_property)
                 
             elif isinstance(attribute, mathutils.Quaternion):
-                node.outputs.new('NodeSocketVector', node.attributeProperty)
+                node.outputs.new('NodeSocketVector', node.attribute_property)
                 
             elif len(attribute) == 4: # RGBA
-                node.outputs.new('NodeSocketColor', node.attributeProperty)
+                node.outputs.new('NodeSocketColor', node.attribute_property)
                 
         return{'FINISHED'}
 
 
 
-class custom_nodes_add_input_socket(bpy.types.Operator):
-    bl_idname = "add_input_socket_to_custom_node.btn"
+class DataNodesAddInputSocket(bpy.types.Operator):
+    bl_idname = "add_input_socket_to_data_node.btn"
     bl_label = "Add input socket"
     bl_description = "Add input socket to the node"
     
@@ -175,7 +156,7 @@ class custom_nodes_add_input_socket(bpy.types.Operator):
     def poll(cls, context):
         tree_type = context.space_data.tree_type
         node_tree = ['ShaderNodeTree', 'CompositorNodeTree', 'DataNodeTree']
-        return tree_type in node_tree and context.node.attributeProperty
+        return tree_type in node_tree and context.node.attribute_property
     
     def execute(self, context):
         node = context.node
@@ -185,38 +166,38 @@ class custom_nodes_add_input_socket(bpy.types.Operator):
         data_path = "bpy.data."+node.data_enum + "['"+node.data_item+"']"
         data_path = eval(data_path)
         try:
-            attribute = eval("data_path"+"."+node.attributeProperty)
+            attribute = eval("data_path"+"."+node.attribute_property)
         except:
             attribute = None
         
         if attribute is not None:
             
             if isinstance(attribute, str):
-                node.inputs.new('NodeSocketString', node.attributeProperty)
+                node.inputs.new('NodeSocketString', node.attribute_property)
                 
             elif isinstance(attribute, bool):
-                node.inputs.new('NodeSocketBool', node.attributeProperty)
+                node.inputs.new('NodeSocketBool', node.attribute_property)
                 
             elif isinstance(attribute, int):
-                node.inputs.new('NodeSocketInt', node.attributeProperty)
+                node.inputs.new('NodeSocketInt', node.attribute_property)
                 
             elif isinstance(attribute, float):
-                node.inputs.new('NodeSocketFloat', node.attributeProperty)
+                node.inputs.new('NodeSocketFloat', node.attribute_property)
                 
             elif isinstance(attribute, mathutils.Color):
-                node.inputs.new('NodeSocketColor', node.attributeProperty)
+                node.inputs.new('NodeSocketColor', node.attribute_property)
                 
             elif isinstance(attribute, mathutils.Vector):
-                node.inputs.new('NodeSocketVector', node.attributeProperty)
+                node.inputs.new('NodeSocketVector', node.attribute_property)
                 
             elif isinstance(attribute, mathutils.Euler):
-                node.inputs.new('NodeSocketVector', node.attributeProperty)
+                node.inputs.new('NodeSocketVector', node.attribute_property)
                 
             elif isinstance(attribute, mathutils.Quaternion):
-                node.inputs.new('NodeSocketVector', node.attributeProperty)
+                node.inputs.new('NodeSocketVector', node.attribute_property)
                 
             elif len(attribute) == 4: # RGBA
-                node.inputs.new('NodeSocketColor', node.attributeProperty)
+                node.inputs.new('NodeSocketColor', node.attribute_property)
             
         return{'FINISHED'}
     
