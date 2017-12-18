@@ -148,12 +148,8 @@ def scene_update(scene):
             
             
     
-    
-    
-    
-    
     ### node tree update ###
-    
+    '''
     # update compositing tree
     tree =  scene.node_tree
     if scene.use_nodes:
@@ -170,7 +166,7 @@ def scene_update(scene):
     for tree in bpy.data.node_groups:
         if tree.is_updated:
             update_nodes(scene)
-    
+    '''
     
     
     
