@@ -100,20 +100,23 @@ class AddBox(bpy.types.Operator):
     bl_label = "Add box"
     bl_description = "Create a box/shelf/cabinet mesh."
     bl_options = {'REGISTER', 'UNDO'}
- 
-    # edit - Whether to add or update.
+    
     width = bpy.props.FloatProperty(
         name='Width',
-        default=30)
+        subtype='DISTANCE',
+        default=0.80)
     length = bpy.props.FloatProperty(
         name='Lenght',
-        default=70)
+        subtype='DISTANCE',
+        default=0.60)
     height = bpy.props.FloatProperty(
         name='Height',
-        default=10)
+        subtype='DISTANCE',
+        default=0.35)
     thickness = bpy.props.FloatProperty(
         name='Thickness',
-        default=1.8)
+        subtype='DISTANCE',
+        default=0.018)
  
     def execute(self, context):
         create_box(
@@ -132,7 +135,7 @@ class AddBox(bpy.types.Operator):
 
 
 def menu_add_box(self, context):
-    self.layout.operator(AddBox.bl_idname, text='Box', icon='MESH_CUBE')
+    self.layout.operator('mesh.create_box', text='Box', icon='MESH_CUBE')
  
  
 def register():
