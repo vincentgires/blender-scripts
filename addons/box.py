@@ -12,7 +12,7 @@ bl_info = {
 
 
 import bpy
-
+import math
 
 def create_panel(name='Panel', width=1.0, height=1.0, thickness=1.0):
     context = bpy.context
@@ -81,45 +81,58 @@ def create_cube(name='Cube'):
     return object
 '''
 
-def create_panels(width, length, height, thickness):
+def create_panels(width, height, length, thickness, inside):
     
     panels = []
-    
-    #bottom = create_cube('bottom')
-    #bottom.scale = (width, length, thickness)
-    #panels.append(bottom)
     
     # cover
     #
     #
     
-    side_a = create_panel('side_a', width, height, thickness)
-    side_a.location = (0, 0, thickness)
-    #side_a.scale = (thickness, length, height-thickness)
+    # FRONT
+    if inside:
+        front = create_panel('front', width-(thickness*2), height, thickness)
+        front.location.x = thickness
+    else:
+        front = create_panel('front', width, height, thickness)
+    panels.append(front)
+    
+    # BACK
+    if inside:
+        back = create_panel('back', width-(thickness*2), height, thickness)
+        back.location = (thickness, length-thickness, 0)
+    else:
+        back = create_panel('back', width, height, thickness)
+        back.location = (0, length-thickness, 0)
+    panels.append(back)
+    
+    # SIDE A
+    if inside:
+        side_a = create_panel('side_a', length, height, thickness)
+        side_a.location.x = thickness
+    else:
+        side_a = create_panel('side_a', length-(2*thickness), height, thickness)
+        side_a.location = (thickness, thickness, 0)
+    side_a.rotation_euler.z = math.radians(90)
     panels.append(side_a)
     
-    #side_b = create_cube('side_b')
-    #side_b.location = (width-thickness, 0, thickness)
-    #side_b.scale = (thickness, length, height-thickness)
-    #panels.append(side_b)
-    
-    #front = create_cube('front')
-    #front.location = (thickness, 0, thickness)
-    #front.scale = (width-(thickness*2), thickness, height-thickness)
-    #panels.append(front)
-    
-    #back = create_cube('back')
-    #back.location = (thickness, length-thickness, thickness)
-    #back.scale = (width-(thickness*2), thickness, height-thickness)
-    #panels.append(back)
+    # SIDE B
+    if inside:
+        side_b = create_panel('side_b', length, height, thickness)
+        side_b.location.x = width
+    else:
+        side_b = create_panel('side_b', length-(2*thickness), height, thickness)
+        side_b.location = (width, thickness, 0)
+    side_b.rotation_euler.z = math.radians(90)
+    panels.append(side_b)
     
     return panels
 
-def create_box(name, width, length, height, thickness):
+def create_box(name, width, length, height, thickness, inside):
     context = bpy.context
     data = bpy.data
     
-    panels = create_panels(width, length, height, thickness)
+    panels = create_panels(width, height, length, thickness, inside)
     empty = data.objects.new('Empty', None)
     empty.name = name
     context.scene.objects.link(empty)
@@ -151,6 +164,9 @@ class AddBox(bpy.types.Operator):
         name='Thickness',
         subtype='DISTANCE',
         default=0.018)
+    inside = bpy.props.BoolProperty(
+        name='Inside',
+        default=False)
  
     def execute(self, context):
         create_box(
@@ -158,7 +174,8 @@ class AddBox(bpy.types.Operator):
             width=self.width,
             length=self.length,
             height=self.height,
-            thickness=self.thickness
+            thickness=self.thickness,
+            inside=self.inside
             )
  
         return {'FINISHED'}
