@@ -14,7 +14,7 @@ bl_info = {
 import bpy
 import math
 
-def create_panel(name='Panel', width=1.0, height=1.0, thickness=1.0):
+def create_board(name='Panel', width=1.0, height=1.0, thickness=1.0):
     context = bpy.context
     data = bpy.data
     
@@ -81,65 +81,117 @@ def create_cube(name='Cube'):
     return object
 '''
 
-def create_panels(width, height, length, thickness, inside):
+def create_boards(**kwargs):
+    width = kwargs['width']
+    height = kwargs['height']
+    length = kwargs['length']
+    thickness = kwargs['thickness']
+    inside = kwargs['inside']
+    bottom = kwargs['bottom']
+    cover = kwargs['cover']
     
-    panels = []
-    
-    # cover
-    #
-    #
+    boards = []
     
     # FRONT
     if inside:
-        front = create_panel('front', width-(thickness*2), height, thickness)
+        front = create_board(
+            'front', width-(thickness*2), height, thickness)
         front.location.x = thickness
     else:
-        front = create_panel('front', width, height, thickness)
-    panels.append(front)
+        front = create_board(
+            'front', width, height, thickness)
+    boards.append(front)
     
     # BACK
     if inside:
-        back = create_panel('back', width-(thickness*2), height, thickness)
+        back = create_board(
+            'back', width-(thickness*2), height, thickness)
         back.location = (thickness, length-thickness, 0)
     else:
-        back = create_panel('back', width, height, thickness)
+        back = create_board(
+            'back', width, height, thickness)
         back.location = (0, length-thickness, 0)
-    panels.append(back)
+    boards.append(back)
     
     # SIDE A
     if inside:
-        side_a = create_panel('side_a', length, height, thickness)
+        side_a = create_board(
+            'side_a', length, height, thickness)
         side_a.location.x = thickness
     else:
-        side_a = create_panel('side_a', length-(2*thickness), height, thickness)
+        side_a = create_board(
+            'side_a', length-(2*thickness), height, thickness)
         side_a.location = (thickness, thickness, 0)
     side_a.rotation_euler.z = math.radians(90)
-    panels.append(side_a)
+    boards.append(side_a)
     
     # SIDE B
     if inside:
-        side_b = create_panel('side_b', length, height, thickness)
+        side_b = create_board(
+            'side_b', length, height, thickness)
         side_b.location.x = width
     else:
-        side_b = create_panel('side_b', length-(2*thickness), height, thickness)
+        side_b = create_board(
+            'side_b', length-(2*thickness), height, thickness)
         side_b.location = (width, thickness, 0)
     side_b.rotation_euler.z = math.radians(90)
-    panels.append(side_b)
+    boards.append(side_b)
     
-    return panels
+    # BOTTOM
+    if bottom.enable:
+        if bottom.inside:
+            bottom_board = create_board(
+                'bottom',
+                width-(2*thickness),
+                length-(2*thickness),
+                bottom.thickness
+                )
+            bottom_board.location = (width-thickness, thickness, 0)
+            bottom_board.rotation_euler = (
+                math.radians(90), 0, math.radians(180))
+            
+        else:
+            bottom_board = create_board(
+                'bottom', width, length, bottom.thickness)
+            bottom_board.location = (width, 0, -thickness)
+            bottom_board.rotation_euler = (
+                math.radians(90), 0, math.radians(180))
+        
+        boards.append(bottom_board)
+    
+    return boards
 
-def create_box(name, width, length, height, thickness, inside):
+def create_box(**kwargs):
     context = bpy.context
     data = bpy.data
     
-    panels = create_panels(width, height, length, thickness, inside)
+    boards = create_boards(**kwargs)
     empty = data.objects.new('Empty', None)
-    empty.name = name
+    empty.name = kwargs['name']
     context.scene.objects.link(empty)
     
-    for p in panels:
-        p.parent = empty
+    for b in boards:
+        b.parent = empty
 
+
+class BoardProperties(bpy.types.PropertyGroup):
+    enable = bpy.props.BoolProperty(
+        name='Enable',
+        default=False)
+    
+    thickness = bpy.props.FloatProperty(
+        name='Thickness',
+        subtype='DISTANCE',
+        default=0.018)
+    
+    offset = bpy.props.FloatProperty(
+        name='Offset',
+        subtype='DISTANCE',
+        default=False)
+    
+    inside = bpy.props.BoolProperty(
+        name='Inside',
+        default=True)
 
 class AddBox(bpy.types.Operator):
     '''Add a box/shelf/cabinet mesh.'''
@@ -152,51 +204,94 @@ class AddBox(bpy.types.Operator):
         name='Width',
         subtype='DISTANCE',
         default=0.80)
+    
     length = bpy.props.FloatProperty(
         name='Lenght',
         subtype='DISTANCE',
         default=0.60)
+    
     height = bpy.props.FloatProperty(
         name='Height',
         subtype='DISTANCE',
         default=0.35)
+    
     thickness = bpy.props.FloatProperty(
         name='Thickness',
         subtype='DISTANCE',
         default=0.018)
+    
     inside = bpy.props.BoolProperty(
         name='Inside',
         default=False)
- 
+    
+    bottom = bpy.props.PointerProperty(
+        type=BoardProperties,
+        name='Bottom')
+    
+    cover = bpy.props.PointerProperty(
+        type=BoardProperties,
+        name='Cover')
+    
+    #shelf = bpy.props.CollectionProperty(
+        #type=BoardProperties,
+        #name='Bottom')
+        
+    def draw(self, context):
+        layout = self.layout
+        
+        col = layout.column(align=True)
+        col.prop(self, 'width')
+        col.prop(self, 'length')
+        col.prop(self, 'height')
+        col.prop(self, 'thickness')
+        col.prop(self, 'inside')
+        
+        boards = [
+            self.bottom,
+            self.cover
+            ]
+        
+        for board in boards:
+            col = layout.column(align=True)
+            col.label(board.name)
+            col.prop(board, 'enable')
+            col.prop(board, 'thickness')
+            col.prop(board, 'inside')
+    
     def execute(self, context):
         create_box(
-            name='Box',
+            name='Shelf',
             width=self.width,
             length=self.length,
             height=self.height,
             thickness=self.thickness,
-            inside=self.inside
+            inside=self.inside,
+            bottom=self.bottom,
+            cover=self.cover
             )
  
         return {'FINISHED'}
  
     def invoke(self, context, event):
+        self.bottom.name = 'Bottom'
+        self.cover.name = 'Cover'
+        
         self.execute(context)
         return {'FINISHED'}
 
 
-def menu_add_box(self, context):
+def menu_add_shelf(self, context):
     self.layout.operator('mesh.create_box', text='Box', icon='MESH_CUBE')
  
  
 def register():
     bpy.utils.register_module(__name__)
-    bpy.types.INFO_MT_mesh_add.append(menu_add_box)
+    bpy.types.INFO_MT_mesh_add.append(menu_add_shelf)
  
  
 def unregister():
     bpy.utils.unregister_module(__name__)
-    bpy.types.INFO_MT_mesh_add.remove(menu_add_box)
+    bpy.types.INFO_MT_mesh_add.remove(menu_add_shelf)
  
 if __name__ == '__main__':
     register()
