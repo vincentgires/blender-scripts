@@ -43,6 +43,17 @@ class PointCloudProperties(bpy.types.PropertyGroup):
     
     position_pass = bpy.props.StringProperty(
         name='Position pass')
+    
+    point_detail = bpy.props.FloatProperty(
+        name='Detail',
+        default=0.25,
+        soft_min=0.01,
+        soft_max=1.0)
+    
+    point_size = bpy.props.IntProperty(
+        name='Size',
+        default=1,
+        soft_min=1)
 
 
 ## FUNCTIONS ##
@@ -52,10 +63,20 @@ def draw_pointcloud_gl():
     context = bpy.context
     scene = context.scene
     
+    if not cloud_coordinates:
+        return None
+    
+    detail = scene.point_cloud.point_detail
+    length_full = len(cloud_coordinates)
+    length_detail = length_full*detail
+    step = length_full/length_detail
+    step = int(step)
+    size = scene.point_cloud.point_size
+    
+    bgl.glPointSize(size)
     bgl.glBegin(bgl.GL_POINTS)
-    for coord in cloud_coordinates:
+    for coord in cloud_coordinates[::step]:
         color, position = coord
-        bgl.glPointSize(1)
         bgl.glColor3f(color[0], color[1], color[2])
         bgl.glVertex3f(position[0], position[1], position[2])
     bgl.glEnd()
@@ -144,18 +165,22 @@ class PointCloud3DViewPanel(bpy.types.Panel):
     bl_category = 'Custom'
  
     def draw(self, context):
+        scene = context.scene
+        data = bpy.data
         layout = self.layout
         
         col = layout.column(align=True)
-        col.prop_search(context.scene.point_cloud, 'position_pass',
-                           bpy.data, 'images', icon='FILE_IMAGE')
-        col.prop_search(context.scene.point_cloud, 'color_pass',
-                           bpy.data, 'images', icon='FILE_IMAGE')
+        col.prop_search(scene.point_cloud, 'position_pass',
+                        data, 'images', icon='FILE_IMAGE')
+        col.prop_search(scene.point_cloud, 'color_pass',
+                        data, 'images', icon='FILE_IMAGE')
         
         col = layout.column(align=True)
         row = col.row(align=True)
         row.operator('scene.pointcloud_generate')
         row.operator('scene.pointcloud_clear')
+        col.prop(scene.point_cloud, 'point_detail', slider=True)
+        col.prop(scene.point_cloud, 'point_size')
         col.operator('scene.pointcloud_generate_mesh')
 
 
