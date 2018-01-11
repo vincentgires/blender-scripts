@@ -47,13 +47,13 @@ class PointCloudProperties(bpy.types.PropertyGroup):
     point_detail = bpy.props.FloatProperty(
         name='Detail',
         default=0.25,
-        soft_min=0.01,
-        soft_max=1.0)
+        min=0.001,
+        max=1.0)
     
     point_size = bpy.props.IntProperty(
         name='Size',
         default=1,
-        soft_min=1)
+        min=1)
 
 
 ## FUNCTIONS ##
@@ -75,10 +75,14 @@ def draw_pointcloud_gl():
     
     bgl.glPointSize(size)
     bgl.glBegin(bgl.GL_POINTS)
+    
     for coord in cloud_coordinates[::step]:
-        color, position = coord
-        bgl.glColor3f(color[0], color[1], color[2])
-        bgl.glVertex3f(position[0], position[1], position[2])
+        position, color = coord
+        r, g, b = color
+        x, y, z = position
+        bgl.glColor3f(r, g, b)
+        bgl.glVertex3f(x, y, z)
+    
     bgl.glEnd()
 
 
@@ -93,7 +97,9 @@ def get_positions(context):
     coordinates = []
     cpt_rgba = 0
     pixel_rgb = []
-
+    
+    context.window.cursor_set('WAIT')
+    
     for value in position_pixels:
         
         if cpt_rgba <= 2:
@@ -108,6 +114,7 @@ def get_positions(context):
         elif cpt_rgba == 4:
             cpt_rgba = 0
     
+    context.window.cursor_set('DEFAULT')
     return coordinates
 
 
@@ -125,7 +132,9 @@ def get_coordinates(context):
     cpt_rgba = 0
     pixel_rgb_position = []
     pixel_rgb_color = []
-
+    
+    context.window.cursor_set('WAIT')
+    
     for value_position, value_color in zip(position_pixels, color_pixels):
         
         if cpt_rgba <= 2:
@@ -141,7 +150,8 @@ def get_coordinates(context):
             
         elif cpt_rgba == 4:
             cpt_rgba = 0
-
+    
+    context.window.cursor_set('DEFAULT')
 
 def create_mesh(name, origin, verts, edges, faces):
     me = bpy.data.meshes.new(name+'Mesh')
@@ -177,8 +187,9 @@ class PointCloud3DViewPanel(bpy.types.Panel):
         
         col = layout.column(align=True)
         row = col.row(align=True)
-        row.operator('scene.pointcloud_generate')
-        row.operator('scene.pointcloud_clear')
+        text = 'Update cloud' if cloud_coordinates else 'Generate cloud'
+        row.operator('scene.pointcloud_generate', text=text)
+        row.operator('scene.pointcloud_clear', text='', icon='PANEL_CLOSE')
         col.prop(scene.point_cloud, 'point_detail', slider=True)
         col.prop(scene.point_cloud, 'point_size')
         col.operator('scene.pointcloud_generate_mesh')
