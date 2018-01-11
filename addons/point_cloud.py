@@ -32,19 +32,10 @@ bl_info = {
 import bpy
 import bgl
 
+cloud_coordinates = []
 
 ## CUSTOM PROPERTIES ##
 #######################
-
-class PointCloudCoordinateProperties(bpy.types.PropertyGroup):
-    color = bpy.props.FloatVectorProperty(
-        name='Color',
-        subtype='COLOR')
-    
-    position = bpy.props.FloatVectorProperty(
-        name='Position',
-        subtype='XYZ')
-
 
 class PointCloudProperties(bpy.types.PropertyGroup):
     color_pass = bpy.props.StringProperty(
@@ -52,10 +43,6 @@ class PointCloudProperties(bpy.types.PropertyGroup):
     
     position_pass = bpy.props.StringProperty(
         name='Position pass')
-    
-    coordinates = bpy.props.CollectionProperty(
-        name='Coordinates',
-        type=PointCloudCoordinateProperties)
 
 
 ## FUNCTIONS ##
@@ -64,15 +51,13 @@ class PointCloudProperties(bpy.types.PropertyGroup):
 def draw_pointcloud_gl():
     context = bpy.context
     scene = context.scene
-    coordinates = scene.point_cloud.coordinates
     
     bgl.glBegin(bgl.GL_POINTS)
-    for coord in coordinates:
-        color = coord.color
-        position = coord.position
+    for coord in cloud_coordinates:
+        color, position = coord
         bgl.glPointSize(1)
-        bgl.glColor3f(color.r, color.g, color.b)
-        bgl.glVertex3f(position.x, position.y, position.z)
+        bgl.glColor3f(color[0], color[1], color[2])
+        bgl.glVertex3f(position[0], position[1], position[2])
     bgl.glEnd()
 
 
@@ -109,8 +94,6 @@ def get_coordinates(context):
     scene = context.scene
     data = bpy.data
     
-    coordinates = scene.point_cloud.coordinates
-    
     position_src = scene.point_cloud.position_pass
     color_src = scene.point_cloud.color_pass
     position_data = data.images[position_src]
@@ -131,10 +114,7 @@ def get_coordinates(context):
         cpt_rgba += 1
         
         if cpt_rgba == 3:
-            coord = coordinates.add()
-            coord.position = pixel_rgb_position
-            coord.color = pixel_rgb_color
-            
+            cloud_coordinates.append((pixel_rgb_position, pixel_rgb_color))
             pixel_rgb_position = []
             pixel_rgb_color = []
             
@@ -177,8 +157,6 @@ class PointCloud3DViewPanel(bpy.types.Panel):
         row.operator('scene.pointcloud_generate')
         row.operator('scene.pointcloud_clear')
         col.operator('scene.pointcloud_generate_mesh')
-        
-        layout.prop(context.scene.point_cloud, 'coordinates')
 
 
 ## OPERATOR ##
@@ -208,14 +186,10 @@ class PointCloudClearOpenGl(bpy.types.Operator):
     
     @classmethod
     def poll(cls, context):
-        scene = context.scene
-        coordinates = scene.point_cloud.coordinates
-        return coordinates
+        return cloud_coordinates
     
     def execute(self, context):
-        scene = context.scene
-        coordinates = scene.point_cloud.coordinates
-        coordinates.clear()
+        cloud_coordinates.clear()
         return{'FINISHED'}
 
 
