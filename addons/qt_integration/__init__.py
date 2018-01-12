@@ -18,66 +18,68 @@
 
 
 bl_info = {
-    "name": "Qt Integration",
-    "author": "Vincent Gires",
-    "description": "Qt Integration Example",
-    "version": (0, 0, 1),
-    "blender": (2, 7, 8),
-    "location": "",
-    "warning": "",
-    "wiki_url": "",
-    "tracker_url": "",
-    "category": "Qt"}
+    'name': 'Qt Integration',
+    'author': 'Vincent Gires',
+    'description': 'Qt Integration Example',
+    'version': (0, 0, 1),
+    'blender': (2, 7, 8),
+    'location': '',
+    'warning': '',
+    'wiki_url': '',
+    'tracker_url': '',
+    'category': 'Qt'}
 
 import bpy
-import sys, os, logging
+import sys
+import os
+import logging
 
 from qt_integration import config
+
 if config.MODULE_PATH:
     if os.path.exists(config.MODULE_PATH):
         try:
             sys.path.append(config.MODULE_PATH)
             from PyQt5 import QtGui, QtWidgets, QtCore
-            from qt_integration import qt_window
-            from qt_integration import ui
         except:
-            logging.error("Can't find the PyQt5 module")
+            logging.error('Can not find the PyQt module')
 else:
-    logging.error("No MODULE_PATH is configured in config.py")
+    logging.warning('No MODULE_PATH is configured in config.py')
 
 
-
-
-class QT_WINDOW_EventLoopOp(bpy.types.Operator):
-    bl_idname = "qt_window.event_loop"
-    bl_label = "PyQt Event Loop"
-    
+class QtWindowEventLoop(bpy.types.Operator):
+    bl_idname = 'screen.qt_event_loop'
+    bl_label = 'PyQt Event Loop'
     _timer = None
+    
+    def __init__(self, widget):
+        self._widget = widget
     
     def modal(self, context, event):
         wm = context.window_manager
         if self.widget.widget_close:
             logging.debug('cancel modal operator')
             wm.event_timer_remove(self._timer)
-            return {"CANCELLED"}
+            return {'CANCELLED'}
         else:
             logging.debug('process the events for Qt window')
             self.event_loop.processEvents()
             self.app.sendPostedEvents(None, 0)
         
         return {'PASS_THROUGH'}
-
-
+    
     def execute(self, context):
         logging.debug('execute operator')
         
         self.app = QtWidgets.QApplication.instance()
-        # instance() gives the possibility to have multiple windows and close it one by one
+        # instance() gives the possibility to have multiple windows
+        # and close it one by one
+        
         if not self.app:
             self.app = QtWidgets.QApplication(['blender'])
         self.event_loop = QtCore.QEventLoop()
         
-        self.widget = qt_window.EXAMPLE_Widget()
+        self.widget = self._widget()
         self.widget.context = context
         
         logging.debug(self.app)
@@ -89,15 +91,17 @@ class QT_WINDOW_EventLoopOp(bpy.types.Operator):
         context.window_manager.modal_handler_add(self)
         
         return {'RUNNING_MODAL'}
-    
 
 
 def register():
     bpy.utils.register_module(__name__)
     
+    from qt_integration import example
+    bpy.utils.register_class(example.CustomWindow)
+    bpy.utils.register_class(example.QtPanelExample)
+    
 def unregister():
     bpy.utils.unregister_module(__name__)
     
-if __name__ == "__main__":
+if __name__ == '__main__':
     register()
-

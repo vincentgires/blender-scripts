@@ -3,7 +3,7 @@
 import sys, logging, os
 from PyQt5 import QtGui, QtWidgets, QtCore
 
-class EXAMPLE_Widget(QtWidgets.QWidget):
+class ExampleWidget(QtWidgets.QWidget):
     def __init__(self):
         super().__init__()
         self.widget_close = None
@@ -13,7 +13,8 @@ class EXAMPLE_Widget(QtWidgets.QWidget):
     def initUI(self):
         self.resize(720, 300)
         self.setWindowTitle("QT Window")
-        #self.setWindowFlags(QtCore.Qt.WindowStaysOnTopHint | QtCore.Qt.FramelessWindowHint)
+        self.setWindowFlags(
+            QtCore.Qt.WindowStaysOnTopHint | QtCore.Qt.FramelessWindowHint)
         
         label = QtWidgets.QLabel('Label')
         layout = QtWidgets.QVBoxLayout()
@@ -26,12 +27,9 @@ class EXAMPLE_Widget(QtWidgets.QWidget):
     def closeEvent(self, event):
         self.widget_close = True
         self.deleteLater()
-    
 
 if __name__ == '__main__':
     app = QtWidgets.QApplication(sys.argv)
     app.setStyle("Plastique")
-    window = EXAMPLE_Widget()
+    window = ExempleWidget()
     sys.exit(app.exec())
-    
-
