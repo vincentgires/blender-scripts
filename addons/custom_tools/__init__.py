@@ -22,8 +22,8 @@ bl_info = {
     'author': 'Vincent Gires',
     'description': '---',
     'version': (0, 0, 1),
-    'blender': (2, 7, 6),
-    'location': 'Tool shelves (3D View, Image Editor)',
+    'blender': (2, 7, 9),
+    'location': 'Tool shelves (3D View, Image Editor, Node Editor)',
     'warning': '',
     'wiki_url': '',
     'tracker_url': '',
@@ -40,7 +40,6 @@ from custom_tools.tools import animation
 from custom_tools.tools import look_through
 from custom_tools.tools import node
 from custom_tools.tools import image
-from custom_tools.tools import cache
 from custom_tools.tools import sequencer
 
 
@@ -93,7 +92,8 @@ def register():
     kc = bpy.context.window_manager.keyconfigs.addon
     
     km = kc.keymaps.new(name='Node Editor', space_type='NODE_EDITOR')
-    kmi = km.keymap_items.new('node.double_click', 'ACTIONMOUSE', 'DOUBLE_CLICK')
+    kmi = km.keymap_items.new('node.double_click',
+                              'ACTIONMOUSE', 'DOUBLE_CLICK')
     KEYMAPS.append((km, kmi))
     
     km = kc.keymaps.new(name='Window', space_type='EMPTY')

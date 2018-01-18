@@ -49,15 +49,15 @@ class CustomToolsOpenStripAsMovieClip(bpy.types.Operator):
     
     @classmethod
     def poll(cls, context):
-        if context.scene.sequence_editor and context.scene.sequence_editor.active_strip:
-            if context.scene.sequence_editor.active_strip.type == 'MOVIE':
-                return True
-        else:
-            return False
+        scene = context.scene
+        if scene.sequence_editor and scene.sequence_editor.active_strip:
+            return scene.sequence_editor.active_strip.type == 'MOVIE'
     
     def execute(self, context):
-        strip = context.scene.sequence_editor.active_strip
-        movie = bpy.data.movieclips.load(filepath = strip.filepath)
+        scene = context.scene
+        data = bpy.data
+        strip = scene.sequence_editor.active_strip
+        movie = data.movieclips.load(filepath=strip.filepath)
         movie.frame_start = strip.frame_start
         
         return{'FINISHED'}

@@ -275,8 +275,8 @@ class CustomToolsGetImageFromCompositorNode(bpy.types.Operator):
     
     @classmethod
     def poll(cls, context):
-        return (context.scene.node_tree.nodes.active is not None and
-                context.scene.node_tree.nodes.active.type == 'IMAGE')
+        active_node = context.scene.node_tree.nodes.active
+        return active_node is not None and active_node.type == 'IMAGE'
     
     def execute(self, context):
         target_image = context.scene.node_tree.nodes.active.image
@@ -292,14 +292,16 @@ class CustomToolsGetImageFromMaterialNode(bpy.types.Operator):
     
     @classmethod
     def poll(cls, context):
-        if (context.object is not None and context.object.active_material):
-            if context.object.active_material.use_nodes:
-                if context.object.active_material.node_tree.nodes.active:
-                    if context.object.active_material.node_tree.nodes.active.type == 'TEX_IMAGE':
-                        return True
+        active_material = context.object.active_material
+        if (context.object is not None and active_material):
+            if active_material.use_nodes:
+                active_node = active_material.node_tree.nodes.active
+                if active_node:
+                    return active_node.type == 'TEX_IMAGE'
         
     def execute(self, context):
-        target_image = context.object.active_material.node_tree.nodes.active.image
+        active_material = context.object.active_material
+        target_image = active_material.node_tree.nodes.active.image
         context.space_data.image = target_image
         
         return{'FINISHED'}
@@ -350,7 +352,8 @@ class CustomToolsCreateMaskNode(bpy.types.Operator):
     def execute(self, context):
         
         mask_from_image_editor = context.area.spaces.active.mask
-        mask_node = context.scene.node_tree.nodes.new(type='CompositorNodeMask')
+        node_tree = context.scene.node_tree
+        mask_node = node_tree.nodes.new(type='CompositorNodeMask')
         mask_node.mask = mask_from_image_editor
         
         active_node = context.scene.node_tree.nodes.active
@@ -402,7 +405,8 @@ class CustomToolsViewerConnection(bpy.types.Operator):
     node_name = bpy.props.StringProperty()
     
     def execute(self, context):
-        context.scene.node_tree.nodes.active = context.scene.node_tree.nodes[self.node_name]
+        node_tree = context.scene.node_tree
+        node_tree.nodes.active = node_tree.nodes[self.node_name]
         bpy.ops.node.link_viewer()
 
         return{'FINISHED'}
@@ -416,7 +420,8 @@ class CustomToolsViewerRemove(bpy.types.Operator):
     node_name = bpy.props.StringProperty()
     
     def execute(self, context):
-        context.scene.node_tree.nodes[self.node_name].custom_tools_viewer = False
+        node_tree = context.scene.node_tree
+        node_tree.nodes[self.node_name].custom_tools_viewer = False
 
         return{'FINISHED'}
 
@@ -425,7 +430,7 @@ class CustomToolsViewerRemove(bpy.types.Operator):
 class CustomToolsCompoNodeColorPicker(bpy.types.Operator):
     bl_idname = 'scene.customtools_compo_node_color_picker'
     bl_label = 'Color Picker'
-    bl_description = 'Pick the color of the image and set the value to the selected node'
+    bl_description = 'Pick the color and set the value to the selected node'
     
     # Properties
     input_name = bpy.props.StringProperty()
@@ -435,7 +440,8 @@ class CustomToolsCompoNodeColorPicker(bpy.types.Operator):
         return (context.space_data.image)
     
     def modal(self, context, event):
-        
+        scene = context.scene
+        area = context.area
         w = context.window_manager.windows[0]
         w.cursor_modal_set('EYEDROPPER')
         
@@ -446,12 +452,12 @@ class CustomToolsCompoNodeColorPicker(bpy.types.Operator):
             mouse_x = event.mouse_x - context.region.x
             mouse_y = event.mouse_y - context.region.y
 
-            uv = context.area.regions[-1].view2d.region_to_view(mouse_x, mouse_y)
+            uv = area.regions[-1].view2d.region_to_view(mouse_x, mouse_y)
             
-            if context.scene.color_picker_image:
-                img = bpy.data.images[context.scene.color_picker_image]
+            if scene.color_picker_image:
+                img = bpy.data.images[scene.color_picker_image]
             else:
-                img = context.area.spaces[0].image
+                img = area.spaces[0].image
             
             size_x, size_y = img.size[:]
             
@@ -462,7 +468,7 @@ class CustomToolsCompoNodeColorPicker(bpy.types.Operator):
             pixels = img.pixels[offset:offset+4]
             pixels = [pixels[0], pixels[1], pixels[2]]
             
-            selected_input = context.scene.node_tree.nodes.active.inputs
+            selected_input = scene.node_tree.nodes.active.inputs
             
             if selected_input[self.input_name].type == 'VECTOR':
                 selected_input[self.input_name].default_value = pixels
@@ -492,7 +498,8 @@ class CustomToolsCompoNodeColorPicker(bpy.types.Operator):
             context.window_manager.modal_handler_add(self)
             return {'RUNNING_MODAL'}
         else:
-            self.report({'WARNING'}, 'UV/Image Editor not found, cannot run operator')
+            self.report({'WARNING'},
+                        'UV/Image Editor not found, cannot run operator')
             return {'CANCELLED'}
 
 
@@ -556,8 +563,10 @@ class CustomToolsCompoNodeTransformGrab(bpy.types.Operator):
     
     @classmethod
     def poll(cls, context):
-        return (context.scene.use_nodes and
-                    context.scene.node_tree.nodes.active.type in ['TRANSFORM', 'TRANSLATE'])
+        scene = context.scene
+        active_node = scene.node_tree.nodes.active
+        return (scene.use_nodes and
+                active_node.type in ['TRANSFORM', 'TRANSLATE'])
     
     def modal(self, context, event):
         active_node = context.scene.node_tree.nodes.active
@@ -567,15 +576,18 @@ class CustomToolsCompoNodeTransformGrab(bpy.types.Operator):
         context.area.tag_redraw()
         
         self.mouse_pos_xy = (event.mouse_region_x, event.mouse_region_y)
-        self.distance_x_axis = distance2d(self.mouse_pos_xy, (self.mouse_pos_xy[0], self.init_pos_y))
-        self.distance_y_axis = distance2d(self.mouse_pos_xy, (self.init_pos_x, self.mouse_pos_xy[1]))
+        self.distance_x_axis = distance2d(
+            self.mouse_pos_xy, (self.mouse_pos_xy[0], self.init_pos_y))
+        self.distance_y_axis = distance2d(
+            self.mouse_pos_xy, (self.init_pos_x, self.mouse_pos_xy[1]))
         
         
         ### MOVE #############
         ## X ##
         if self.region_x_init:
             if not self.snap_axis_y:
-                target_value_x = self.value_x_init + (event.mouse_region_x - self.region_x_init)
+                target_value_x = self.value_x_init \
+                    + (event.mouse_region_x - self.region_x_init)
                 active_node.inputs['X'].default_value = target_value_x
             else:
                 active_node.inputs['X'].default_value = self.value_x_init
@@ -586,7 +598,8 @@ class CustomToolsCompoNodeTransformGrab(bpy.types.Operator):
         ## Y ##
         if self.region_y_init:
             if not self.snap_axis_x:
-                target_value_y = self.value_y_init + (event.mouse_region_y - self.region_y_init)
+                target_value_y = self.value_y_init \
+                    + (event.mouse_region_y - self.region_y_init)
                 active_node.inputs['Y'].default_value = target_value_y
             else:
                 active_node.inputs['Y'].default_value = self.value_y_init
@@ -615,7 +628,8 @@ class CustomToolsCompoNodeTransformGrab(bpy.types.Operator):
         if event.type in ('RET', 'NUMPAD_ENTER', 'LEFTMOUSE'):
             w.cursor_modal_restore()
             context.area.header_text_set()
-            bpy.types.SpaceImageEditor.draw_handler_remove(self._handle_axes, 'WINDOW')
+            bpy.types.SpaceImageEditor.draw_handler_remove(
+                self._handle_axes, 'WINDOW')
             
             return {'FINISHED'}
         
@@ -625,7 +639,8 @@ class CustomToolsCompoNodeTransformGrab(bpy.types.Operator):
             active_node.inputs['Y'].default_value = self.value_y_init
             w.cursor_modal_restore()
             context.area.header_text_set()
-            bpy.types.SpaceImageEditor.draw_handler_remove(self._handle_axes, 'WINDOW')
+            bpy.types.SpaceImageEditor.draw_handler_remove(
+                self._handle_axes, 'WINDOW')
             
             return {'CANCELLED'}
         
@@ -682,13 +697,17 @@ class CustomToolsCompoNodeTransformGrab(bpy.types.Operator):
         #self.init_pos_y = 100
         #self.init_pos_x = int(context.area.width/2)
         #self.init_pos_y = int(context.area.height/2)
-        self.init_pos_x, self.init_pos_y = bpy.context.region.view2d.view_to_region(active_node.inputs['X'].default_value/img_size_x + 0.5, active_node.inputs['Y'].default_value/img_size_y + 0.5)
+        view2d = context.region.view2d
+        self.init_pos_x, self.init_pos_y = view2d.view_to_region(
+            active_node.inputs['X'].default_value/img_size_x + 0.5,
+            active_node.inputs['Y'].default_value/img_size_y + 0.5)
         
         self.snap_axis_x = False
         self.snap_axis_y = False
         
         args = (self, context)
-        self._handle_axes = bpy.types.SpaceImageEditor.draw_handler_add(draw_callback_axis, args, 'WINDOW', 'POST_PIXEL')
+        self._handle_axes = bpy.types.SpaceImageEditor.draw_handler_add(
+            draw_callback_axis, args, 'WINDOW', 'POST_PIXEL')
         
         context.window_manager.modal_handler_add(self)
         return {'RUNNING_MODAL'}

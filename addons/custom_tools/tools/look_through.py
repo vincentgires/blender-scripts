@@ -59,11 +59,8 @@ class CustomToolsLookThroughSelected(bpy.types.Operator):
         return (context.object is not None)
     
     def execute(self, context):
-        context.space_data.lock_camera_and_layers = False # needs to be False to active local camera
-        
-        active_scene = context.scene
-        active_camera = context.scene.camera
-        active_object = context.active_object
+        context.space_data.lock_camera_and_layers = False
+        # needs to be False to active local camera
         
         bpy.ops.view3d.object_as_camera()
         context.scene.camera = active_camera # restore render camera
@@ -74,7 +71,8 @@ class CustomToolsLookThroughSelected(bpy.types.Operator):
 class CustomToolsLookThroughRender(bpy.types.Operator):
     bl_idname = 'scene.customtools_look_through_render'
     bl_label = 'Look through render'
-    bl_description = 'Look Through render camera, could be different than the local camera'
+    bl_description = ('Look Through render camera, '
+                      'could be different than the local camera')
     
     def execute(self, context):
         active_scene = bpy.context.scene
@@ -109,12 +107,14 @@ class CustomToolsSetActiveCamera(bpy.types.Operator):
         
         
         if context.space_data.type == 'VIEW_3D':
-            context.space_data.lock_camera_and_layers = True # needs to be True to set the render camera... (?) by bpy.ops.view3d.object_as_camera() or bpy.context.scene.camera = active_object
+            context.space_data.lock_camera_and_layers = True
+            # needs to be True to set the render camera
         
         context.scene.camera = active_object
         
         if context.space_data.type == 'VIEW_3D':
-            context.space_data.lock_camera_and_layers = store_lock_context # reset lock camera and layers like it was before the script
+            context.space_data.lock_camera_and_layers = store_lock_context
+            # reset lock camera and layers like it was before the script
         
         return{'FINISHED'}
 

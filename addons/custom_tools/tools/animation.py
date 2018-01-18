@@ -130,8 +130,13 @@ class CustomToolsPoseToEmpty(bpy.types.Operator):
         empty_location = bone_location + object_location
         
         bpy.ops.object.mode_set(mode='OBJECT')
-        bpy.ops.object.empty_add(type='PLAIN_AXES', radius=1, view_align=False, location=empty_location, rotation=bone_rotation)
-        #bpy.ops.mesh.primitive_cube_add(radius=1, view_align=False, location=empty_location, rotation=bone_rotation)
+        bpy.ops.object.empty_add(
+            type='PLAIN_AXES',
+            radius=1,
+            view_align=False,
+            location=empty_location,
+            rotation=bone_rotation)
+        
         empty = context.object
         empty.select = False
         bpy.ops.object.select_all(action='TOGGLE')

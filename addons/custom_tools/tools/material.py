@@ -59,7 +59,8 @@ class CustomToolsSetMeterial(bpy.types.Operator):
         return [(mat.name, mat.name, '') for mat in self.material_item]
     
     material_enum = bpy.props.EnumProperty(items=item_cb, name='Material')
-    material_item = bpy.props.CollectionProperty(type=bpy.types.PropertyGroup, name='number')
+    material_item = bpy.props.CollectionProperty(
+        type=bpy.types.PropertyGroup, name='number')
     
     def execute(self, context):
         if len(self.material_item) > 0:

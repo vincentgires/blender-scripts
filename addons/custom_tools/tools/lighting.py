@@ -37,12 +37,15 @@ class View3dCustomPanelLightingTools(bpy.types.Panel):
     bl_category = 'Lighting'
     
     def draw(self, context):
+        scene = context.scene
         layout = self.layout
         col = layout.column(align=True)
-        object_aim_btn = col.operator('scene.customtools_aim_normal', icon='MAN_TRANS')
-        object_aim_btn.object_name = context.scene.objects.active.name
-        object_look_through_btn = col.operator('scene.customtools_look_through', icon='FORWARD')
-        object_look_through_btn.object_name = context.scene.objects.active.name
+        object_aim_btn = col.operator(
+            'scene.customtools_aim_normal', icon='MAN_TRANS')
+        object_aim_btn.object_name = scene.objects.active.name
+        object_look_through_btn = col.operator(
+            'scene.customtools_look_through', icon='FORWARD')
+        object_look_through_btn.object_name = scene.objects.active.name
 
 
 class View3dCustomPanelLightingLights(bpy.types.Panel):
@@ -74,13 +77,15 @@ class View3dCustomPanelLightingLights(bpy.types.Panel):
                         
                         ### COLOR ###
                         if not node.inputs['Color'].is_linked:
-                            row.prop(node.inputs['Color'], 'default_value', text='')
+                            row.prop(node.inputs['Color'],
+                                     'default_value', text='')
                         else:
                             row.label('Connected')
                             
                         ### STRENGHT ###
                         if not node.inputs['Strength'].is_linked:
-                            row.prop(node.inputs['Strength'], 'default_value', text='Strength')
+                            row.prop(node.inputs['Strength'],
+                                     'default_value', text='Strength')
                         else:
                             row.label('Connected')
             else:
@@ -99,14 +104,18 @@ class View3dCustomPanelLightingLights(bpy.types.Panel):
                 if obj == context.active_object:
                     row.label('', icon='TRIA_RIGHT')
                 
-                light_select_btn = row.operator('scene.customtools_select_light', text=obj.name)
+                light_select_btn = row.operator(
+                    'scene.customtools_select_light', text=obj.name)
                 light_select_btn.light_name = obj.name
-                light_aim_btn = row.operator('scene.customtools_aim_normal', text='', icon='MAN_TRANS')
+                light_aim_btn = row.operator(
+                    'scene.customtools_aim_normal', text='', icon='MAN_TRANS')
                 light_aim_btn.object_name = obj.name
-                look_through_btn = row.operator('scene.customtools_look_through', text='', icon='FORWARD')
+                look_through_btn = row.operator(
+                    'scene.customtools_look_through', text='', icon='FORWARD')
                 look_through_btn.object_name = obj.name
                 
-                row.prop(obj.data, 'type', expand=False, icon='LAMP_'+obj.data.type, text='', icon_only=True)
+                row.prop(obj.data, 'type', expand=False,
+                         icon='LAMP_'+obj.data.type, text='', icon_only=True)
                 
                 if obj.data.type == 'AREA':
                     row = col.row(align=True)
@@ -117,8 +126,10 @@ class View3dCustomPanelLightingLights(bpy.types.Panel):
                 
                 if obj.data.type == 'SPOT':
                     row = col.row(align=True)
-                    row.prop(obj.data, 'spot_size', text='Spot Size', slider=True)
-                    row.prop(obj.data, 'spot_blend', text='Blend', slider=True)
+                    row.prop(obj.data, 'spot_size',
+                             text='Spot Size', slider=True)
+                    row.prop(obj.data, 'spot_blend',
+                             text='Blend', slider=True)
                     
                 
                 if obj.data.use_nodes:
@@ -128,13 +139,15 @@ class View3dCustomPanelLightingLights(bpy.types.Panel):
                             
                             ### COLOR ###
                             if not node.inputs['Color'].is_linked:
-                                row.prop(node.inputs['Color'], 'default_value', text='')
+                                row.prop(node.inputs['Color'],
+                                         'default_value', text='')
                             else:
                                 row.label('Connected')
                                 
                             ### STRENGHT ###
                             if not node.inputs['Strength'].is_linked:
-                                row.prop(node.inputs['Strength'], 'default_value', text='')
+                                row.prop(node.inputs['Strength'],
+                                         'default_value', text='')
                             else:
                                 row.label('Connected')
                                 
@@ -171,13 +184,15 @@ class View3dCustomPanelLightingLights(bpy.types.Panel):
                     
                     ### COLOR ###
                     if not node.inputs['Color'].is_linked:
-                        row.prop(node.inputs['Color'], 'default_value', text='')
+                        row.prop(node.inputs['Color'],
+                                 'default_value', text='')
                     else:
                         row.label('Connected')
                         
                     ### STRENGHT ###
                     if not node.inputs['Strength'].is_linked:
-                        row.prop(node.inputs['Strength'], 'default_value', text='')
+                        row.prop(node.inputs['Strength'],
+                                 'default_value', text='')
                     else:
                         row.label('Connected')
 
@@ -275,7 +290,8 @@ def aim_normal(context, event, object_name, ray_max=1000.0, offset=-1):
         else:
             return None, None, None'''
         # cast the ray
-        success, location, normal, face_index = obj.ray_cast(ray_origin_obj, ray_direction_obj)
+        success, location, normal, face_index = obj.ray_cast(
+            ray_origin_obj, ray_direction_obj)
 
         if success:
             return location, normal, face_index
@@ -320,13 +336,24 @@ def aim_normal(context, event, object_name, ray_max=1000.0, offset=-1):
                     x_vect_y = (normal.z*y_vect_x)-(normal.x*y_vect_z)
                     x_vect_z = (normal.x*y_vect_y)-(normal.y*y_vect_x)
                     
-                    y_vect_normalize = math.sqrt((y_vect_x * y_vect_x) + (y_vect_y * y_vect_y) + (y_vect_z * y_vect_z))
-                    x_vect_normalize = math.sqrt((x_vect_x * x_vect_x) + (x_vect_y * x_vect_y) + (x_vect_z * x_vect_z))
+                    y_vect_normalize = math.sqrt((y_vect_x * y_vect_x) \
+                        + (y_vect_y * y_vect_y) + (y_vect_z * y_vect_z))
+                    x_vect_normalize = math.sqrt((x_vect_x * x_vect_x) \
+                        + (x_vect_y * x_vect_y) + (x_vect_z * x_vect_z))
                     
                     matrix = mathutils.Matrix().to_3x3()
-                    matrix.row[0] = ((x_vect_x/x_vect_normalize, y_vect_x/y_vect_normalize, normal.x))
-                    matrix.row[1] = ((x_vect_y/x_vect_normalize, y_vect_y/y_vect_normalize, normal.y))
-                    matrix.row[2] = ((x_vect_z/x_vect_normalize, y_vect_z/y_vect_normalize, normal.z))
+                    matrix.row[0] = (
+                        (x_vect_x/x_vect_normalize,
+                         y_vect_x/y_vect_normalize,
+                         normal.x))
+                    matrix.row[1] = (
+                        (x_vect_y/x_vect_normalize,
+                         y_vect_y/y_vect_normalize,
+                         normal.y))
+                    matrix.row[2] = (
+                        (x_vect_z/x_vect_normalize,
+                         y_vect_z/y_vect_normalize,
+                         normal.z))
                     
                     object.matrix_world = matrix.to_4x4()
                     
@@ -334,7 +361,8 @@ def aim_normal(context, event, object_name, ray_max=1000.0, offset=-1):
                     # position
                     object.location = hit_world
                     for i in range(0, 3):
-                        object.location[i] = object.location[i] + (offset * normal[i])
+                        object.location[i] = object.location[i] \
+                            + (offset * normal[i])
                     
                     # scale
                     object.scale = origin_scale
@@ -342,7 +370,9 @@ def aim_normal(context, event, object_name, ray_max=1000.0, offset=-1):
 
 def set_header(context, offset):
     context.area.header_text_set(
-        'Aim tool | Move the mouse to align to the normal | Offset with Wheel Up-Down : '+str(offset))
+        ('Aim tool | '
+         'Move the mouse to align to the normal | '
+         'Offset with Wheel Up-Down : {}').format(offset))
 
 
 class CustomToolsAimNormal(bpy.types.Operator):
@@ -401,14 +431,15 @@ class CustomToolsAimNormal(bpy.types.Operator):
     
     
     def invoke(self, context, event):
-        
-        self.matrix_save = context.scene.objects[self.object_name].matrix_world.copy()
+        scene = context.scene
+        self.matrix_save = scene.objects[self.object_name].matrix_world.copy()
         
         if context.area.type == 'VIEW_3D':
             context.window_manager.modal_handler_add(self)
             return {'RUNNING_MODAL'}
         else:
-            self.report({'WARNING'}, 'VIEW_3D Editor not found, cannot run operator')
+            self.report({'WARNING'},
+                        'VIEW_3D Editor not found, cannot run operator')
             return {'CANCELLED'}
 
 
@@ -424,10 +455,8 @@ class CustomToolsLookThrough(bpy.types.Operator):
         return (context.object is not None)
     
     def execute(self, context):
-        context.space_data.lock_camera_and_layers = False # needs to be False to active local camera
-        
-        active_scene = context.scene
-        active_camera = context.scene.camera
+        context.space_data.lock_camera_and_layers = False
+        # needs to be False to active local camera
         
         context.space_data.camera = bpy.data.objects[self.object_name]
         bpy.ops.view3d.viewnumpad(type='CAMERA')

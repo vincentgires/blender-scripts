@@ -47,7 +47,8 @@ class View3dCustomPanelRendering(bpy.types.Panel):
 class CustomToolsSetObjectId(bpy.types.Operator):
     bl_idname = 'scene.customtools_set_object_id'
     bl_label = 'Set object ID'
-    bl_description = 'Set incremental object ID on all mesh objects in the scene'
+    bl_description = ('Set incremental object ID '
+                      'on all mesh objects in the scene')
     
     @classmethod
     def poll(cls, context):
