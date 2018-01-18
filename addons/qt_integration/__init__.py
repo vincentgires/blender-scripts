@@ -20,7 +20,7 @@
 bl_info = {
     'name': 'Qt Integration',
     'author': 'Vincent Gires',
-    'description': 'Qt Integration Example',
+    'description': 'Qt Integration',
     'version': (0, 0, 1),
     'blender': (2, 7, 8),
     'location': '',

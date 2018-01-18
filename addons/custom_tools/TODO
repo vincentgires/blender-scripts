@@ -1,4 +1,2 @@
-
-### A FAIRE :
-### - To EMPTY EN rotation object
-### - trouver comment mettre les keymap du node editor dans fichier node.py et pas init.py
+- To EMPTY rotation object
+- trouver comment mettre les keymap du node editor dans fichier node.py et pas init.py

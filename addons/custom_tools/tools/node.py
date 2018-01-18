@@ -56,19 +56,20 @@ class NodeEditorCustomPanelTools(bpy.types.Panel):
         
         layout.operator('scene.customtools_copy_attributes')
         
-        box = layout.box()
-        row = box.row()
+        #box = layout.box()
+        row = layout.row(align=True)
         
-        left_btn = row.operator('scene.customtools_move_nodes', text='', icon='TRIA_LEFT')
+        left_btn = row.operator(
+            'scene.customtools_move_nodes', text=' ', icon='TRIA_LEFT')
         left_btn.direction = 'left'
-        
-        right_btn = row.operator('scene.customtools_move_nodes', text='', icon='TRIA_RIGHT')
+        right_btn = row.operator(
+            'scene.customtools_move_nodes', text=' ', icon='TRIA_RIGHT')
         right_btn.direction = 'right'
-        
-        up_btn = row.operator('scene.customtools_move_nodes', text='', icon='TRIA_UP')
+        up_btn = row.operator(
+            'scene.customtools_move_nodes', text=' ', icon='TRIA_UP')
         up_btn.direction = 'up'
-        
-        down_btn = row.operator('scene.customtools_move_nodes', text='', icon='TRIA_DOWN')
+        down_btn = row.operator(
+            'scene.customtools_move_nodes', text=' ', icon='TRIA_DOWN')
         down_btn.direction = 'down'
         
         
@@ -88,27 +89,41 @@ class NodeEditorCustomPanelViewer(bpy.types.Panel):
         active_node = context.active_node
         if active_node:
             if not active_node.custom_tools_viewer:
-                layout.prop(active_node, 'custom_tools_viewer', text=active_node.name, icon='ZOOMIN')
+                layout.prop(
+                    active_node,
+                    'custom_tools_viewer',
+                    text=active_node.name,
+                    icon='ZOOMIN')
             else:
-                layout.prop(active_node, 'custom_tools_viewer', text=active_node.name, icon='ZOOMOUT')
+                layout.prop(
+                    active_node,
+                    'custom_tools_viewer',
+                    text=active_node.name,
+                    icon='ZOOMOUT')
         
         if context.scene.use_nodes:
             for node in context.scene.node_tree.nodes:
                 if node.custom_tools_viewer:
                     box = layout.box()
-                    row = box.row()
+                    row = box.row(align=True)
                     if node.label is not '':
                         node_name = node.label
                     else:
                         node_name = node.name
                     
-                    button_name = row.operator('scene.customtools_viewer_connection', emboss=False, text=node_name)
+                    button_name = row.operator(
+                        'scene.customtools_viewer_connection',
+                        emboss=False, text=node_name)
                     button_name.node_name = node.name
                     
-                    button_remove = row.operator('scene.customtools_viewer_remove', icon='PANEL_CLOSE', emboss=False, text='')
+                    button_remove = row.operator(
+                        'scene.customtools_viewer_remove',
+                        icon='PANEL_CLOSE', emboss=False, text='')
                     button_remove.node_name = node.name
                     
-                    button_icon = row.operator('scene.customtools_viewer_connection', icon='TRIA_RIGHT', emboss=False, text='')
+                    button_icon = row.operator(
+                        'scene.customtools_viewer_connection',
+                        icon='TRIA_RIGHT', emboss=False, text='')
                     button_icon.node_name = node.name
 
 
@@ -120,8 +135,9 @@ class ImageEditorCustomPanelDisplay(bpy.types.Panel):
     
     def draw(self, context):
         layout = self.layout
-        layout.operator('scene.customtools_display_viewer_node')
-        layout.operator('scene.customtools_display_render_result')
+        col = layout.column(align=True)
+        col.operator('scene.customtools_display_viewer_node')
+        col.operator('scene.customtools_display_render_result')
 
 
 class ImageEditorCustomPanelCompositorNode(bpy.types.Panel):
@@ -134,23 +150,30 @@ class ImageEditorCustomPanelCompositorNode(bpy.types.Panel):
         scene = context.scene
         layout = self.layout
         
-        if scene.node_tree:
-            if scene.node_tree.nodes.active:
-                active_node = scene.node_tree.nodes.active
-                
-                layout.label(active_node.name)
-                
-                layout.operator('scene.customtools_get_mask_from_compositor_node')
-                layout.operator('scene.customtools_get_image_from_compositor_node')
-                layout.operator('scene.customtools_create_mask_node')
-                
-                box = layout.box()
-                box.label('Color Picker')
-                box.prop_search(context.scene, 'color_picker_image', bpy.data, 'images', icon='IMAGE_DATA')
-                for input in active_node.inputs:
-                    if not input.links:
-                        op = box.operator('scene.customtools_compo_node_color_picker', icon='EYEDROPPER', text=input.name)
-                        op.input_name = input.name
+        if not scene.node_tree:
+            return None
+        
+        if scene.node_tree.nodes.active:
+            active_node = scene.node_tree.nodes.active
+            
+            layout.label(active_node.name)
+            
+            col = layout.column(align=True)
+            col.operator('scene.customtools_get_mask_from_compositor_node')
+            col.operator('scene.customtools_get_image_from_compositor_node')
+            col.operator('scene.customtools_create_mask_node')
+            
+            box = layout.box()
+            col = box.column(align=True)
+            col.label('Color Picker')
+            col.prop_search(context.scene, 'color_picker_image',
+                            bpy.data, 'images', icon='IMAGE_DATA')
+            for input in active_node.inputs:
+                if not input.links:
+                    op = col.operator(
+                        'scene.customtools_compo_node_color_picker',
+                        icon='EYEDROPPER', text=input.name)
+                    op.input_name = input.name
 
 
 class ImageEditorCustomPanelMaterialNode(bpy.types.Panel):

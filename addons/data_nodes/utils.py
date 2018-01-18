@@ -125,26 +125,19 @@ def scene_update(scene):
         #print ("check_objects")
         for object in bpy.data.objects:
             if object.is_updated:
-                # update compositing tree
+                #print ("check_object", object)
                 update_compositing_tree(scene, object, custom_nodes_type)
-                # update nodes in materials
                 update_material_tree(scene, object, custom_nodes_type)
-                # update world node trees
                 update_world_tree(scene, object, custom_nodes_type)
-                # update custom node trees
                 update_custom_tree(scene, object, custom_nodes_type)
     
     if check_scene:
         #print ("check_scene")
         for object in bpy.data.objects:
-            # update compositing tree
             update_compositing_tree(scene, object, custom_nodes_type)
-            # update nodes in materials
             update_material_tree(scene, object, custom_nodes_type)
-            # update world node trees
             update_world_tree(scene, object, custom_nodes_type)
             update_custom_tree(scene, object, custom_nodes_type)
-            # update world node trees
             
             
     
@@ -231,57 +224,60 @@ def render_post_update(scene):
 def send_value(outputs, value):
     for output in outputs:
         for link in output.links:
-            if link.is_valid:
-                # REROUTE
-                if link.to_node.type == 'REROUTE':
-                    reroute = link.to_node
-                    send_value(reroute.outputs, value)
-                    
-                    
-                elif output.type == link.to_socket.type:
-                    # assign value to connected socket
+            
+            if not link.is_valid:
+                continue
+            
+            # REROUTE
+            if link.to_node.type == 'REROUTE':
+                reroute = link.to_node
+                send_value(reroute.outputs, value)
+                
+                
+            elif output.type == link.to_socket.type:
+                # assign value to connected socket
+                link.to_socket.default_value = value
+                # update connected target nodes
+                link.to_node.update()
+            
+            # convert types
+            #elif output.type == "RGBA" and link.to_socket.type == "VALUE":
+                #link.to_socket.default_value = value[0]
+                #link.to_node.update()
+            #elif output.type == "VECTOR" and link.to_socket.type == "VALUE":
+                #link.to_socket.default_value = value[0]
+                #link.to_node.update()
+            #elif output.type == "VALUE" and link.to_socket.type == "RGBA":
+                #link.to_socket.default_value[0] = value
+                #link.to_socket.default_value[1] = value
+                #link.to_socket.default_value[2] = value
+                #link.to_socket.default_value[3] = value
+                #link.to_node.update()
+            #elif output.type == "VALUE" and link.to_socket.type == "VECTOR":
+                #link.to_socket.default_value[0] = value
+                #link.to_socket.default_value[1] = value
+                #link.to_socket.default_value[2] = value
+                #link.to_node.update()
+            
+            else:
+                ok = None
+                
+                if output.type == "VALUE" and link.to_socket.type == "BOOLEAN":
+                    ok = True
+                elif output.type == "VALUE" and link.to_socket.type == "INT":
+                    ok = True
+                elif output.type == "BOOLEAN" and link.to_socket.type == "VALUE":
+                    ok = True
+                elif output.type == "BOOLEAN" and link.to_socket.type == "INT":
+                    ok = True
+                elif output.type == "INT" and link.to_socket.type == "VALUE":
+                    ok = True
+                elif output.type == "INT" and link.to_socket.type == "BOOLEAN":
+                    ok = True
+                
+                if ok:
                     link.to_socket.default_value = value
-                    # update connected target nodes
                     link.to_node.update()
-                
-                # convert types
-                #elif output.type == "RGBA" and link.to_socket.type == "VALUE":
-                    #link.to_socket.default_value = value[0]
-                    #link.to_node.update()
-                #elif output.type == "VECTOR" and link.to_socket.type == "VALUE":
-                    #link.to_socket.default_value = value[0]
-                    #link.to_node.update()
-                #elif output.type == "VALUE" and link.to_socket.type == "RGBA":
-                    #link.to_socket.default_value[0] = value
-                    #link.to_socket.default_value[1] = value
-                    #link.to_socket.default_value[2] = value
-                    #link.to_socket.default_value[3] = value
-                    #link.to_node.update()
-                #elif output.type == "VALUE" and link.to_socket.type == "VECTOR":
-                    #link.to_socket.default_value[0] = value
-                    #link.to_socket.default_value[1] = value
-                    #link.to_socket.default_value[2] = value
-                    #link.to_node.update()
-                
-                else:
-                    ok = None
-                    
-                    if output.type == "VALUE" and link.to_socket.type == "BOOLEAN":
-                        ok = True
-                    elif output.type == "VALUE" and link.to_socket.type == "INT":
-                        ok = True
-                    elif output.type == "BOOLEAN" and link.to_socket.type == "VALUE":
-                        ok = True
-                    elif output.type == "BOOLEAN" and link.to_socket.type == "INT":
-                        ok = True
-                    elif output.type == "INT" and link.to_socket.type == "VALUE":
-                        ok = True
-                    elif output.type == "INT" and link.to_socket.type == "BOOLEAN":
-                        ok = True
-                    
-                    if ok:
-                        link.to_socket.default_value = value
-                        link.to_node.update()
                 
                 
                 

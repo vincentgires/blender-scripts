@@ -63,12 +63,12 @@ class ImageEditorCustomPanelFilepath(bpy.types.Panel):
     def draw(self, context):
         layout = self.layout
         
-        layout.prop(context.scene, 'custom_tools_filepath_apply')
-        layout.prop(context.scene, 'custom_tools_find')
-        layout.prop(context.scene, 'custom_tools_replace')
-        
-        layout.operator('scene.customtools_swap_search_and_replace')
-        layout.operator('scene.customtools_filepath_search_and_replace')
+        col = layout.column(align=True)
+        col.prop(context.scene, 'custom_tools_filepath_apply')
+        col.prop(context.scene, 'custom_tools_find')
+        col.prop(context.scene, 'custom_tools_replace')
+        col.operator('scene.customtools_swap_search_and_replace')
+        col.operator('scene.customtools_filepath_search_and_replace')
 
 
 class NodeEditorCustomPanelFilepath(bpy.types.Panel):
@@ -84,17 +84,19 @@ class NodeEditorCustomPanelFilepath(bpy.types.Panel):
     def draw(self, context):
         layout = self.layout
         
+        col = layout.column(align=True)
+        
         selected_nodes = context.selected_nodes
         for node in selected_nodes:
             if node.type == 'IMAGE':
                 image = node.image
-                layout.label(image.filepath)
+                col.label(image.filepath)
         
-        layout.prop(context.scene, 'custom_tools_find')
-        layout.prop(context.scene, 'custom_tools_replace')
+        col.prop(context.scene, 'custom_tools_find')
+        col.prop(context.scene, 'custom_tools_replace')
         
-        layout.operator('scene.customtools_swap_search_and_replace')
-        layout.operator('scene.customtools_filepath_search_and_replace_nodes')
+        col.operator('scene.customtools_swap_search_and_replace')
+        col.operator('scene.customtools_filepath_search_and_replace_nodes')
 
 
 ## OPERATOR ##
