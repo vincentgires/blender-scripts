@@ -292,6 +292,9 @@ class CustomToolsGetImageFromMaterialNode(bpy.types.Operator):
     
     @classmethod
     def poll(cls, context):
+        if not context.object:
+            return False
+        
         active_material = context.object.active_material
         if (context.object is not None and active_material):
             if active_material.use_nodes:

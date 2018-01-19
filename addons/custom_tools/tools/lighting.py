@@ -42,10 +42,12 @@ class View3dCustomPanelLightingTools(bpy.types.Panel):
         col = layout.column(align=True)
         object_aim_btn = col.operator(
             'scene.customtools_aim_normal', icon='MAN_TRANS')
-        object_aim_btn.object_name = scene.objects.active.name
         object_look_through_btn = col.operator(
             'scene.customtools_look_through', icon='FORWARD')
-        object_look_through_btn.object_name = scene.objects.active.name
+        
+        if scene.objects.active:
+            object_aim_btn.object_name = scene.objects.active.name
+            object_look_through_btn.object_name = scene.objects.active.name
 
 
 class View3dCustomPanelLightingLights(bpy.types.Panel):
