@@ -36,15 +36,19 @@ import logging
 
 from qt_integration import config
 
+logger = logging.getLogger(__name__)
+
+for path in config.MODULE_PATH:
+    if os.path.exists(path):
+        sys.path.append(path)
+
 if config.MODULE_PATH:
-    if os.path.exists(config.MODULE_PATH):
-        try:
-            sys.path.append(config.MODULE_PATH)
-            from PyQt5 import QtGui, QtWidgets, QtCore
-        except:
-            logging.error('Can not find the PyQt module')
+    try:
+        from PyQt5 import QtGui, QtWidgets, QtCore
+    except:
+        logger.error('Can not find the PyQt module')
 else:
-    logging.warning('No MODULE_PATH is configured in config.py')
+    logger.warning('No MODULE_PATH is configured in config.py')
 
 
 class QtWindowEventLoop(bpy.types.Operator):
@@ -58,18 +62,18 @@ class QtWindowEventLoop(bpy.types.Operator):
     def modal(self, context, event):
         wm = context.window_manager
         if self.widget.widget_close:
-            logging.debug('cancel modal operator')
+            logger.debug('cancel modal operator')
             wm.event_timer_remove(self._timer)
             return {'CANCELLED'}
         else:
-            logging.debug('process the events for Qt window')
+            logger.debug('process the events for Qt window')
             self.event_loop.processEvents()
             self.app.sendPostedEvents(None, 0)
         
         return {'PASS_THROUGH'}
     
     def execute(self, context):
-        logging.debug('execute operator')
+        logger.debug('execute operator')
         
         self.app = QtWidgets.QApplication.instance()
         # instance() gives the possibility to have multiple windows
@@ -82,8 +86,8 @@ class QtWindowEventLoop(bpy.types.Operator):
         self.widget = self._widget()
         self.widget.context = context
         
-        logging.debug(self.app)
-        logging.debug(self.widget)
+        logger.debug(self.app)
+        logger.debug(self.widget)
         
         # run modal
         wm = context.window_manager
