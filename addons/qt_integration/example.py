@@ -1,4 +1,5 @@
 import bpy
+import sys
 from PyQt5 import QtGui, QtWidgets, QtCore
 from qt_integration import QtWindowEventLoop
 
@@ -6,11 +7,10 @@ from qt_integration import QtWindowEventLoop
 class ExampleWidget(QtWidgets.QWidget):
     def __init__(self):
         super().__init__()
-        self.widget_close = None
         self.context = None
-        self.initUI()
+        self.configure()
         
-    def initUI(self):
+    def configure(self):
         self.resize(720, 300)
         self.setWindowTitle("QT Window")
         self.setWindowFlags(QtCore.Qt.WindowStaysOnTopHint)
@@ -24,11 +24,10 @@ class ExampleWidget(QtWidgets.QWidget):
         self.show()
     
     def closeEvent(self, event):
-        self.widget_close = True
         self.deleteLater()
 
 
-class CustomWindow(QtWindowEventLoop):
+class CustomWindowOperator(QtWindowEventLoop):
     bl_idname = 'screen.custom_window'
     bl_label = 'Custom window'
     
@@ -50,5 +49,5 @@ class QtPanelExample(bpy.types.Panel):
 
 if __name__ == '__main__':
     app = QtWidgets.QApplication(sys.argv)
-    window = ExempleWidget()
+    window = ExampleWidget()
     sys.exit(app.exec())

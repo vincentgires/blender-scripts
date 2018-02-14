@@ -55,13 +55,18 @@ class QtWindowEventLoop(bpy.types.Operator):
     bl_idname = 'screen.qt_event_loop'
     bl_label = 'PyQt Event Loop'
     _timer = None
+    _close = None
     
     def __init__(self, widget):
         self._widget = widget
     
+    def close(self):
+        self._close = True
+    
     def modal(self, context, event):
         wm = context.window_manager
-        if self.widget.widget_close:
+        
+        if self._close:
             logger.debug('cancel modal operator')
             wm.event_timer_remove(self._timer)
             return {'CANCELLED'}
@@ -85,6 +90,7 @@ class QtWindowEventLoop(bpy.types.Operator):
         
         self.widget = self._widget()
         self.widget.context = context
+        self.widget.destroyed.connect(self.close)
         
         logger.debug(self.app)
         logger.debug(self.widget)
@@ -101,7 +107,7 @@ def register():
     bpy.utils.register_module(__name__)
     
     from qt_integration import example
-    bpy.utils.register_class(example.CustomWindow)
+    bpy.utils.register_class(example.CustomWindowOperator)
     bpy.utils.register_class(example.QtPanelExample)
     
 def unregister():
