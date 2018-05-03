@@ -253,7 +253,7 @@ def set_display_side(scene):
     
     sequences = scene.sequence_editor.sequences
     
-    if bpy.context.scene.display_side == 'wipe':
+    if scene.display_side == 'wipe':
         apply_wipe(scene)
         scene.render.resolution_x = scene.strip_width
         scene.render.resolution_y = scene.strip_height
@@ -399,7 +399,7 @@ class swap_strips(bpy.types.Operator):
         
         # swap strip type
         tmp_type = scene.stripA_load_type
-        scene.stripA_load_type = bpy.context.scene.stripB_load_type
+        scene.stripA_load_type = scene.stripB_load_type
         scene.stripB_load_type = tmp_type
         
         # reload strips
@@ -415,7 +415,6 @@ class swap_strips(bpy.types.Operator):
 
 #########################
 #########################
-
 
 
 def register():
