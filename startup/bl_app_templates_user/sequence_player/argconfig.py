@@ -5,9 +5,8 @@ import argparse
 def get_args():
     parser = argparse.ArgumentParser()
     parser.add_argument(
-        '-aces',
-        help='Set a custom ACES colorspace',
-        action='store_true',
+        '-ocio',
+        help='Set a custom OCIO config path',
         default=False,
         required=False)
     parser.add_argument(
