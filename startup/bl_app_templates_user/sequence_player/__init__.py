@@ -7,17 +7,9 @@ import sys
 
 from .ui import *
 from .operators import *
-from .argconfig import get_args
 
-args = get_args()
-supported_extensions = (
-    '.mov',
-    '.mp4',
-    '.png',
-    '.jpg',
-    '.jpeg',
-    '.exr',
-    '.hdr')
+supported_extensions = ('.mov', '.mp4', '.png',
+                        '.jpg', '.jpeg', '.exr', '.hdr')
 
 
 def check_file_extension(file):
@@ -107,35 +99,39 @@ def scene_update(scene):
     data = bpy.data
     movieclips = data.movieclips
 
-    if movieclips.is_updated:
-        logging.debug('movieclips is updated')
-        for area in context.screen.areas:
-            if area.type == 'CLIP_EDITOR':
-                for space in area.spaces:
-                    if space.type == 'CLIP_EDITOR':
-                        clip = space.clip
-                        filename = os.path.basename(clip.filepath)
-                        file, ext = os.path.splitext(filename)
-                        ext = ext.lower()
+    if not movieclips.is_updated:
+        return None
 
-                        clip.name = filename
-                        context.scene.frame_end = clip.frame_duration
+    logging.debug('movieclips is updated')
+    for area in context.screen.areas:
+        if area.type != 'CLIP_EDITOR':
+            continue
+        for space in area.spaces:
+            if space.type != 'CLIP_EDITOR':
+                continue
+            clip = space.clip
+            filename = os.path.basename(clip.filepath)
+            file, ext = os.path.splitext(filename)
+            ext = ext.lower()
 
-                        # set browser
-                        folderpath = os.path.dirname(clip.filepath)
-                        wm.sequence_player.directory_path = folderpath
+            clip.name = filename
+            context.scene.frame_end = clip.frame_duration
 
-                        # set colorspace
-                        if args.aces:
-                            if ext in ['.exr']:
-                                clip.colorspace_settings.name = 'ACES - ACEScg'
-                            else:
-                                clip.colorspace_settings.name = 'Output - sRGB (D60 sim.)'
-                        else:
-                            if ext in ['.exr']:
-                                clip.colorspace_settings.name = 'Linear'
-                            else:
-                                clip.colorspace_settings.name = 'sRGB'
+            # set browser
+            folderpath = os.path.dirname(clip.filepath)
+            wm.sequence_player.directory_path = folderpath
+
+            # set colorspace
+            if scene.display_settings.display_device == 'ACES':
+                if ext in ['.exr']:
+                    clip.colorspace_settings.name = 'ACES - ACEScg'
+                else:
+                    clip.colorspace_settings.name = 'Output - sRGB (D60 sim.)'
+            else:
+                if ext in ['.exr']:
+                    clip.colorspace_settings.name = 'Linear'
+                else:
+                    clip.colorspace_settings.name = 'sRGB'
 
 
 preview_collections = {}
