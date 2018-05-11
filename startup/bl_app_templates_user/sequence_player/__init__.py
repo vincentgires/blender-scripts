@@ -7,6 +7,7 @@ import sys
 
 from .ui import *
 from .operators import *
+from .argconfig import getargs
 
 supported_extensions = ('.mov', '.mp4', '.png',
                         '.jpg', '.jpeg', '.exr', '.hdr')

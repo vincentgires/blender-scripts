@@ -2,7 +2,7 @@ import sys
 import argparse
 
 
-def get_args():
+def getargs():
     parser = argparse.ArgumentParser()
     parser.add_argument(
         '-ocio',
@@ -24,3 +24,4 @@ def get_args():
         args = parser.parse_args()
 
     return args
+
