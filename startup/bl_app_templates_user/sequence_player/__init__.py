@@ -102,6 +102,9 @@ def scene_update(scene):
     if not movieclips.is_updated:
         return None
 
+    if not context.window:
+        return None
+
     logging.debug('movieclips is updated')
     for area in context.screen.areas:
         if area.type != 'CLIP_EDITOR':
