@@ -17,4 +17,3 @@ if path:
         wm.sequence_player.directory_path = path
     elif sequence_player.check_file_extension(path):
         bpy.ops.scene.load_clip(filepath=path)
-

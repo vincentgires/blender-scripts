@@ -24,4 +24,3 @@ def getargs():
         args = parser.parse_args()
 
     return args
-

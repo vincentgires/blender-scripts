@@ -1,5 +1,7 @@
 import bpy
 import os
+import shutil
+import json
 
 
 class UIBrowser(bpy.types.Panel):
@@ -113,3 +115,38 @@ class UISettings(bpy.types.Panel):
         scene = context.scene
         layout = self.layout
         layout.prop(user_preferences.system, 'memory_cache_limit')
+
+
+class UIMediaInfo(bpy.types.Panel):
+    bl_label = 'MediaInfo'
+    bl_space_type = 'CLIP_EDITOR'
+    bl_region_type = 'UI'
+    bl_category = 'MediaInfo'
+
+    @classmethod
+    def poll(cls, context):
+        for space in context.area.spaces:
+            if space.type == 'CLIP_EDITOR':
+                clip = space.clip
+                if not clip:
+                    return None
+        app_exist = shutil.which('mediainfo')
+        return app_exist
+
+    def draw(self, context):
+        scene = context.scene
+        area = context.area
+        layout = self.layout
+        layout.operator('scene.get_mediainfo')
+
+        for space in area.spaces:
+            if space.type == 'CLIP_EDITOR':
+                clip = space.clip
+                if clip.mediainfo:
+                    info = json.loads(clip.mediainfo)
+                    for i in info['media']['track']:
+                        col = layout.column(align=True)
+                        for j, v in i.items():
+                            row = col.row()
+                            row.label('{}: '.format(j))
+                            row.label(v)

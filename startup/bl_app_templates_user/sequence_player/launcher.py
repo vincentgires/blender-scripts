@@ -20,7 +20,7 @@ script_path = os.path.join(
     'setapp.py')
 
 command.extend(['--python', script_path, '--'])
-command.extend(sys.argv[1:]) # pass the same arguments to Blender
+command.extend(sys.argv[1:])  # pass the same arguments to Blender
 
 # set ACES config.ocio with EXR files
 if args.path:
@@ -34,4 +34,3 @@ if args.ocio:
     subprocess.call(command, env=env)
 else:
     subprocess.call(command)
-

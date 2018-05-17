@@ -93,6 +93,12 @@ class SequencePlayerProperties(bpy.types.PropertyGroup):
         default=True)
 
 
+class SequencePlayerMovieClipProperties(bpy.types.PropertyGroup):
+    bpy.types.MovieClip.mediainfo = bpy.props.StringProperty(
+        name='MediaInfo',
+        description='Informations on the media')
+
+
 @persistent
 def scene_update(scene):
     context = bpy.context
@@ -142,6 +148,7 @@ preview_collections = {}
 keymaps = []
 keep_panels = ['Footage Settings', 'Footage Information']
 
+
 def register():
     # Unregister all defaults panels
     for pt in bpy.types.Panel.__subclasses__():
@@ -160,6 +167,8 @@ def register():
     bpy.utils.register_class(FolderNavigation)
     bpy.utils.register_class(UISettings)
     bpy.utils.register_class(InteractiveTimeline)
+    bpy.utils.register_class(GetMediaInfo)
+    bpy.utils.register_class(UIMediaInfo)
 
     # Keymaps
     kc = bpy.context.window_manager.keyconfigs.default
@@ -188,6 +197,8 @@ def unregister():
     bpy.utils.unregister_class(FolderNavigation)
     bpy.utils.unregister_class(UISettings)
     bpy.utils.unregister_class(InteractiveTimeline)
+    bpy.utils.unregister_class(GetMediaInfo)
+    bpy.utils.unregister_class(UIMediaInfo)
 
     # Register all the defaults panels
     for pt in bpy.types.Panel.__subclasses__():

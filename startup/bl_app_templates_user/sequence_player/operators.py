@@ -1,6 +1,22 @@
 import bpy
 import os
 import logging
+import shutil
+from subprocess import Popen, PIPE
+
+
+def get_mediainfo(input):
+    mediainfo_app = 'mediainfo'
+    app_exist = shutil.which(mediainfo_app)
+    if app_exist:
+        command = [mediainfo_app, input, '--Output=JSON']
+        p = Popen(command, stdout=PIPE, stderr=PIPE)
+        output, errors = p.communicate()
+        if p.returncode:
+            raise Exception(errors)
+        else:
+            output = output.decode()
+            return output
 
 
 class LoadClip(bpy.types.Operator):
@@ -114,3 +130,24 @@ class InteractiveTimeline(bpy.types.Operator):
         self.mouse_position = ()
         context.window_manager.modal_handler_add(self)
         return {'RUNNING_MODAL'}
+
+
+class GetMediaInfo(bpy.types.Operator):
+    bl_idname = 'scene.get_mediainfo'
+    bl_label = 'Load'
+
+    @classmethod
+    def poll(cls, context):
+        app_exist = shutil.which('mediainfo')
+        return app_exist
+
+    def execute(self, context):
+        area = context.area
+        for space in area.spaces:
+            if space.type == 'CLIP_EDITOR':
+                clip = space.clip
+                filepath = bpy.path.abspath(clip.filepath)
+                info = get_mediainfo(filepath)
+                clip.mediainfo = info
+
+        return {'FINISHED'}
