@@ -143,10 +143,10 @@ class UIMediaInfo(bpy.types.Panel):
             if space.type == 'CLIP_EDITOR':
                 clip = space.clip
                 if clip.mediainfo:
-                    info = json.loads(clip.mediainfo)
-                    for i in info['media']['track']:
-                        col = layout.column(align=True)
-                        for j, v in i.items():
-                            row = col.row()
-                            row.label('{}: '.format(j))
-                            row.label(v)
+                    for line in clip.mediainfo.splitlines():
+                        if line == '':
+                            continue
+                        elif ':' not in line:
+                            box = layout.box()
+                            col = box.column(align=True)
+                        col.label(' '.join(line.split()))

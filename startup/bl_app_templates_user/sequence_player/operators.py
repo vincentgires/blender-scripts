@@ -9,7 +9,7 @@ def get_mediainfo(input):
     mediainfo_app = 'mediainfo'
     app_exist = shutil.which(mediainfo_app)
     if app_exist:
-        command = [mediainfo_app, input, '--Output=JSON']
+        command = [mediainfo_app, input]
         p = Popen(command, stdout=PIPE, stderr=PIPE)
         output, errors = p.communicate()
         if p.returncode:
