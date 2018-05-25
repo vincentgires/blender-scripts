@@ -31,7 +31,7 @@ bl_info = {
     'author': 'Vincent Gires',
     'description': 'Qt Integration',
     'version': (0, 0, 1),
-    'blender': (2, 7, 8),
+    'blender': (2, 7, 9),
     'location': '',
     'warning': '',
     'wiki_url': '',
@@ -42,13 +42,17 @@ logger = logging.getLogger(__name__)
 
 
 class QtWindowEventLoop(bpy.types.Operator):
+    '''This class is a modal operator that behave like QEventLoop and allow
+    PyQt to run inside Blender.'''
+
     bl_idname = 'screen.qt_event_loop'
     bl_label = 'PyQt Event Loop'
     _timer = None
     _close = None
 
-    def __init__(self, widget):
+    def __init__(self, widget, *args):
         self._widget = widget
+        self._args = args
 
     def close(self):
         self._close = True
@@ -59,7 +63,7 @@ class QtWindowEventLoop(bpy.types.Operator):
         if self._close:
             logger.debug('cancel modal operator')
             wm.event_timer_remove(self._timer)
-            return {'CANCELLED'}
+            return {'FINISHED'}
         else:
             logger.debug('process the events for Qt window')
             self.event_loop.processEvents()
@@ -78,7 +82,7 @@ class QtWindowEventLoop(bpy.types.Operator):
             self.app = QtWidgets.QApplication(['blender'])
         self.event_loop = QtCore.QEventLoop()
 
-        self.widget = self._widget()
+        self.widget = self._widget(*self._args)
         self.widget.context = context
         self.widget.destroyed.connect(self.close)
 

@@ -5,22 +5,17 @@ from qt_integration import QtWindowEventLoop
 
 
 class ExampleWidget(QtWidgets.QWidget):
-    def __init__(self):
+    def __init__(self, label_name):
         super().__init__()
         self.context = None
-        self.configure()
-
-    def configure(self):
         self.resize(720, 300)
         self.setWindowTitle("QT Window")
         self.setWindowFlags(QtCore.Qt.WindowStaysOnTopHint)
-
-        label = QtWidgets.QLabel('Label')
+        label = QtWidgets.QLabel(label_name)
         layout = QtWidgets.QVBoxLayout()
         layout.setContentsMargins(0, 0, 0, 0)
         layout.addWidget(label)
         self.setLayout(layout)
-
         self.show()
 
     def closeEvent(self, event):
@@ -32,7 +27,7 @@ class CustomWindowOperator(QtWindowEventLoop):
     bl_label = 'Custom window'
 
     def __init__(self):
-        super().__init__(widget=ExampleWidget)
+        super().__init__(ExampleWidget, 'LABEL_NAME')
 
 
 class QtPanelExample(bpy.types.Panel):
@@ -48,6 +43,5 @@ class QtPanelExample(bpy.types.Panel):
 
 
 if __name__ == '__main__':
-    app = QtWidgets.QApplication(sys.argv)
-    window = ExampleWidget()
-    sys.exit(app.exec())
+    bpy.utils.register_class(CustomWindowOperator)
+    bpy.ops.screen.custom_window()
