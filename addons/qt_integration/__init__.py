@@ -48,9 +48,10 @@ class QtWindowEventLoop(bpy.types.Operator):
     bl_idname = 'screen.qt_event_loop'
     bl_label = 'PyQt Event Loop'
 
-    def __init__(self, widget, *args):
+    def __init__(self, widget, *args, **kwargs):
         self._widget = widget
         self._args = args
+        self._kwargs = kwargs
 
     def close(self):
         self._close = True
@@ -77,9 +78,14 @@ class QtWindowEventLoop(bpy.types.Operator):
         # and close it one by one
 
         if not self.app:
+            # create the first instance
             self.app = QtWidgets.QApplication(['blender'])
-        self.event_loop = QtCore.QEventLoop()
 
+        if 'stylesheet' in self._kwargs:
+            stylesheet = self._kwargs['stylesheet']
+            self.set_stylesheet(self.app, stylesheet)
+
+        self.event_loop = QtCore.QEventLoop()
         self.widget = self._widget(*self._args)
         self.widget.context = context
         self.widget.destroyed.connect(self.close)
@@ -93,6 +99,14 @@ class QtWindowEventLoop(bpy.types.Operator):
         context.window_manager.modal_handler_add(self)
 
         return {'RUNNING_MODAL'}
+
+    def set_stylesheet(self, app, filepath):
+        file_qss = QtCore.QFile(filepath)
+        if file_qss.exists():
+            file_qss.open(QtCore.QFile.ReadOnly)
+            stylesheet = QtCore.QTextStream(file_qss).readAll()
+            app.setStyleSheet(stylesheet)
+            file_qss.close()
 
 
 def register():

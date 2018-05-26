@@ -9,7 +9,7 @@ class ExampleWidget(QtWidgets.QWidget):
         super().__init__()
         self.context = None
         self.resize(720, 300)
-        self.setWindowTitle("QT Window")
+        self.setWindowTitle('Qt Window')
         self.setWindowFlags(QtCore.Qt.WindowStaysOnTopHint)
         label = QtWidgets.QLabel(label_name)
         layout = QtWidgets.QVBoxLayout()
