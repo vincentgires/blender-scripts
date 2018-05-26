@@ -87,7 +87,6 @@ class QtWindowEventLoop(bpy.types.Operator):
 
         self.event_loop = QtCore.QEventLoop()
         self.widget = self._widget(*self._args)
-        self.widget.context = context
         self.widget.destroyed.connect(self.close)
 
         logger.debug(self.app)

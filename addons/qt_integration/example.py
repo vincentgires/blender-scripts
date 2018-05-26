@@ -7,16 +7,21 @@ from qt_integration import QtWindowEventLoop
 class ExampleWidget(QtWidgets.QWidget):
     def __init__(self, label_name):
         super().__init__()
-        self.context = None
         self.resize(720, 300)
         self.setWindowTitle('Qt Window')
         self.setWindowFlags(QtCore.Qt.WindowStaysOnTopHint)
-        label = QtWidgets.QLabel(label_name)
+        self.label = QtWidgets.QLabel(label_name)
+        self.label2 = QtWidgets.QLabel()
         layout = QtWidgets.QVBoxLayout()
         layout.setContentsMargins(0, 0, 0, 0)
-        layout.addWidget(label)
+        layout.addWidget(self.label)
+        layout.addWidget(self.label2)
         self.setLayout(layout)
         self.show()
+
+    def paintEvent(self, event):
+        print('upd')
+        self.label2.setText(bpy.context.object.name)
 
 
 class CustomWindowOperator(QtWindowEventLoop):
