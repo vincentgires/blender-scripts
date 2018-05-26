@@ -1,7 +1,7 @@
 import bpy
 import sys
 from PyQt5 import QtWidgets, QtCore
-from qt_integration import QtWindowEventLoop
+from qtutils import QtWindowEventLoop
 
 
 class ExampleWidget(QtWidgets.QWidget):
@@ -19,8 +19,8 @@ class ExampleWidget(QtWidgets.QWidget):
         self.setLayout(layout)
         self.show()
 
-    def paintEvent(self, event):
-        print('upd')
+    def enterEvent(self, event):
+        print('enterEvent')
         self.label2.setText(bpy.context.object.name)
 
 
