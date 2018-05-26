@@ -18,9 +18,6 @@ class ExampleWidget(QtWidgets.QWidget):
         self.setLayout(layout)
         self.show()
 
-    def closeEvent(self, event):
-        self.deleteLater()
-
 
 class CustomWindowOperator(QtWindowEventLoop):
     bl_idname = 'screen.custom_window'
