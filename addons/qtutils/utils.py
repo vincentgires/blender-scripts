@@ -12,8 +12,10 @@ logger = logging.getLogger('qtutils')
 
 
 class QtWindowEventLoop(bpy.types.Operator):
-    '''This class is a modal operator that behave like QEventLoop and allows
-    PyQt to run inside Blender.'''
+    '''
+    This class is a modal operator that behave like QEventLoop and allows
+    PyQt to run inside Blender.
+    '''
 
     bl_idname = 'screen.qt_event_loop'
     bl_label = 'PyQt Event Loop'
@@ -23,14 +25,12 @@ class QtWindowEventLoop(bpy.types.Operator):
         self._args = args
         self._kwargs = kwargs
 
-    def close(self):
-        self._close = True
-
     def modal(self, context, event):
         wm = context.window_manager
 
         if not self.widget.isVisible():
-            logger.debug('cancel modal operator')
+            # if widget is closed
+            logger.debug('finish modal operator')
             wm.event_timer_remove(self._timer)
             return {'FINISHED'}
         else:
@@ -56,8 +56,7 @@ class QtWindowEventLoop(bpy.types.Operator):
             self.set_stylesheet(self.app, stylesheet)
 
         self.event_loop = QtCore.QEventLoop()
-        self.widget = self._widget(*self._args)
-        self.widget.destroyed.connect(self.close)
+        self.widget = self._widget(*self._args, **self._kwargs)
 
         logger.debug(self.app)
         logger.debug(self.widget)

@@ -5,23 +5,24 @@ from qtutils import QtWindowEventLoop
 
 
 class ExampleWidget(QtWidgets.QWidget):
-    def __init__(self, label_name):
+    def __init__(self, label_name, text):
         super().__init__()
         self.resize(720, 300)
         self.setWindowTitle('Qt Window')
         self.setWindowFlags(QtCore.Qt.WindowStaysOnTopHint)
         self.label = QtWidgets.QLabel(label_name)
-        self.label2 = QtWidgets.QLabel()
+        self.label2 = QtWidgets.QLabel(text)
+        self.label3 = QtWidgets.QLabel()
         layout = QtWidgets.QVBoxLayout()
         layout.setContentsMargins(0, 0, 0, 0)
         layout.addWidget(self.label)
         layout.addWidget(self.label2)
+        layout.addWidget(self.label3)
         self.setLayout(layout)
         self.show()
 
     def enterEvent(self, event):
-        print('enterEvent')
-        self.label2.setText(bpy.context.object.name)
+        self.label3.setText(bpy.context.object.name)
 
 
 class CustomWindowOperator(QtWindowEventLoop):
@@ -29,7 +30,7 @@ class CustomWindowOperator(QtWindowEventLoop):
     bl_label = 'Custom window'
 
     def __init__(self):
-        super().__init__(ExampleWidget, 'LABEL_NAME')
+        super().__init__(ExampleWidget, 'LABEL_NAME', text='a text')
 
 
 class QtPanelExample(bpy.types.Panel):
