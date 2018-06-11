@@ -49,7 +49,7 @@ class QtWindowEventLoop(bpy.types.Operator):
 
         if not self.app:
             # create the first instance
-            self.app = QtWidgets.QApplication(['blender'])
+            self.app = QtWidgets.QApplication(sys.argv)
 
         if 'stylesheet' in self._kwargs:
             stylesheet = self._kwargs['stylesheet']
