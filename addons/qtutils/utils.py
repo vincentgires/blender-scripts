@@ -6,7 +6,10 @@ import logging
 try:
     from PyQt5 import QtWidgets, QtCore
 except ImportError:
-    raise ImportError('Cannot find the PyQt module')
+    try:
+        from PySide2 import QtWidgets, QtCore
+    except ImportError:
+        raise ImportError('Cannot find PyQt5 or PySide2 module')
 
 logger = logging.getLogger('qtutils')
 
@@ -14,11 +17,11 @@ logger = logging.getLogger('qtutils')
 class QtWindowEventLoop(bpy.types.Operator):
     '''
     This class is a modal operator that behave like QEventLoop and allows
-    PyQt to run inside Blender.
+    PyQt or PySide to run inside Blender.
     '''
 
     bl_idname = 'screen.qt_event_loop'
-    bl_label = 'PyQt Event Loop'
+    bl_label = 'Qt Event Loop'
 
     def __init__(self, widget, *args, **kwargs):
         self._widget = widget
