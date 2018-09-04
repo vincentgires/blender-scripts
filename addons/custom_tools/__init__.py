@@ -17,6 +17,18 @@
 # ##### END GPL LICENSE BLOCK #####
 
 
+import bpy
+from custom_tools.tools import object
+from custom_tools.tools import rendering
+from custom_tools.tools import material
+from custom_tools.tools import lighting
+from custom_tools.tools import animation
+from custom_tools.tools import look_through
+from custom_tools.tools import node
+from custom_tools.tools import image
+from custom_tools.tools import sequencer
+
+
 bl_info = {
     'name': 'Custom tools',
     'author': 'Vincent Gires',
@@ -30,23 +42,6 @@ bl_info = {
     'category': '3D View'}
 
 
-import bpy
-
-from custom_tools.tools import object
-from custom_tools.tools import rendering
-from custom_tools.tools import material
-from custom_tools.tools import lighting
-from custom_tools.tools import animation
-from custom_tools.tools import look_through
-from custom_tools.tools import node
-from custom_tools.tools import image
-from custom_tools.tools import sequencer
-
-
-## HEADER ##
-############
-
-
 def header_color_management(self, context):
     layout = self.layout
     layout.operator('scene.reset_exposure', emboss=False, text='Exposure')
@@ -55,47 +50,45 @@ def header_color_management(self, context):
     layout.prop(context.scene.view_settings, 'gamma', emboss=False, text='')
 
 
-## OPERATOR ##
-##############
+def render_panel(self, context):
+    layout = self.layout
+    layout.operator('render.render_gif')
 
 
 class CustomToolsResetExposure(bpy.types.Operator):
     bl_idname = 'scene.reset_exposure'
     bl_label = 'Reset Exposure'
-    
+
     def execute(self, context):
         context.scene.view_settings.exposure = 0
-        
         return{'FINISHED'}
+
 
 class CustomToolsResetGamma(bpy.types.Operator):
     bl_idname = 'scene.reset_gamma'
     bl_label = 'Reset Gamma'
-    
+
     def execute(self, context):
         context.scene.view_settings.gamma = 1
-        
         return{'FINISHED'}
-
-
-## REGISTRATION ##
-##################
 
 
 KEYMAPS = list()
 
+
 def register():
     bpy.utils.register_module(__name__)
     bpy.types.INFO_HT_header.append(header_color_management)
-    
-    ### KEYMAPS ###
+    bpy.types.RENDER_PT_render.append(render_panel)
+
+    # Keymaps
     kc = bpy.context.window_manager.keyconfigs.addon
-    
+
     km = kc.keymaps.new(name='Node Editor', space_type='NODE_EDITOR')
     kmi = km.keymap_items.new('node.double_click',
                               'ACTIONMOUSE', 'DOUBLE_CLICK')
     KEYMAPS.append((km, kmi))
-    
+
     km = kc.keymaps.new(name='Window', space_type='EMPTY')
     kmi = km.keymap_items.new('compo_node_transform_grab.call', 'G', 'PRESS')
     KEYMAPS.append((km, kmi))
@@ -104,8 +97,9 @@ def register():
 def unregister():
     bpy.utils.unregister_module(__name__)
     bpy.types.INFO_HT_header.remove(header_color_management)
-    
-    ### KEYMAPS ###
+    bpy.types.RENDER_PT_render.remove(render_panel)
+
+    # Keymaps
     for km, kmi in KEYMAPS:
         km.keymap_items.remove(kmi)
     KEYMAPS.clear()

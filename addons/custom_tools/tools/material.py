@@ -23,58 +23,46 @@
 import bpy
 
 
-## PANEL ##
-###########
-
-
 class View3dCustomPanelMaterial(bpy.types.Panel):
     bl_label = 'Material'
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'TOOLS'
     bl_category = 'Custom'
-    
+
     def draw(self, context):
         layout = self.layout
         layout.operator('scene.customtools_set_material')
 
 
-## OPERATOR ##
-##############
-
-
 class CustomToolsSetMeterial(bpy.types.Operator):
     bl_idname = 'scene.customtools_set_material'
     bl_label = 'Set material'
-    
+
     apply = bpy.props.EnumProperty(
         items=(
             ('selected', 'Selected', 'Selected object'),
-            ('active', 'Active', 'Active object'),
-            ),
-        name='Apply'
-        )
-    
-    
+            ('active', 'Active', 'Active object')),
+        name='Apply')
+
     def item_cb(self, context):
         return [(mat.name, mat.name, '') for mat in self.material_item]
-    
+
     material_enum = bpy.props.EnumProperty(items=item_cb, name='Material')
     material_item = bpy.props.CollectionProperty(
         type=bpy.types.PropertyGroup, name='number')
-    
+
     def execute(self, context):
         if len(self.material_item) > 0:
             material = bpy.data.materials[self.material_enum]
-            print (material)
-            
+            print(material)
+
         return {'FINISHED'}
 
     def invoke(self, context, event):
-        
+
         self.material_item.clear()
         for material in bpy.data.materials:
             self.material_item.add().name = material.name
-            
-        return context.window_manager.invoke_props_dialog(self)
-        #return context.window_manager.invoke_search_popup(self)
 
+        return context.window_manager.invoke_props_dialog(self)
+        # return context.window_manager.invoke_search_popup(self)
