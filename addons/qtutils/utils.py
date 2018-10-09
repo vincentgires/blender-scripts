@@ -2,21 +2,13 @@ import bpy
 import sys
 import os
 import logging
-
-try:
-    from PyQt5 import QtWidgets, QtCore
-except ImportError:
-    try:
-        from PySide2 import QtWidgets, QtCore
-    except ImportError:
-        raise ImportError('Cannot find PyQt5 or PySide2 module')
+from Qt import QtWidgets, QtCore
 
 logger = logging.getLogger('qtutils')
 
 
 class QtWindowEventLoop(bpy.types.Operator):
-    '''
-    This class is a modal operator that behave like QEventLoop and allows
+    ''' This class is a modal operator that behave like QEventLoop and allows
     PyQt or PySide to run inside Blender.
     '''
 
