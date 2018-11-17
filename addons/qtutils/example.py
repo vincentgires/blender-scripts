@@ -1,6 +1,6 @@
 import bpy
 import sys
-from Qt import QtWidgets, QtCore
+from PySide2 import QtWidgets, QtCore
 from qtutils import QtWindowEventLoop
 
 

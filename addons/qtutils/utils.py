@@ -2,7 +2,15 @@ import bpy
 import sys
 import os
 import logging
-from Qt import QtWidgets, QtCore
+
+qt_binding = os.environ.get('QT_PREFERRED_BINDING')
+if qt_binding:
+    if qt_binding == 'PySide2':
+        from PySide2 import QtWidgets, QtCore
+    elif qt_binding == 'PyQt5':
+        from PyQt5 import QtWidgets, QtCore
+else:
+    from PySide2 import QtWidgets, QtCore
 
 logger = logging.getLogger('qtutils')
 
