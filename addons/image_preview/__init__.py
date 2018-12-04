@@ -57,7 +57,7 @@ def get_enum_previews_from_file(self, context):
     '''EnumProperty callback'''
 
     enum_items = []
-    if context is None:
+    if not context:
         return enum_items
     pcoll = preview_images['images']
     for index, image in enumerate(bpy.data.images):
