@@ -21,7 +21,8 @@ import bgl
 
 bl_info = {
     'name': 'Point Cloud',
-    'author': 'Vincent Gires',
+    'author': 'Vincent Girès',
+    'description': 'Generate cloud of vertices based on the position pass',
     'version': (0, 0, 1),
     'blender': (2, 7, 9),
     'location': 'Tool shelves (3D View, Image Editor)',
@@ -58,8 +59,8 @@ def draw_pointcloud_gl():
 
     detail = scene.point_cloud.point_detail
     length_full = len(cloud_coordinates)
-    length_detail = length_full*detail
-    step = length_full/length_detail
+    length_detail = length_full * detail
+    step = length_full / length_detail
     step = int(step)
     size = scene.point_cloud.point_size
 
@@ -145,14 +146,13 @@ def get_coordinates(context):
 
 
 def create_mesh(name, origin, verts, edges, faces):
-    me = bpy.data.meshes.new(name+'Mesh')
+    me = bpy.data.meshes.new(name + 'Mesh')
     ob = bpy.data.objects.new(name, me)
     ob.location = origin
     ob.show_name = True
     bpy.context.scene.objects.link(ob)
     me.from_pydata(verts, edges, faces)
     me.update(calc_edges=True)
-
     return ob
 
 

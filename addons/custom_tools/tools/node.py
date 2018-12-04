@@ -452,7 +452,7 @@ class CustomToolsCompoNodeColorPicker(bpy.types.Operator):
             y = int(size_y * uv[1]) % size_y
 
             offset = (y * size_x + x) * 4
-            pixels = img.pixels[offset:offset+4]
+            pixels = img.pixels[offset:offset + 4]
             pixels = [pixels[0], pixels[1], pixels[2]]
 
             selected_input = scene.node_tree.nodes.active.inputs
@@ -488,7 +488,7 @@ class CustomToolsCompoNodeColorPicker(bpy.types.Operator):
 
 
 def distance2d(A, B):
-    distance = math.sqrt((B[0]-A[0])**2 + (B[1]-A[1])**2)
+    distance = math.sqrt((B[0] - A[0]) ** 2 + (B[1] - A[1]) ** 2)
     return distance
 
 
@@ -662,8 +662,8 @@ class CustomToolsCompoNodeTransformGrab(bpy.types.Operator):
 
         view2d = context.region.view2d
         self.init_pos_x, self.init_pos_y = view2d.view_to_region(
-            active_node.inputs['X'].default_value/img_size_x + 0.5,
-            active_node.inputs['Y'].default_value/img_size_y + 0.5)
+            active_node.inputs['X'].default_value / img_size_x + 0.5,
+            active_node.inputs['Y'].default_value / img_size_y + 0.5)
 
         self.snap_axis_x = False
         self.snap_axis_y = False

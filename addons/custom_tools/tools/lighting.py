@@ -110,8 +110,9 @@ class View3dCustomPanelLightingLights(bpy.types.Panel):
                     'scene.customtools_look_through', text='', icon='FORWARD')
                 look_through_btn.object_name = obj.name
 
-                row.prop(obj.data, 'type', expand=False,
-                         icon='LAMP_'+obj.data.type, text='', icon_only=True)
+                row.prop(
+                    obj.data, 'type', expand=False,
+                    icon='LAMP_' + obj.data.type, text='', icon_only=True)
 
                 if obj.data.type == 'AREA':
                     row = col.row(align=True)
@@ -293,66 +294,69 @@ def aim_normal(context, event, object_name, ray_max=1000.0, offset=-1):
 
     for obj, matrix in visible_objects_and_duplis():
 
-        if obj.type == 'MESH':
-            hit, normal, face_index = obj_ray_cast(obj, matrix)
-            if hit is not None:
-                hit_world = matrix * hit
-                length_squared = (hit_world - ray_origin).length_squared
-                if best_obj is None or length_squared < best_length_squared:
-                    best_length_squared = length_squared
-                    best_obj = obj
+        if obj.type != 'MESH':
+            continue
 
-                    # object = context.scene.objects.active
-                    origin_scale = object.scale.copy()
+        hit, normal, face_index = obj_ray_cast(obj, matrix)
+        if not hit:
+            continue
 
-                    # apply target local coordinate
-                    normal = best_obj.matrix_world.to_3x3() * normal
-                    normal = normal * -1
-                    normal = normal.copy()
+        hit_world = matrix * hit
+        length_squared = (hit_world - ray_origin).length_squared
+        if best_obj is None or length_squared < best_length_squared:
+            best_length_squared = length_squared
+            best_obj = obj
 
-                    # rotation
+            # object = context.scene.objects.active
+            origin_scale = object.scale.copy()
 
-                    vect_x = 1
-                    vect_y = 1
-                    vect_z = 1
+            # apply target local coordinate
+            normal = best_obj.matrix_world.to_3x3() * normal
+            normal = normal * -1
+            normal = normal.copy()
 
-                    y_vect_x = (normal.y*vect_z)-(normal.z*vect_y)
-                    y_vect_y = (normal.z*vect_x)-(normal.x*vect_z)
-                    y_vect_z = (normal.x*vect_y)-(normal.y*vect_x)
+            # rotation
+            vect_x = 1
+            vect_y = 1
+            vect_z = 1
 
-                    x_vect_x = (normal.y*y_vect_z)-(normal.z*y_vect_y)
-                    x_vect_y = (normal.z*y_vect_x)-(normal.x*y_vect_z)
-                    x_vect_z = (normal.x*y_vect_y)-(normal.y*y_vect_x)
+            y_vect_x = (normal.y * vect_z) - (normal.z * vect_y)
+            y_vect_y = (normal.z * vect_x) - (normal.x * vect_z)
+            y_vect_z = (normal.x * vect_y) - (normal.y * vect_x)
 
-                    y_vect_normalize = math.sqrt((y_vect_x * y_vect_x) \
-                        + (y_vect_y * y_vect_y) + (y_vect_z * y_vect_z))
-                    x_vect_normalize = math.sqrt((x_vect_x * x_vect_x) \
-                        + (x_vect_y * x_vect_y) + (x_vect_z * x_vect_z))
+            x_vect_x = (normal.y * y_vect_z) - (normal.z * y_vect_y)
+            x_vect_y = (normal.z * y_vect_x) - (normal.x * y_vect_z)
+            x_vect_z = (normal.x * y_vect_y) - (normal.y * y_vect_x)
 
-                    matrix = mathutils.Matrix().to_3x3()
-                    matrix.row[0] = (
-                        (x_vect_x/x_vect_normalize,
-                         y_vect_x/y_vect_normalize,
-                         normal.x))
-                    matrix.row[1] = (
-                        (x_vect_y/x_vect_normalize,
-                         y_vect_y/y_vect_normalize,
-                         normal.y))
-                    matrix.row[2] = (
-                        (x_vect_z/x_vect_normalize,
-                         y_vect_z/y_vect_normalize,
-                         normal.z))
+            y_vect_normalize = math.sqrt((y_vect_x * y_vect_x) \
+                + (y_vect_y * y_vect_y) + (y_vect_z * y_vect_z))
+            x_vect_normalize = math.sqrt((x_vect_x * x_vect_x) \
+                + (x_vect_y * x_vect_y) + (x_vect_z * x_vect_z))
 
-                    object.matrix_world = matrix.to_4x4()
+            matrix = mathutils.Matrix().to_3x3()
+            matrix.row[0] = (
+                (x_vect_x / x_vect_normalize,
+                 y_vect_x / y_vect_normalize,
+                 normal.x))
+            matrix.row[1] = (
+                (x_vect_y / x_vect_normalize,
+                 y_vect_y / y_vect_normalize,
+                 normal.y))
+            matrix.row[2] = (
+                (x_vect_z / x_vect_normalize,
+                 y_vect_z / y_vect_normalize,
+                 normal.z))
 
-                    # position
-                    object.location = hit_world
-                    for i in range(0, 3):
-                        object.location[i] = object.location[i] \
-                            + (offset * normal[i])
+            object.matrix_world = matrix.to_4x4()
 
-                    # scale
-                    object.scale = origin_scale
+            # position
+            object.location = hit_world
+            for i in range(0, 3):
+                object.location[i] = object.location[i] \
+                    + (offset * normal[i])
+
+            # scale
+            object.scale = origin_scale
 
 
 def set_header(context, offset):
