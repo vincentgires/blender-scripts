@@ -216,8 +216,8 @@ class CustomToolsSelectLight(bpy.types.Operator):
 
     @classmethod
     def poll(cls, context):
-        return (context.object is not None and
-                context.object.mode == 'OBJECT')
+        ob = context.object
+        return ob and ob.mode == 'OBJECT'
 
     def execute(self, context):
         for obj in context.scene.objects:
@@ -303,7 +303,7 @@ def aim_normal(context, event, object_name, ray_max=1000.0, offset=-1):
 
         hit_world = matrix * hit
         length_squared = (hit_world - ray_origin).length_squared
-        if best_obj is None or length_squared < best_length_squared:
+        if not best_obj or length_squared < best_length_squared:
             best_length_squared = length_squared
             best_obj = obj
 
@@ -377,8 +377,8 @@ class CustomToolsAimNormal(bpy.types.Operator):
 
     @classmethod
     def poll(cls, context):
-        return (context.object is not None and
-                context.object.mode == 'OBJECT')
+        ob = context.object
+        return ob and ob.mode == 'POSE'
 
     def modal(self, context, event):
 
@@ -438,7 +438,7 @@ class CustomToolsLookThrough(bpy.types.Operator):
 
     @classmethod
     def poll(cls, context):
-        return (context.object is not None)
+        return context.object
 
     def execute(self, context):
         context.space_data.lock_camera_and_layers = False

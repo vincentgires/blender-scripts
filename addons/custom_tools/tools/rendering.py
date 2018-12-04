@@ -48,8 +48,8 @@ class CustomToolsSetObjectId(bpy.types.Operator):
 
     @classmethod
     def poll(cls, context):
-        return (context.object is not None and
-                context.object.mode == 'OBJECT')
+        ob = context.object
+        return ob and ob.mode == 'OBJECT'
 
     def execute(self, context):
         cpt = 1
@@ -68,8 +68,8 @@ class CustomToolsSetMaterialId(bpy.types.Operator):
 
     @classmethod
     def poll(cls, context):
-        return (context.object is not None and
-                context.object.mode == 'OBJECT')
+        ob = context.object
+        return ob and ob.mode == 'OBJECT'
 
     def execute(self, context):
         cpt = 1

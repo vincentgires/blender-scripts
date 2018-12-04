@@ -240,8 +240,8 @@ class CustomToolsGetMaskFromNode(bpy.types.Operator):
 
     @classmethod
     def poll(cls, context):
-        return (context.scene.node_tree.nodes.active is not None and
-                context.scene.node_tree.nodes.active.type == 'MASK')
+        active_node = context.scene.node_tree.nodes.active
+        return active_node and active_node.type == 'MASK'
 
     def execute(self, context):
         target_mask = context.scene.node_tree.nodes.active.mask
@@ -259,7 +259,7 @@ class CustomToolsGetImageFromCompositorNode(bpy.types.Operator):
     @classmethod
     def poll(cls, context):
         active_node = context.scene.node_tree.nodes.active
-        return active_node is not None and active_node.type == 'IMAGE'
+        return active_node and active_node.type == 'IMAGE'
 
     def execute(self, context):
         target_image = context.scene.node_tree.nodes.active.image
@@ -279,7 +279,7 @@ class CustomToolsGetImageFromMaterialNode(bpy.types.Operator):
             return False
 
         active_material = context.object.active_material
-        if (context.object is not None and active_material):
+        if context.object and active_material:
             if active_material.use_nodes:
                 active_node = active_material.node_tree.nodes.active
                 if active_node:

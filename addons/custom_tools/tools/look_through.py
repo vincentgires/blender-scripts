@@ -56,7 +56,7 @@ class CustomToolsLookThroughSelected(bpy.types.Operator):
 
     @classmethod
     def poll(cls, context):
-        return (context.object is not None)
+        return context.object
 
     def execute(self, context):
         context.space_data.lock_camera_and_layers = False
@@ -90,7 +90,7 @@ class CustomToolsSetActiveCamera(bpy.types.Operator):
 
     @classmethod
     def poll(cls, context):
-        return (context.object is not None)
+        return context.object
 
     def execute(self, context):
 
@@ -154,7 +154,7 @@ class CustomToolsRemoveLocalCamera(bpy.types.Operator):
 
     @classmethod
     def poll(cls, context):
-        return (context.space_data.camera is not None)
+        return context.space_data.camera
 
     def execute(self, context):
         context.space_data.camera = None

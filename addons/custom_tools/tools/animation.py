@@ -52,8 +52,8 @@ class CustomToolsResetPose(bpy.types.Operator):
 
     @classmethod
     def poll(cls, context):
-        return (context.object is not None and
-                context.object.mode == 'POSE')
+        ob = context.object
+        return ob and ob.mode == 'POSE'
 
     def execute(self, context):
         for pose_bone in context.selected_pose_bones:
@@ -107,8 +107,8 @@ class CustomToolsPoseToEmpty(bpy.types.Operator):
 
     @classmethod
     def poll(cls, context):
-        return (context.object is not None and
-                context.object.mode == 'POSE')
+        ob = context.object
+        return ob and ob.mode == 'POSE'
 
     def execute(self, context):
         active_armature = context.active_object

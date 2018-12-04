@@ -54,8 +54,8 @@ class CustomToolsResetObjects(bpy.types.Operator):
 
     @classmethod
     def poll(cls, context):
-        return (context.object is not None and
-                context.object.mode == 'OBJECT')
+        ob = context.object
+        return ob and ob.mode == 'OBJECT'
 
     def execute(self, context):
         for obj in context.selected_objects:
@@ -75,7 +75,7 @@ class CustomToolsShowName(bpy.types.Operator):
 
     @classmethod
     def poll(cls, context):
-        return (context.object is not None)
+        return context.object
 
     def execute(self, context):
         for obj in context.selected_objects:
@@ -91,7 +91,7 @@ class CustomToolsHideName(bpy.types.Operator):
 
     @classmethod
     def poll(cls, context):
-        return (context.object is not None)
+        return context.object
 
     def execute(self, context):
         for obj in context.selected_objects:
@@ -107,7 +107,7 @@ class CustomToolsShowWire(bpy.types.Operator):
 
     @classmethod
     def poll(cls, context):
-        return (context.object is not None)
+        return context.object
 
     def execute(self, context):
         for obj in context.selected_objects:
@@ -124,7 +124,7 @@ class CustomToolsHideWire(bpy.types.Operator):
 
     @classmethod
     def poll(cls, context):
-        return (context.object is not None)
+        return context.object
 
     def execute(self, context):
         for obj in context.selected_objects:
