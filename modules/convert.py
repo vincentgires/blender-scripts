@@ -12,7 +12,8 @@ elif sys.platform.startswith('win'):
     MAGICK_BIN = 'magick.exe'
 
 
-def sequence_to_gif(inputs, output, fps=15, optimize=True, depth=8):
+def sequence_to_gif(
+        inputs, output, fps=15, optimize=True, depth=8, bounce=False):
     ''' Convert image sequence to gif
     inputs can be folder or list of image path'''
 
@@ -27,6 +28,8 @@ def sequence_to_gif(inputs, output, fps=15, optimize=True, depth=8):
         '-delay', fps,
         '-loop', '0']
     command.extend(inputs)
+    if bounce:
+        command.extend(['-duplicate', '1,-2-1'])
     if optimize:
         command.extend(['-layers', 'optimize'])
     if depth:
