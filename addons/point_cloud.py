@@ -18,63 +18,71 @@
 
 import bpy
 import bgl
+import gpu
+from gpu_extras.batch import batch_for_shader
 
 bl_info = {
     'name': 'Point Cloud',
     'author': 'Vincent Girès',
     'description': 'Generate cloud of vertices based on the position pass',
     'version': (0, 0, 1),
-    'blender': (2, 7, 9),
+    'blender': (2, 80, 0),
     'location': 'Tool shelves (3D View, Image Editor)',
-    'warning': '',
-    'wiki_url': '',
-    'tracker_url': '',
     'category': '3D View'}
 
-cloud_coordinates = []
+cloud_coords = []
+cloud_colors = []
+cloud_shader = gpu.shader.from_builtin('3D_FLAT_COLOR')
+cloud_batch = None
 
 
 class PointCloudProperties(bpy.types.PropertyGroup):
-    color_pass = bpy.props.StringProperty(
+    color_pass: bpy.props.StringProperty(
         name='Color pass')
-    position_pass = bpy.props.StringProperty(
+    position_pass: bpy.props.StringProperty(
         name='Position pass')
-    point_detail = bpy.props.FloatProperty(
+    point_detail: bpy.props.FloatProperty(
         name='Detail',
         default=0.25,
         min=0.001,
         max=1.0)
-    point_size = bpy.props.IntProperty(
+    point_size: bpy.props.IntProperty(
         name='Size',
         default=1,
         min=1)
 
 
-def draw_pointcloud_gl():
-    context = bpy.context
-    scene = context.scene
+def draw_cloud():
+    if cloud_batch:
+        cloud_shader.bind()
+        cloud_batch.draw(cloud_shader)
 
-    if not cloud_coordinates:
-        return None
 
-    detail = scene.point_cloud.point_detail
-    length_full = len(cloud_coordinates)
-    length_detail = length_full * detail
-    step = length_full / length_detail
-    step = int(step)
-    size = scene.point_cloud.point_size
-
-    bgl.glPointSize(size)
-    bgl.glBegin(bgl.GL_POINTS)
-
-    for coord in cloud_coordinates[::step]:
-        position, color = coord
-        r, g, b = color
-        x, y, z = position
-        bgl.glColor3f(r, g, b)
-        bgl.glVertex3f(x, y, z)
-
-    bgl.glEnd()
+# def draw_pointcloud_gl():
+#     context = bpy.context
+#     scene = context.scene
+#
+#     if not cloud_coordinates:
+#         return None
+#
+#     detail = scene.point_cloud.point_detail
+#     length_full = len(cloud_coordinates)
+#     length_detail = length_full * detail
+#     step = length_full / length_detail
+#     step = int(step)
+#     size = scene.point_cloud.point_size
+#
+#     bgl.glPointSize(size)
+#     bgl.glBegin(bgl.GL_POINTS)
+#
+#     for coord in cloud_coordinates[::step]:
+#         position, color = coord
+#         r, g, b = color
+#         x, y, z = position
+#         bgl.glColor3f(r, g, b)
+#         bgl.glVertex3f(x, y, z)
+#
+#     bgl.glEnd()
 
 
 def get_positions(context):
@@ -92,7 +100,6 @@ def get_positions(context):
     context.window.cursor_set('WAIT')
 
     for value in position_pixels:
-
         if cpt_rgba <= 2:
             pixel_rgb.append(value)
 
@@ -101,7 +108,6 @@ def get_positions(context):
         if cpt_rgba == 3:
             coordinates.append(pixel_rgb)
             pixel_rgb = []
-
         elif cpt_rgba == 4:
             cpt_rgba = 0
 
@@ -135,7 +141,9 @@ def get_coordinates(context):
         cpt_rgba += 1
 
         if cpt_rgba == 3:
-            cloud_coordinates.append((pixel_rgb_position, pixel_rgb_color))
+            cloud_coords.append(pixel_rgb_position)
+            pixel_rgb_color.append(1.0)  # TODO: add alpha from image
+            cloud_colors.append(pixel_rgb_color)
             pixel_rgb_position = []
             pixel_rgb_color = []
 
@@ -150,7 +158,7 @@ def create_mesh(name, origin, verts, edges, faces):
     ob = bpy.data.objects.new(name, me)
     ob.location = origin
     ob.show_name = True
-    bpy.context.scene.objects.link(ob)
+    bpy.context.scene.collection.objects.link(ob)
     me.from_pydata(verts, edges, faces)
     me.update(calc_edges=True)
     return ob
@@ -158,9 +166,9 @@ def create_mesh(name, origin, verts, edges, faces):
 
 class PointCloud3DViewPanel(bpy.types.Panel):
     bl_label = 'Point Cloud'
-    bl_space_type = 'VIEW_3D'
-    bl_region_type = 'TOOLS'
-    bl_category = 'Custom'
+    bl_space_type = 'PROPERTIES'
+    bl_region_type = 'WINDOW'
+    bl_context = 'scene'
 
     def draw(self, context):
         scene = context.scene
@@ -177,7 +185,7 @@ class PointCloud3DViewPanel(bpy.types.Panel):
 
         col = layout.column(align=True)
         row = col.row(align=True)
-        text = 'Update cloud' if cloud_coordinates else 'Generate cloud'
+        text = 'Update cloud' if cloud_coords else 'Generate cloud'
         row.operator('scene.pointcloud_generate', text=text)
         row.operator('scene.pointcloud_clear', text='', icon='PANEL_CLOSE')
         col.prop(scene.point_cloud, 'point_detail', slider=True)
@@ -199,6 +207,10 @@ class PointCloudGenerateOpenGl(bpy.types.Operator):
     def execute(self, context):
         scene = context.scene
         coordinates = get_coordinates(context)
+        global cloud_batch
+        cloud_batch = batch_for_shader(
+            cloud_shader, 'POINTS',
+            {'pos': cloud_coords, 'color': cloud_colors})
         return{'FINISHED'}
 
 
@@ -209,10 +221,13 @@ class PointCloudClearOpenGl(bpy.types.Operator):
 
     @classmethod
     def poll(cls, context):
-        return cloud_coordinates
+        return cloud_coords
 
     def execute(self, context):
-        cloud_coordinates.clear()
+        cloud_coords.clear()
+        cloud_colors.clear()
+        global cloud_batch
+        cloud_batch = None
         return{'FINISHED'}
 
 
@@ -235,22 +250,30 @@ class PointCloudGenerateMesh(bpy.types.Operator):
         return{'FINISHED'}
 
 
-opengl_handle = [None]
+draw_handler = {}
+classes = (
+    PointCloudProperties,
+    PointCloud3DViewPanel,
+    PointCloudGenerateOpenGl,
+    PointCloudClearOpenGl,
+    PointCloudGenerateMesh)
 
 
 def register():
-    bpy.utils.register_module(__name__)
+    for cls in classes:
+        bpy.utils.register_class(cls)
     bpy.types.Scene.point_cloud = \
         bpy.props.PointerProperty(type=PointCloudProperties)
-    opengl_handle[0] = bpy.types.SpaceView3D.draw_handler_add(
-        draw_pointcloud_gl, (), 'WINDOW', 'POST_VIEW')
+    draw_handler['cloud'] = bpy.types.SpaceView3D.draw_handler_add(
+        draw_cloud, (), 'WINDOW', 'POST_VIEW')
 
 
 def unregister():
-    bpy.utils.unregister_module(__name__)
+    for cls in reversed(classes):
+        bpy.utils.unregister_class(cls)
     del bpy.types.Scene.point_cloud
     bpy.types.SpaceView3D.draw_handler_remove(
-        opengl_handle[0], 'WINDOW')
+        draw_handler['cloud'], 'WINDOW')
 
 
 if __name__ == '__main__':
