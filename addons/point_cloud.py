@@ -30,10 +30,11 @@ bl_info = {
     'location': 'Tool shelves (3D View, Image Editor)',
     'category': '3D View'}
 
-cloud_coords = []
-cloud_colors = []
-cloud_shader = gpu.shader.from_builtin('3D_FLAT_COLOR')
-cloud_batch = None
+pointcloud = {
+    'coords': [],
+    'colors': [],
+    'shader': gpu.shader.from_builtin('3D_FLAT_COLOR'),
+    'batch': None}
 
 
 class PointCloudProperties(bpy.types.PropertyGroup):
@@ -53,9 +54,9 @@ class PointCloudProperties(bpy.types.PropertyGroup):
 
 
 def draw_cloud():
-    if cloud_batch:
-        cloud_shader.bind()
-        cloud_batch.draw(cloud_shader)
+    if pointcloud['batch']:
+        pointcloud['shader'].bind()
+        pointcloud['batch'].draw(pointcloud['shader'])
 
 
 # def draw_pointcloud_gl():
@@ -141,9 +142,9 @@ def get_coordinates(context):
         cpt_rgba += 1
 
         if cpt_rgba == 3:
-            cloud_coords.append(pixel_rgb_position)
+            pointcloud['coords'].append(pixel_rgb_position)
             pixel_rgb_color.append(1.0)  # TODO: add alpha from image
-            cloud_colors.append(pixel_rgb_color)
+            pointcloud['colors'].append(pixel_rgb_color)
             pixel_rgb_position = []
             pixel_rgb_color = []
 
@@ -185,7 +186,7 @@ class PointCloud3DViewPanel(bpy.types.Panel):
 
         col = layout.column(align=True)
         row = col.row(align=True)
-        text = 'Update cloud' if cloud_coords else 'Generate cloud'
+        text = 'Update cloud' if pointcloud['coords'] else 'Generate cloud'
         row.operator('scene.pointcloud_generate', text=text)
         row.operator('scene.pointcloud_clear', text='', icon='PANEL_CLOSE')
         col.prop(scene.point_cloud, 'point_detail', slider=True)
@@ -207,10 +208,10 @@ class PointCloudGenerateOpenGl(bpy.types.Operator):
     def execute(self, context):
         scene = context.scene
         coordinates = get_coordinates(context)
-        global cloud_batch
-        cloud_batch = batch_for_shader(
-            cloud_shader, 'POINTS',
-            {'pos': cloud_coords, 'color': cloud_colors})
+        pointcloud['batch'] = batch_for_shader(
+            pointcloud['shader'], 'POINTS',
+            {'pos': pointcloud['coords'],
+             'color': pointcloud['colors']})
         return{'FINISHED'}
 
 
@@ -221,13 +222,12 @@ class PointCloudClearOpenGl(bpy.types.Operator):
 
     @classmethod
     def poll(cls, context):
-        return cloud_coords
+        return pointcloud['coords']
 
     def execute(self, context):
-        cloud_coords.clear()
-        cloud_colors.clear()
-        global cloud_batch
-        cloud_batch = None
+        pointcloud['coords'].clear()
+        pointcloud['colors'].clear()
+        pointcloud['batch'] = None
         return{'FINISHED'}
 
 
