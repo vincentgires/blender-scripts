@@ -31,10 +31,29 @@ bl_info = {
     'category': '3D View'}
 
 pointcloud = {
-    'coords': [],
+    'coords': [],  # reduced pixels for faster display
     'colors': [],
+    'coords_full': [],  # full pixels from the image
+    'colors_full': [],
     'shader': gpu.shader.from_builtin('3D_FLAT_COLOR'),
     'batch': None}
+
+
+def batch_pointcloud():
+    pointcloud['batch'] = batch_for_shader(
+        pointcloud['shader'], 'POINTS',
+        {'pos': pointcloud['coords'], 'color': pointcloud['colors']})
+
+
+def callback_point_detail(self, context):
+    detail = self.point_detail
+    length_full = len(pointcloud['coords_full'])
+    length_detail = length_full * detail
+    step = length_full / length_detail
+    step = int(step)
+    pointcloud['coords'] = pointcloud['coords_full'][::step]
+    pointcloud['colors'] = pointcloud['colors_full'][::step]
+    batch_pointcloud()
 
 
 class PointCloudProperties(bpy.types.PropertyGroup):
@@ -46,7 +65,8 @@ class PointCloudProperties(bpy.types.PropertyGroup):
         name='Detail',
         default=0.25,
         min=0.001,
-        max=1.0)
+        max=1.0,
+        update=callback_point_detail)
     point_size: bpy.props.IntProperty(
         name='Size',
         default=1,
@@ -54,36 +74,13 @@ class PointCloudProperties(bpy.types.PropertyGroup):
 
 
 def draw_cloud():
+    context = bpy.context
+    scene = context.scene
     if pointcloud['batch']:
         pointcloud['shader'].bind()
+        size = scene.point_cloud.point_size
+        bgl.glPointSize(size)
         pointcloud['batch'].draw(pointcloud['shader'])
-
-
-# def draw_pointcloud_gl():
-#     context = bpy.context
-#     scene = context.scene
-#
-#     if not cloud_coordinates:
-#         return None
-#
-#     detail = scene.point_cloud.point_detail
-#     length_full = len(cloud_coordinates)
-#     length_detail = length_full * detail
-#     step = length_full / length_detail
-#     step = int(step)
-#     size = scene.point_cloud.point_size
-#
-#     bgl.glPointSize(size)
-#     bgl.glBegin(bgl.GL_POINTS)
-#
-#     for coord in cloud_coordinates[::step]:
-#         position, color = coord
-#         r, g, b = color
-#         x, y, z = position
-#         bgl.glColor3f(r, g, b)
-#         bgl.glVertex3f(x, y, z)
-#
-#     bgl.glEnd()
 
 
 def get_positions(context):
@@ -116,7 +113,7 @@ def get_positions(context):
     return coordinates
 
 
-def get_coordinates(context):
+def set_coordinates_and_colors(context):
     scene = context.scene
     data = bpy.data
 
@@ -142,15 +139,17 @@ def get_coordinates(context):
         cpt_rgba += 1
 
         if cpt_rgba == 3:
-            pointcloud['coords'].append(pixel_rgb_position)
+            pointcloud['coords_full'].append(pixel_rgb_position)
             pixel_rgb_color.append(1.0)  # TODO: add alpha from image
-            pointcloud['colors'].append(pixel_rgb_color)
+            pointcloud['colors_full'].append(pixel_rgb_color)
             pixel_rgb_position = []
             pixel_rgb_color = []
 
         elif cpt_rgba == 4:
             cpt_rgba = 0
 
+    pointcloud['coords'] = pointcloud['coords_full']
+    pointcloud['colors'] = pointcloud['colors_full']
     context.window.cursor_set('DEFAULT')
 
 
@@ -207,11 +206,8 @@ class PointCloudGenerateOpenGl(bpy.types.Operator):
 
     def execute(self, context):
         scene = context.scene
-        coordinates = get_coordinates(context)
-        pointcloud['batch'] = batch_for_shader(
-            pointcloud['shader'], 'POINTS',
-            {'pos': pointcloud['coords'],
-             'color': pointcloud['colors']})
+        set_coordinates_and_colors(context)
+        batch_pointcloud()
         return{'FINISHED'}
 
 
