@@ -36,7 +36,7 @@ class CustomWindowOperator(QtWindowEventLoop):
 class QtPanelExample(bpy.types.Panel):
     bl_label = 'Qt'
     bl_space_type = 'VIEW_3D'
-    bl_region_type = 'TOOLS'
+    bl_region_type = 'UI'
     bl_category = 'Custom'
 
     def draw(self, context):

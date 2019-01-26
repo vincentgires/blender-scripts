@@ -21,23 +21,21 @@ from qtutils.utils import QtWindowEventLoop
 
 bl_info = {
     'name': 'qtutils',
-    'author': 'Vincent Gires',
+    'author': 'Vincent Girès',
     'description': 'Qt Integration',
     'version': (0, 0, 1),
-    'blender': (2, 7, 9),
-    'location': '',
-    'warning': '',
-    'wiki_url': '',
-    'tracker_url': '',
+    'blender': (2, 80, 0),
     'category': 'Qt'}
 
 
 def register():
-    bpy.utils.register_module(__name__)
+    bpy.utils.register_class(QtWindowEventLoop)
     from qtutils import example
     bpy.utils.register_class(example.CustomWindowOperator)
     bpy.utils.register_class(example.QtPanelExample)
 
 
 def unregister():
-    bpy.utils.unregister_module(__name__)
+    bpy.utils.unregister_class(QtWindowEventLoop)
+    bpy.utils.unregister_class(example.CustomWindowOperator)
+    bpy.utils.unregister_class(example.QtPanelExample)

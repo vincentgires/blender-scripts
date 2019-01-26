@@ -66,7 +66,7 @@ class QtWindowEventLoop(bpy.types.Operator):
 
         # run modal
         wm = context.window_manager
-        self._timer = wm.event_timer_add(1/120, context.window)
+        self._timer = wm.event_timer_add(1 / 120, window=context.window)
         context.window_manager.modal_handler_add(self)
 
         return {'RUNNING_MODAL'}
