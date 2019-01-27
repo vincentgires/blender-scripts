@@ -42,6 +42,13 @@ RGBA_STEP = 4  # image pixels gives 4 values for each pixel (r, g, b, a)
 XYZ_STEP = 3  # mesh creation needs only position values (x, y, z)
 
 
+def redraw_view_3d():
+    for screen in bpy.data.screens:
+        for area in screen.areas:
+            if area.type == 'VIEW_3D':
+                area.tag_redraw()
+
+
 def batch_pointcloud():
     pointcloud['batch'] = batch_for_shader(
         pointcloud['shader'], 'POINTS',
@@ -132,6 +139,8 @@ def set_coordinates_and_colors(context):
     pointcloud['colors'] = pointcloud['colors_full']
     context.window.cursor_set('DEFAULT')
 
+    redraw_view_3d()
+
 
 def create_mesh(name, origin, verts, edges, faces):
     me = bpy.data.meshes.new(name + 'Mesh')
@@ -204,6 +213,7 @@ class PointCloudClearOpenGl(bpy.types.Operator):
         pointcloud['coords'].clear()
         pointcloud['colors'].clear()
         pointcloud['batch'] = None
+        redraw_view_3d()
         return{'FINISHED'}
 
 
