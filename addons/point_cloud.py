@@ -38,6 +38,9 @@ pointcloud = {
     'shader': gpu.shader.from_builtin('3D_FLAT_COLOR'),
     'batch': None}
 
+RGBA_STEP = 4  # image pixels gives 4 values for each pixel (r, g, b, a)
+XYZ_STEP = 3  # mesh creation needs only position values (x, y, z)
+
 
 def batch_pointcloud():
     pointcloud['batch'] = batch_for_shader(
@@ -86,37 +89,25 @@ def draw_cloud():
 def get_positions(context):
     scene = context.scene
     data = bpy.data
-
     position_src = scene.point_cloud.position_pass
     position_data = data.images[position_src]
     position_pixels = list(position_data.pixels)
 
-    coordinates = []
-    cpt_rgba = 0
-    pixel_rgb = []
-
     context.window.cursor_set('WAIT')
-
-    for value in position_pixels:
-        if cpt_rgba <= 2:
-            pixel_rgb.append(value)
-
-        cpt_rgba += 1
-
-        if cpt_rgba == 3:
-            coordinates.append(pixel_rgb)
-            pixel_rgb = []
-        elif cpt_rgba == 4:
-            cpt_rgba = 0
-
+    coordinates = []
+    for i in range(0, len(position_pixels), RGBA_STEP):
+        pixel_rgb = []
+        for j in range(XYZ_STEP):
+            pixel_rgb.append(position_pixels[i + j])
+        coordinates.append(pixel_rgb)
     context.window.cursor_set('DEFAULT')
+
     return coordinates
 
 
 def set_coordinates_and_colors(context):
     scene = context.scene
     data = bpy.data
-
     position_src = scene.point_cloud.position_pass
     color_src = scene.point_cloud.color_pass
     position_data = data.images[position_src]
@@ -124,29 +115,18 @@ def set_coordinates_and_colors(context):
     position_pixels = list(position_data.pixels)
     color_pixels = list(color_data.pixels)
 
-    cpt_rgba = 0
-    pixel_rgb_position = []
-    pixel_rgb_color = []
-
     context.window.cursor_set('WAIT')
-
-    for value_position, value_color in zip(position_pixels, color_pixels):
-
-        if cpt_rgba <= 2:
-            pixel_rgb_position.append(value_position)
-            pixel_rgb_color.append(value_color)
-
-        cpt_rgba += 1
-
-        if cpt_rgba == 3:
-            pointcloud['coords_full'].append(pixel_rgb_position)
-            pixel_rgb_color.append(1.0)  # TODO: add alpha from image
-            pointcloud['colors_full'].append(pixel_rgb_color)
-            pixel_rgb_position = []
-            pixel_rgb_color = []
-
-        elif cpt_rgba == 4:
-            cpt_rgba = 0
+    pixels = list(zip(position_pixels, color_pixels))
+    for i in range(0, len(pixels), RGBA_STEP):
+        pixel_position = []
+        pixel_color = []
+        for j in range(RGBA_STEP):
+            position, color = pixels[i + j]
+            if j < XYZ_STEP:
+                pixel_position.append(position)
+            pixel_color.append(color)
+        pointcloud['coords_full'].append(pixel_position)
+        pointcloud['colors_full'].append(pixel_color)
 
     pointcloud['coords'] = pointcloud['coords_full']
     pointcloud['colors'] = pointcloud['colors_full']
