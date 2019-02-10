@@ -100,9 +100,9 @@
         </wcol_text>
         <wcol_option>
           <ThemeWidgetColors
-            outline="#373737"
-            inner="#666666ff"
-            inner_sel="#838383e6"
+            outline="#474747"
+            inner="#2b2b2bff"
+            inner_sel="#2b2b2bff"
             item="#ffffffff"
             text="#e6e6e6"
             text_sel="#ffffff"
