@@ -16,9 +16,7 @@ logger = logging.getLogger('qtutils')
 
 
 class QtWindowEventLoop(bpy.types.Operator):
-    ''' This class is a modal operator that behave like QEventLoop and allows
-    PyQt or PySide to run inside Blender.
-    '''
+    """Allows PyQt or PySide to run inside Blender"""
 
     bl_idname = 'screen.qt_event_loop'
     bl_label = 'Qt Event Loop'
