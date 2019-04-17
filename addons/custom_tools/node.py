@@ -1,240 +1,11 @@
-# ##### BEGIN GPL LICENSE BLOCK #####
-#
-#  This program is free software; you can redistribute it and/or
-#  modify it under the terms of the GNU General Public License
-#  as published by the Free Software Foundation; either version 2
-#  of the License, or (at your option) any later version.
-#
-#  This program is distributed in the hope that it will be useful,
-#  but WITHOUT ANY WARRANTY; without even the implied warranty of
-#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#  GNU General Public License for more details.
-#
-#  You should have received a copy of the GNU General Public License
-#  along with this program; if not, write to the Free Software Foundation,
-#  Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
-#
-# ##### END GPL LICENSE BLOCK #####
-
-# Author : Vincent Gires
-# www.vincentgires.com
-
-
 import bpy
 import bgl
 import blf
 import math
 
 
-class CustomToolsNodeProperties(bpy.types.PropertyGroup):
-    bpy.types.Node.custom_tools_viewer = bpy.props.BoolProperty(
-        name='Use',
-        description='Use this node in viewer list',
-        default=0)
-
-    bpy.types.Scene.color_picker_image = bpy.props.StringProperty(
-        name='Image')
-
-
-class NodeEditorCustomPanelTools(bpy.types.Panel):
-    bl_label = 'Tools'
-    bl_space_type = 'NODE_EDITOR'
-    bl_region_type = 'TOOLS'
-    bl_category = 'Custom'
-
-    def draw(self, context):
-        layout = self.layout
-        layout.operator('scene.customtools_copy_attributes')
-        row = layout.row(align=True)
-        left_btn = row.operator(
-            'scene.customtools_move_nodes', text=' ', icon='TRIA_LEFT')
-        left_btn.direction = 'left'
-        right_btn = row.operator(
-            'scene.customtools_move_nodes', text=' ', icon='TRIA_RIGHT')
-        right_btn.direction = 'right'
-        up_btn = row.operator(
-            'scene.customtools_move_nodes', text=' ', icon='TRIA_UP')
-        up_btn.direction = 'up'
-        down_btn = row.operator(
-            'scene.customtools_move_nodes', text=' ', icon='TRIA_DOWN')
-        down_btn.direction = 'down'
-
-
-class NodeEditorCustomPanelViewer(bpy.types.Panel):
-    bl_label = 'Viewer'
-    bl_space_type = 'NODE_EDITOR'
-    bl_region_type = 'TOOLS'
-    bl_category = 'Custom'
-
-    @classmethod
-    def poll(cls, context):
-        return (context.space_data.tree_type == 'CompositorNodeTree')
-
-    def draw(self, context):
-        layout = self.layout
-
-        active_node = context.active_node
-        if active_node:
-            if not active_node.custom_tools_viewer:
-                layout.prop(
-                    active_node,
-                    'custom_tools_viewer',
-                    text=active_node.name,
-                    icon='ZOOMIN')
-            else:
-                layout.prop(
-                    active_node,
-                    'custom_tools_viewer',
-                    text=active_node.name,
-                    icon='ZOOMOUT')
-
-        if context.scene.use_nodes:
-            for node in context.scene.node_tree.nodes:
-                if node.custom_tools_viewer:
-                    box = layout.box()
-                    row = box.row(align=True)
-                    if node.label is not '':
-                        node_name = node.label
-                    else:
-                        node_name = node.name
-
-                    button_name = row.operator(
-                        'scene.customtools_viewer_connection',
-                        emboss=False, text=node_name)
-                    button_name.node_name = node.name
-
-                    button_remove = row.operator(
-                        'scene.customtools_viewer_remove',
-                        icon='PANEL_CLOSE', emboss=False, text='')
-                    button_remove.node_name = node.name
-
-                    button_icon = row.operator(
-                        'scene.customtools_viewer_connection',
-                        icon='TRIA_RIGHT', emboss=False, text='')
-                    button_icon.node_name = node.name
-
-
-class ImageEditorCustomPanelDisplay(bpy.types.Panel):
-    bl_label = 'Display'
-    bl_space_type = 'IMAGE_EDITOR'
-    bl_region_type = 'TOOLS'
-    bl_category = 'Custom'
-
-    def draw(self, context):
-        layout = self.layout
-        col = layout.column(align=True)
-        col.operator('scene.customtools_display_viewer_node')
-        col.operator('scene.customtools_display_render_result')
-
-
-class ImageEditorCustomPanelCompositorNode(bpy.types.Panel):
-    bl_label = 'Compositor Node'
-    bl_space_type = 'IMAGE_EDITOR'
-    bl_region_type = 'TOOLS'
-    bl_category = 'Custom'
-
-    def draw(self, context):
-        scene = context.scene
-        layout = self.layout
-
-        if not scene.node_tree:
-            return None
-
-        if scene.node_tree.nodes.active:
-            active_node = scene.node_tree.nodes.active
-
-            layout.label(active_node.name)
-
-            col = layout.column(align=True)
-            col.operator('scene.customtools_get_mask_from_compositor_node')
-            col.operator('scene.customtools_get_image_from_compositor_node')
-            col.operator('scene.customtools_create_mask_node')
-
-            box = layout.box()
-            col = box.column(align=True)
-            col.label('Color Picker')
-            col.prop_search(context.scene, 'color_picker_image',
-                            bpy.data, 'images', icon='IMAGE_DATA')
-            for input in active_node.inputs:
-                if not input.links:
-                    op = col.operator(
-                        'scene.customtools_compo_node_color_picker',
-                        icon='EYEDROPPER', text=input.name)
-                    op.input_name = input.name
-
-
-class ImageEditorCustomPanelMaterialNode(bpy.types.Panel):
-    bl_label = 'Material Node'
-    bl_space_type = 'IMAGE_EDITOR'
-    bl_region_type = 'TOOLS'
-    bl_category = 'Custom'
-
-    def draw(self, context):
-        layout = self.layout
-        layout.operator('scene.customtools_get_image_from_material_node')
-
-
-class CustomToolsShowNode(bpy.types.Operator):
-    bl_idname = 'scene.customtools_copy_attributes'
-    bl_label = 'Copy attributes'
-    bl_description = 'Copy attributes from active node'
-
-    def execute(self, context):
-        selected_nodes = context.selected_nodes
-        active_node = context.active_node
-        scene = context.scene
-
-        if context.space_data.tree_type == 'CompositorNodeTree':
-            tree = scene.node_tree
-        elif context.space_data.tree_type == 'ShaderNodeTree':
-            if context.space_data.shader_type == 'OBJECT':
-                tree = context.object.active_material.node_tree
-            elif context.space_data.shader_type == 'WORLD':
-                tree = context.scene.world.node_tree
-        links = tree.links
-
-        type = ['VALUE', 'VECTOR', 'RGBA']
-        for index, input in enumerate(active_node.inputs):
-
-            for node in selected_nodes:
-
-                if input.type in type:
-                    if input.type == node.inputs[index].type:
-                        node.inputs[index].default_value = input.default_value
-
-                if input.is_linked:
-                    from_socket = input.links[-1].from_socket
-                    links.new(from_socket, node.inputs[index])
-
-        return{'FINISHED'}
-
-
-class CustomToolsMoveNodes(bpy.types.Operator):
-    bl_idname = 'scene.customtools_move_nodes'
-    bl_label = 'Move nodes left'
-    bl_description = 'Move selected nodes to the left'
-
-    direction = bpy.props.StringProperty(name='direction')
-
-    def execute(self, context):
-        selected_nodes = context.selected_nodes
-
-        step = 50
-        for node in selected_nodes:
-            if self.direction == 'left':
-                node.location[0] -= step
-            elif self.direction == 'right':
-                node.location[0] += step
-            elif self.direction == 'up':
-                node.location[1] += step
-            elif self.direction == 'down':
-                node.location[1] -= step
-
-        return{'FINISHED'}
-
-
-class CustomToolsGetMaskFromNode(bpy.types.Operator):
-    bl_idname = 'scene.customtools_get_mask_from_compositor_node'
+class GetMaskFromNode(bpy.types.Operator):
+    bl_idname = 'scene.get_mask_from_compositor_node'
     bl_label = 'Get mask'
     bl_description = 'Get mask from active node'
 
@@ -251,8 +22,8 @@ class CustomToolsGetMaskFromNode(bpy.types.Operator):
         return{'FINISHED'}
 
 
-class CustomToolsGetImageFromCompositorNode(bpy.types.Operator):
-    bl_idname = 'scene.customtools_get_image_from_compositor_node'
+class GetImageFromCompositorNode(bpy.types.Operator):
+    bl_idname = 'scene.get_image_from_compositor_node'
     bl_label = 'Get image'
     bl_description = 'Get image from active node'
 
@@ -268,8 +39,8 @@ class CustomToolsGetImageFromCompositorNode(bpy.types.Operator):
         return{'FINISHED'}
 
 
-class CustomToolsGetImageFromMaterialNode(bpy.types.Operator):
-    bl_idname = 'scene.customtools_get_image_from_material_node'
+class GetImageFromMaterialNode(bpy.types.Operator):
+    bl_idname = 'scene.get_image_from_material_node'
     bl_label = 'Get image'
     bl_description = 'Get image from active node'
 
@@ -293,41 +64,8 @@ class CustomToolsGetImageFromMaterialNode(bpy.types.Operator):
         return{'FINISHED'}
 
 
-class CustomToolsDisplayViewer(bpy.types.Operator):
-    bl_idname = 'scene.customtools_display_viewer_node'
-    bl_label = 'Display Viewer'
-    bl_description = 'Display Viewer Node'
-
-    @classmethod
-    def poll(cls, context):
-        for image in bpy.data.images:
-            if image.name == 'Viewer Node':
-                return True
-
-    def execute(self, context):
-        context.space_data.image = bpy.data.images['Viewer Node']
-        return{'FINISHED'}
-
-
-class CustomToolsDisplayRenderResult(bpy.types.Operator):
-    bl_idname = 'scene.customtools_display_render_result'
-    bl_label = 'Display Render Result'
-    bl_description = 'Display Render Result from Composite Node'
-
-    @classmethod
-    def poll(cls, context):
-        for image in bpy.data.images:
-            if image.name == 'Render Result':
-                return True
-
-    def execute(self, context):
-        context.space_data.image = bpy.data.images['Render Result']
-
-        return{'FINISHED'}
-
-
-class CustomToolsCreateMaskNode(bpy.types.Operator):
-    bl_idname = 'scene.customtools_create_mask_node'
+class CreateMaskNode(bpy.types.Operator):
+    bl_idname = 'scene.create_mask_node'
     bl_label = 'Create Mask node'
     bl_description = 'Create Mask node in the compositor'
 
@@ -350,7 +88,7 @@ class CustomToolsCreateMaskNode(bpy.types.Operator):
         return{'FINISHED'}
 
 
-class CustomToolsNodeDoubleClick(bpy.types.Operator):
+class DoubleClick(bpy.types.Operator):
     bl_idname = 'node.double_click'
     bl_label = 'Double Click on a node'
     bl_options = {'UNDO'}
@@ -383,39 +121,8 @@ class CustomToolsNodeDoubleClick(bpy.types.Operator):
         return {'FINISHED'}
 
 
-class CustomToolsViewerConnection(bpy.types.Operator):
-    bl_idname = 'scene.customtools_viewer_connection'
-    bl_label = 'Viewer Connection'
-    bl_description = 'Connect node to the viewer'
-
-    # Properties
-    node_name = bpy.props.StringProperty()
-
-    def execute(self, context):
-        node_tree = context.scene.node_tree
-        node_tree.nodes.active = node_tree.nodes[self.node_name]
-        bpy.ops.node.link_viewer()
-
-        return{'FINISHED'}
-
-
-class CustomToolsViewerRemove(bpy.types.Operator):
-    bl_idname = 'scene.customtools_viewer_remove'
-    bl_label = 'Remove'
-    bl_description = 'Remove from list'
-
-    # Properties
-    node_name = bpy.props.StringProperty()
-
-    def execute(self, context):
-        node_tree = context.scene.node_tree
-        node_tree.nodes[self.node_name].custom_tools_viewer = False
-
-        return{'FINISHED'}
-
-
-class CustomToolsCompoNodeColorPicker(bpy.types.Operator):
-    bl_idname = 'scene.customtools_compo_node_color_picker'
+class CompoNodeColorPicker(bpy.types.Operator):
+    bl_idname = 'scene.compo_node_color_picker'
     bl_label = 'Color Picker'
     bl_description = 'Pick the color and set the value to the selected node'
 
@@ -487,7 +194,7 @@ class CustomToolsCompoNodeColorPicker(bpy.types.Operator):
             return {'CANCELLED'}
 
 
-def distance2d(A, B):
+def _distance2d(A, B):
     distance = math.sqrt((B[0] - A[0]) ** 2 + (B[1] - A[1]) ** 2)
     return distance
 
@@ -536,7 +243,7 @@ def draw_callback_axis(self, context):
 
 
 class CustomToolsCompoNodeTransformGrab(bpy.types.Operator):
-    bl_idname = 'compo_node_transform_grab.call'
+    bl_idname = 'scene.compo_node_transform_grab'
     bl_label = 'Transform node grab modal'
 
     region_x_init = None
@@ -559,9 +266,9 @@ class CustomToolsCompoNodeTransformGrab(bpy.types.Operator):
         context.area.tag_redraw()
 
         self.mouse_pos_xy = (event.mouse_region_x, event.mouse_region_y)
-        self.distance_x_axis = distance2d(
+        self.distance_x_axis = _distance2d(
             self.mouse_pos_xy, (self.mouse_pos_xy[0], self.init_pos_y))
-        self.distance_y_axis = distance2d(
+        self.distance_y_axis = _distance2d(
             self.mouse_pos_xy, (self.init_pos_x, self.mouse_pos_xy[1]))
 
         # MOVE
