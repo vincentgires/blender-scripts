@@ -153,7 +153,8 @@ def create_mesh(name, origin, verts, edges, faces):
     return ob
 
 
-class PointCloud3DViewPanel(bpy.types.Panel):
+class ScenePropertiesPanel(bpy.types.Panel):
+    bl_idname = 'POINTCLOUD_PT_ScenePropertiesPanel'
     bl_label = 'Point Cloud'
     bl_space_type = 'PROPERTIES'
     bl_region_type = 'WINDOW'
@@ -239,7 +240,7 @@ class PointCloudGenerateMesh(bpy.types.Operator):
 draw_handler = {}
 classes = (
     PointCloudProperties,
-    PointCloud3DViewPanel,
+    ScenePropertiesPanel,
     PointCloudGenerateOpenGl,
     PointCloudClearOpenGl,
     PointCloudGenerateMesh)

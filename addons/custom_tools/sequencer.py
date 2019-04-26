@@ -3,6 +3,7 @@ import os
 
 
 class SequencerCustomPanel(bpy.types.Panel):
+    bl_idname = 'BLENDERDEV_PT_SequencerCustomPanel'
     bl_label = 'Custom'
     bl_space_type = 'SEQUENCE_EDITOR'
     bl_region_type = 'UI'
