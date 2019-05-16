@@ -159,6 +159,7 @@ class ScenePropertiesPanel(bpy.types.Panel):
     bl_space_type = 'PROPERTIES'
     bl_region_type = 'WINDOW'
     bl_context = 'scene'
+    bl_options = {'DEFAULT_CLOSED'}
 
     def draw(self, context):
         scene = context.scene
