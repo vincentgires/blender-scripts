@@ -53,7 +53,8 @@ classes = (
     render.RenderToGif,
     sequencer.SequencerCustomPanel,
     sequencer.OpenStripAsMovieclip,
-    sequencer.OpenStripAsCompositing
+    sequencer.OpenStripAsCompositing,
+    sequencer.DisableSceneStrips,
 )
 
 def register():

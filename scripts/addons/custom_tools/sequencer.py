@@ -13,6 +13,11 @@ class SequencerCustomPanel(bpy.types.Panel):
         layout = self.layout
         layout.operator('scene.open_strip_as_movieclip')
         layout.operator('scene.open_strip_as_compositing')
+        col = layout.column(align=True)
+        col.label(text='Scene strips')
+        row = col.row(align=True)
+        row.operator('scene.disable_scene_strips', text='Mute').mute = True
+        row.operator('scene.disable_scene_strips', text='Show').mute = False
 
 
 class OpenStripAsMovieclip(bpy.types.Operator):
@@ -69,4 +74,19 @@ class OpenStripAsCompositing(bpy.types.Operator):
         output_node = node_tree.nodes.new('CompositorNodeComposite')
         node_tree.links.new(movieclip_node.outputs[0], output_node.inputs[0])
 
+        return{'FINISHED'}
+
+
+class DisableSceneStrips(bpy.types.Operator):
+    bl_idname = 'BLENDERDEV_PT_disable_scene_strips'
+    bl_idname = 'scene.disable_scene_strips'
+    bl_label = 'Disable scene strips'
+
+    mute: bpy.props.BoolProperty(name='Mute', default=True)
+
+    def execute(self, context):
+        scene = context.scene
+        for strip in scene.sequence_editor.sequences_all:
+            if strip.type == 'SCENE':
+                strip.mute = self.mute
         return{'FINISHED'}
