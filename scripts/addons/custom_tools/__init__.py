@@ -52,8 +52,8 @@ classes = (
     ResetGamma,
     render.RenderToGif,
     sequencer.SequencerCustomPanel,
-    sequencer.CustomToolsOpenStripAsMovieClip
-
+    sequencer.OpenStripAsMovieclip,
+    sequencer.OpenStripAsCompositing
 )
 
 def register():
