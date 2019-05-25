@@ -55,6 +55,7 @@ classes = (
     sequencer.OpenStripAsMovieclip,
     sequencer.OpenStripAsCompositing,
     sequencer.DisableSceneStrips,
+    sequencer.SetActiveSceneFromStrip,
 )
 
 def register():

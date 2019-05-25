@@ -18,6 +18,7 @@ class SequencerCustomPanel(bpy.types.Panel):
         row = col.row(align=True)
         row.operator('scene.disable_scene_strips', text='Mute').mute = True
         row.operator('scene.disable_scene_strips', text='Show').mute = False
+        col.operator('scene.set_active_scene_from_strip', text='Set active')
 
 
 class OpenStripAsMovieclip(bpy.types.Operator):
@@ -89,4 +90,22 @@ class DisableSceneStrips(bpy.types.Operator):
         for strip in scene.sequence_editor.sequences_all:
             if strip.type == 'SCENE':
                 strip.mute = self.mute
+        return{'FINISHED'}
+
+
+class SetActiveSceneFromStrip(bpy.types.Operator):
+    bl_idname = 'BLENDERDEV_PT_set_active_scene_from_strip'
+    bl_idname = 'scene.set_active_scene_from_strip'
+    bl_label = 'Set active scene from selectip strip'
+
+    @classmethod
+    def poll(cls, context):
+        scene = context.scene
+        if scene.sequence_editor and scene.sequence_editor.active_strip:
+            return scene.sequence_editor.active_strip.type == 'SCENE'
+
+    def execute(self, context):
+        scene = context.scene
+        strip = scene.sequence_editor.active_strip
+        context.window.scene = strip.scene
         return{'FINISHED'}
