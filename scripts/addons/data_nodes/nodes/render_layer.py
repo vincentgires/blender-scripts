@@ -5,21 +5,21 @@ from data_nodes.utils import send_value
 
 
 class RenderLayersNode(Node):
-    '''Render Layers'''
+    """Render Layers"""
     bl_idname = 'RenderLayersNodeType'
     bl_label = 'Render Layers'
-    
-    def renderlayers_enum(self,context):
+
+    def renderlayers_enum(self, context):
         scene = context.scene
         items = [(layer.name, layer.name, '') for layer in scene.render.layers]
         return items
-    
+
     render_layers = bpy.props.EnumProperty(
-        items=renderlayers_enum, name = 'Layer')
-    
+        items=renderlayers_enum, name='Layer')
+
     def init(self, context):
         self.outputs.new('NodeSocketFloat', 'is_active')
-     
+
     def update(self):
         scene = bpy.context.scene
         active_layer = scene.render.layers.active.name
@@ -29,11 +29,9 @@ class RenderLayersNode(Node):
                     send_value(self.outputs, 1)
                 else:
                     send_value(self.outputs, 0)
-    
+
     def draw_buttons(self, context, layout):
-        layout.prop(self, "render_layers")
+        layout.prop(self, 'render_layers')
 
     def draw_label(self):
-        return "Render Layers"
-
-
+        return 'Render Layers'
