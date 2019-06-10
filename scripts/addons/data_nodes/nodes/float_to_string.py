@@ -19,7 +19,7 @@ class FloatToString(Node):
         self.outputs.new('NodeSocketString', 'String')
 
     def update(self):
-        input_value = self.inputs["Float"].default_value
+        input_value = self.inputs['Float'].default_value
         if self.round_prop:
             input_value = round(input_value)
         input_value = str(input_value)

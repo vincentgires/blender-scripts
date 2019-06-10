@@ -26,7 +26,7 @@ class Color(Node):
         send_value(self.outputs, self.color_prop)
 
     def draw_buttons(self, context, layout):
-        layout.prop(self, "color_prop")
+        layout.prop(self, 'color_prop')
 
     def draw_label(self):
         return "Color"

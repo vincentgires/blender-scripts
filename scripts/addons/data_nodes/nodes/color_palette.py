@@ -6,10 +6,10 @@ from data_nodes.utils import send_value
 class TemplateColorPaletteCollectionUL(bpy.types.UIList):
     def draw_item(self, context, layout, data, item,
                   icon, active_data, active_propname, index):
-        layout.prop(item, "name", text="", emboss=False)
+        layout.prop(item, 'name', text='', emboss=False)
         row = layout.row(align=True)
         for color_item in item.color_collection:
-            row.prop(color_item, "color", text="")
+            row.prop(color_item, 'color', text='')
 
 
 class ColorPalette(Node):
@@ -82,7 +82,7 @@ class ColorPalette(Node):
             row.operator('color_palette_clear_color.btn', text='', icon='X')
 
     def draw_label(self):
-        return "Color Palette"
+        return 'Color Palette'
 
 
 class CustomNodesAddPaletteItem(bpy.types.Operator):

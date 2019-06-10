@@ -77,7 +77,7 @@ class DataInputNode(Node):
             row.prop(self, 'settings', text='',
                      icon='TRIA_DOWN', emboss=False)
 
-            layout.prop(self, "data_enum")
+            layout.prop(self, 'data_enum')
 
             row = layout.row(align=True)
             row.prop_search(self, 'data_item', bpy.data, self.data_enum, text='')

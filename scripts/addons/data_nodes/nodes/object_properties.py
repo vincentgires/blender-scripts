@@ -135,7 +135,7 @@ class ObjectPropertiesNode(Node):
         row.prop_search(
             self, 'data_item', bpy.data, 'objects',
             icon='OBJECT_DATA', text='')
-        row.operator('get_object_to_data_node.btn', text="", icon='EYEDROPPER')
+        row.operator('get_object_to_data_node.btn', text='', icon='EYEDROPPER')
         layout.prop(self, 'displayProperty', text='Properties')
         if self.displayProperty:
             layout.prop(self, 'locationProperty')

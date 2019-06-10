@@ -13,7 +13,7 @@ class IntToFloat(Node):
         self.outputs.new('NodeSocketFloat', 'Float')
 
     def update(self):
-        input_value = self.inputs["Int"].default_value
+        input_value = self.inputs['Int'].default_value
         input_value = float(input_value)
         # Send data value to connected nodes
         send_value(self.outputs, input_value)

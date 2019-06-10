@@ -21,9 +21,9 @@ class Vector(Node):
     def update(self):
         if len(self.inputs) >= 3:
             # Send data value to connected nodes
-            x = self.inputs["X"].default_value
-            y = self.inputs["Y"].default_value
-            z = self.inputs["Z"].default_value
+            x = self.inputs['X'].default_value
+            y = self.inputs['Y'].default_value
+            z = self.inputs['Z'].default_value
             vector = mathutils.Vector((x, y, z))
             # Assign value to connected socket
             send_value(self.outputs, vector)
