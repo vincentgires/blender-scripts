@@ -77,7 +77,7 @@ class DataOutputNode(Node):
         else:
             row = layout.row()
             row.prop(self, 'settings', text='', icon='TRIA_RIGHT', emboss=False)
-            row.label(self.data_item)
+            row.label(text=self.data_item)
 
     def draw_buttons_ext(self, context, layout):
         layout.prop(self, 'data_enum')
