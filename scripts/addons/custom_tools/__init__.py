@@ -53,7 +53,7 @@ classes = (
     render.RenderToGif,
     sequencer.SequencerCustomPanel,
     sequencer.OpenStripAsMovieclip,
-    sequencer.OpenStripAsCompositing,
+    sequencer.AddStripAsCompositing,
     sequencer.DisableSceneStrips,
     sequencer.SetActiveSceneFromStrip,
 )

@@ -12,7 +12,7 @@ class SequencerCustomPanel(bpy.types.Panel):
     def draw(self, context):
         layout = self.layout
         layout.operator('scene.open_strip_as_movieclip')
-        layout.operator('scene.open_strip_as_compositing')
+        layout.operator('scene.add_strip_as_compositing')
         col = layout.column(align=True)
         col.label(text='Scene strips')
         row = col.row(align=True)
@@ -41,10 +41,10 @@ class OpenStripAsMovieclip(bpy.types.Operator):
         return{'FINISHED'}
 
 
-class OpenStripAsCompositing(bpy.types.Operator):
-    bl_idname = 'BLENDERDEV_PT_open_strip_as_compositing'
-    bl_idname = 'scene.open_strip_as_compositing'
-    bl_label = 'Open strip as a compositing scene'
+class AddStripAsCompositing(bpy.types.Operator):
+    bl_idname = 'BLENDERDEV_PT_add_strip_as_compositing'
+    bl_idname = 'scene.add_strip_as_compositing'
+    bl_label = 'Add strip as a compositing scene'
 
     @classmethod
     def poll(cls, context):
@@ -74,6 +74,10 @@ class OpenStripAsCompositing(bpy.types.Operator):
         movieclip_node.clip = movieclip
         output_node = node_tree.nodes.new('CompositorNodeComposite')
         node_tree.links.new(movieclip_node.outputs[0], output_node.inputs[0])
+
+        # Create scene on sequencer
+        sequence_editor.sequences.new_scene(
+            scene.name, scene, strip.channel + 1, strip.frame_start)
 
         return{'FINISHED'}
 
