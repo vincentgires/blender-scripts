@@ -1,5 +1,5 @@
 import bpy
-from qtutils.utils import QtWindowEventLoop
+from qtutils.core import QtWindowEventLoop
 
 bl_info = {
     'name': 'qtutils',
