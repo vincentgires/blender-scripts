@@ -140,7 +140,7 @@ class DataNodesAddInputSocket(bpy.types.Operator):
         selected_object = context.object
 
         # get attribute value and type
-        data_path = 'py.data.' + node.data_enum + '["' + node.data_item + '"]'
+        data_path = 'bpy.data.' + node.data_enum + '["' + node.data_item + '"]'
         data_path = eval(data_path)
         try:
             attribute = eval('data_path.' + node.attribute_property)
