@@ -21,7 +21,7 @@ class RenderToGif(bpy.types.Operator):
 
     def execute(self, context):
         scene = context.scene
-        output = scene.render.filepath
+        output = bpy.path.abspath(scene.render.filepath)
 
         # Set image sequence
         render_tmp = tempfile.mkdtemp()
