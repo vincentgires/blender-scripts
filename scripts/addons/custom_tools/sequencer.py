@@ -58,6 +58,7 @@ class AddStripAsCompositing(bpy.types.Operator):
         strip = sequence_editor.active_strip
 
         movieclip = data.movieclips.load(filepath=strip.filepath)
+        movieclip.colorspace_settings.name = strip.colorspace_settings.name
         x, y = movieclip.size
         scene = data.scenes.new(movieclip.name)
         scene.render.resolution_x = x
