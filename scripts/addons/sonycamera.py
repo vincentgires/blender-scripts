@@ -12,13 +12,13 @@ bl_info = {
     'category': 'Sequencer'}
 
 
-def find_xml(strip):
+def find_xml(filepath):
     SUFFIX = 'M01'
     XML_EXTS = ['.xml', '.XML']
-    filepath = bpy.path.abspath(strip.filepath).rsplit('.', 1)[0]
+    filepath_base = bpy.path.abspath(filepath).rsplit('.', 1)[0]
     for suffix in ['', SUFFIX]:  # first look for filename without suffix
         for ext in XML_EXTS:
-            xml_path = filepath + suffix + ext
+            xml_path = filepath_base + suffix + ext
             if os.path.exists(xml_path):
                 return xml_path
 
@@ -33,6 +33,14 @@ def get_info_from_xml(xml_path):
     for c in colorspace:
         info[c.attrib['name']] = c.attrib['value']
     return info
+
+
+def draw_info(layout, xml_info):
+    for k, v in xml_info.items():
+        col = layout.column(align=True)
+        row = col.row(align=True)
+        row.label(text=k)
+        row.label(text=v)
 
 
 class SequencerPropertiesPanel(bpy.types.Panel):
@@ -53,19 +61,33 @@ class SequencerPropertiesPanel(bpy.types.Panel):
         scene = context.scene
         strip = scene.sequence_editor.active_strip
         layout = self.layout
-        xml_path = find_xml(strip)
+        xml_path = find_xml(strip.filepath)
         if not xml_path:
             return
-        xml_info = get_info_from_xml(xml_path)
-        for k, v in xml_info.items():
-            col = layout.column(align=True)
-            row = col.row(align=True)
-            row.label(text=k)
-            row.label(text=v)
+        draw_info(layout, get_info_from_xml(xml_path))
+
+
+class FilebrowserPropertiesPanel(bpy.types.Panel):
+    bl_idname = 'SONYCAMERA_PT_FilebrowserPropertiesPanel'
+    bl_label = 'Sony'
+    bl_space_type = 'FILE_BROWSER'
+    bl_region_type = 'TOOLS'
+    bl_options = {'DEFAULT_CLOSED'}
+
+    def draw(self, context):
+        scene = context.scene
+        layout = self.layout
+        space = context.space_data
+        filepath = os.path.join(space.params.directory, space.params.filename)
+        xml_path = find_xml(filepath)
+        if not xml_path:
+            return
+        draw_info(layout, get_info_from_xml(xml_path))
 
 
 classes = [
-    SequencerPropertiesPanel]
+    SequencerPropertiesPanel,
+    FilebrowserPropertiesPanel]
 
 
 def register():
