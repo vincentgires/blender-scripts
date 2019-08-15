@@ -29,6 +29,11 @@ def get_info_from_xml(xml_path):
     info = {}
     model_attrib = root[6].attrib
     info[model_attrib['manufacturer']] = model_attrib['modelName']
+    videoformat = root[4]
+    info['fps'] = videoformat[1].attrib['captureFps']
+    info['resolution'] = '{}x{}'.format(
+        videoformat[2].attrib['pixel'],
+        videoformat[2].attrib['numOfVerticalLine'])
     colorspace = root[8][0]
     for c in colorspace:
         info[c.attrib['name']] = c.attrib['value']
