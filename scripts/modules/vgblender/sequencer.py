@@ -122,3 +122,17 @@ def load_movie_strip(
     strip.select = False
     strip.blend_type = blend_type
     return strip
+
+
+def create_adjustment_strip(scene):
+    active_strip = scene.sequence_editor.active_strip
+    if not active_strip:
+        return
+    sequences = scene.sequence_editor.sequences
+    strip = sequences.new_effect(
+        name='Adjustment',
+        type='ADJUSTMENT',
+        channel=active_strip.channel + 1,
+        frame_start=active_strip.frame_start,
+        frame_end=active_strip.frame_start + active_strip.frame_final_duration)
+    return strip
