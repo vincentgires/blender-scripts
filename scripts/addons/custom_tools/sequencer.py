@@ -22,7 +22,6 @@ class SequencerCustomPanel(bpy.types.Panel):
 
 
 class OpenStripAsMovieclip(bpy.types.Operator):
-    bl_idname = 'CUSTOMTOOLS_PT_open_strip_as_movieclip'
     bl_idname = 'scene.open_strip_as_movieclip'
     bl_label = 'Open strip as movieclip'
 
@@ -42,7 +41,6 @@ class OpenStripAsMovieclip(bpy.types.Operator):
 
 
 class AddStripAsCompositing(bpy.types.Operator):
-    bl_idname = 'CUSTOMTOOLS_PT_add_strip_as_compositing'
     bl_idname = 'scene.add_strip_as_compositing'
     bl_label = 'Add strip as a compositing scene'
 
@@ -84,7 +82,6 @@ class AddStripAsCompositing(bpy.types.Operator):
 
 
 class DisableSceneStrips(bpy.types.Operator):
-    bl_idname = 'CUSTOMTOOLS_PT_disable_scene_strips'
     bl_idname = 'scene.disable_scene_strips'
     bl_label = 'Disable scene strips'
 
@@ -99,7 +96,6 @@ class DisableSceneStrips(bpy.types.Operator):
 
 
 class SetActiveSceneFromStrip(bpy.types.Operator):
-    bl_idname = 'CUSTOMTOOLS_PT_set_active_scene_from_strip'
     bl_idname = 'scene.set_active_scene_from_strip'
     bl_label = 'Set active scene from selectip strip'
 
