@@ -12,8 +12,6 @@ class SequencerCustomPanel(bpy.types.Panel):
 
     def draw(self, context):
         layout = self.layout
-        layout.operator('scene.open_strip_as_movieclip')
-        layout.operator('scene.add_strip_as_compositing')
         col = layout.column(align=True)
         col.label(text='Scene strips')
         row = col.row(align=True)

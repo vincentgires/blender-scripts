@@ -35,6 +35,12 @@ def sequencer_add_menu_draw(self, context):
         text='Ajustment Layer from active')
 
 
+def sequencer_strip_menu_draw(self, context):
+    self.layout.separator()
+    self.layout.operator('scene.open_strip_as_movieclip')
+    self.layout.operator('scene.add_strip_as_compositing')
+
+
 class ResetExposure(bpy.types.Operator):
     bl_idname = 'scene.reset_exposure'
     bl_label = 'Reset Exposure'
@@ -72,6 +78,7 @@ def register():
     bpy.types.TOPBAR_HT_upper_bar.append(header_color_management)
     bpy.types.TOPBAR_MT_render.append(render_menu_draw)
     bpy.types.SEQUENCER_MT_add.append(sequencer_add_menu_draw)
+    bpy.types.SEQUENCER_MT_strip.append(sequencer_strip_menu_draw)
 
     # Keymaps
     #kc = bpy.context.window_manager.keyconfigs.addon
@@ -92,6 +99,7 @@ def unregister():
     bpy.types.INFO_HT_header.remove(header_color_management)
     bpy.types.TOPBAR_MT_render.remove(render_menu_draw)
     bpy.types.SEQUENCER_MT_add.remove(sequencer_add_menu_draw)
+    bpy.types.SEQUENCER_MT_strip.remove(sequencer_strip_menu_draw)
 
     # Keymaps
     for km, kmi in keymaps:
