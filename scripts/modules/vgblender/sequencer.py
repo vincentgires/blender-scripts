@@ -90,6 +90,7 @@ def load_image_strip(
     strip.select = False
     strip.blend_type = blend_type
     strip.frame_final_duration = length
+    return strip
 
 
 def load_image_sequence_strip(
