@@ -28,6 +28,13 @@ def render_menu_draw(self, context):
     self.layout.operator('render.render_gif')
 
 
+def sequencer_add_menu_draw(self, context):
+    self.layout.separator()
+    self.layout.operator(
+        'sequencer.create_adjustment_strip',
+        text='Ajustment Layer from active')
+
+
 class ResetExposure(bpy.types.Operator):
     bl_idname = 'scene.reset_exposure'
     bl_label = 'Reset Exposure'
@@ -56,6 +63,7 @@ classes = (
     sequencer.AddStripAsCompositing,
     sequencer.DisableSceneStrips,
     sequencer.SetActiveSceneFromStrip,
+    sequencer.CreateAdjustmentStrip
 )
 
 def register():
@@ -63,6 +71,7 @@ def register():
         bpy.utils.register_class(cls)
     bpy.types.TOPBAR_HT_upper_bar.append(header_color_management)
     bpy.types.TOPBAR_MT_render.append(render_menu_draw)
+    bpy.types.SEQUENCER_MT_add.append(sequencer_add_menu_draw)
 
     # Keymaps
     #kc = bpy.context.window_manager.keyconfigs.addon
@@ -82,6 +91,7 @@ def unregister():
         bpy.utils.unregister_class(cls)
     bpy.types.INFO_HT_header.remove(header_color_management)
     bpy.types.TOPBAR_MT_render.remove(render_menu_draw)
+    bpy.types.SEQUENCER_MT_add.remove(sequencer_add_menu_draw)
 
     # Keymaps
     for km, kmi in keymaps:

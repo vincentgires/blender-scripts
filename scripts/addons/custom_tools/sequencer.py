@@ -1,5 +1,6 @@
 import bpy
 import os
+from vgblender.sequencer import create_adjustment_strip
 
 
 class SequencerCustomPanel(bpy.types.Panel):
@@ -109,4 +110,18 @@ class SetActiveSceneFromStrip(bpy.types.Operator):
         scene = context.scene
         strip = scene.sequence_editor.active_strip
         context.window.scene = strip.scene
+        return{'FINISHED'}
+
+
+class CreateAdjustmentStrip(bpy.types.Operator):
+    bl_idname = 'sequencer.create_adjustment_strip'
+    bl_label = 'Create adjustment effect with the active strip range'
+
+    @classmethod
+    def poll(cls, context):
+        if context.scene.sequence_editor:
+            return context.scene.sequence_editor.active_strip
+
+    def execute(self, context):
+        create_adjustment_strip(context.scene)
         return{'FINISHED'}
