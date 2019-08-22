@@ -135,4 +135,6 @@ def create_adjustment_strip(scene):
         channel=active_strip.channel + 1,
         frame_start=active_strip.frame_start,
         frame_end=active_strip.frame_start + active_strip.frame_final_duration)
+    strip.select = True
+    scene.sequence_editor.active_strip = strip
     return strip
