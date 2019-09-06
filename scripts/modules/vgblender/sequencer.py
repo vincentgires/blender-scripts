@@ -7,6 +7,14 @@ DEFAULT_BLEND_TYPE = 'REPLACE'
 DEFAULT_LENGTH = 24
 
 
+def is_available_sequences(scene):
+    if not scene.sequence_editor:
+        return False
+    sequences = scene.sequence_editor.sequences
+    if sequences:
+        return True
+
+
 def enable_sequence_editor(scene):
     if not scene.sequence_editor:
         scene.sequence_editor_create()
@@ -32,13 +40,8 @@ def get_current_strip(scene):
 
 
 def get_first_strip(scene):
-    # TODO: add decorator for this check
-    if not scene.sequence_editor:
+    if not is_available_sequences(scene):
         return
-    sequences = scene.sequence_editor.sequences
-    if not sequences:
-        return
-    # TODO ---
     sequences = scene.sequence_editor.sequences
     first_strip = sequences[0]
     for strip in sequences:
@@ -48,13 +51,9 @@ def get_first_strip(scene):
 
 
 def get_last_strip(scene):
-    # TODO: add decorator for this check
-    if not scene.sequence_editor:
+    if not is_available_sequences(scene):
         return
     sequences = scene.sequence_editor.sequences
-    if not sequences:
-        return
-    # TODO ---
     last_strip = sequences[0]
     for strip in sequences:
         if strip.frame_start > last_strip.frame_start:
