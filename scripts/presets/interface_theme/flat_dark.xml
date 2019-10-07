@@ -22,6 +22,7 @@
         icon_object_data="#89e689ff"
         icon_modifier="#84b8ffff"
         icon_shading="#ff6060ff"
+        icon_folder="#808080ff"
         icon_border_intensity="0"
         >
         <wcol_regular>
@@ -455,7 +456,7 @@
       <ThemeGraphEditor
         grid="#2a2a2a"
         frame_current="#646464"
-        scrubbing_background="#292929e6"
+        time_scrub_background="#292929e6"
         window_sliders="#969696"
         channels_region="#333333"
         dopesheet_channel="#0f2c4d"
@@ -542,7 +543,7 @@
             button_text="#e5e5e5"
             button_text_hi="#ffffff"
             navigation_bar="#00000000"
-            execution_buts="#00000000"
+            execution_buts="#444444ff"
             tab_active="#4b4b4b"
             tab_inactive="#2b2b2b"
             tab_back="#232323ff"
@@ -564,6 +565,8 @@
       <ThemeNLAEditor
         grid="#2a2a2a"
         view_sliders="#969696"
+        dopesheet_channel="#5a85b2"
+        nla_track="#424242"
         active_action="#cc701a66"
         active_action_unset="#9987614d"
         preview_range="#a14d0066"
@@ -580,7 +583,7 @@
         keyframe_border="#000000ff"
         keyframe_border_selected="#000000ff"
         frame_current="#646464"
-        scrubbing_background="#292929e6"
+        time_scrub_background="#292929e6"
         >
         <space>
           <ThemeSpaceGeneric
@@ -627,7 +630,7 @@
       <ThemeDopeSheet
         grid="#2a2a2a"
         frame_current="#646464"
-        scrubbing_background="#292929e6"
+        time_scrub_background="#292929e6"
         value_sliders="#000000"
         view_sliders="#c0c0c0"
         dopesheet_channel="#0f2c4d24"
@@ -783,7 +786,7 @@
         meta_strip="#6d9183"
         text_strip="#a29700"
         frame_current="#646464"
-        scrubbing_background="#292929e6"
+        time_scrub_background="#292929e6"
         keyframe="#ff8500"
         draw_action="#50c8ff"
         preview_back="#000000"
@@ -973,7 +976,8 @@
     <outliner>
       <ThemeOutliner
         match="#337f33"
-        selected_highlight="#606060"
+        selected_highlight="#223a5b"
+        active="#3b5689"
         selected_object="#e96a00"
         active_object="#ffaf29"
         edited_object="#00806266"
@@ -1141,8 +1145,10 @@
         locked_marker="#7f7f7f"
         path_before="#ff0000"
         path_after="#0000ff"
+        path_keyframe_before="#ffc4c4"
+        path_keyframe_after="#c4c4ff"
         frame_current="#5680c2"
-        scrubbing_background="#292929e6"
+        time_scrub_background="#292929e6"
         strips="#0c0a0a"
         strips_selected="#ff8c00"
         metadatabg="#000000"
