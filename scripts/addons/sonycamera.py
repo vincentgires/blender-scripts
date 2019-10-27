@@ -83,7 +83,11 @@ class FilebrowserPropertiesPanel(bpy.types.Panel):
         scene = context.scene
         layout = self.layout
         space = context.space_data
-        filepath = os.path.join(space.params.directory, space.params.filename)
+        directory = space.params.directory
+        if bpy.app.version[1] > 80:
+            # directory is a byte since 2.81
+            directory = directory.decode()
+        filepath = os.path.join(directory, space.params.filename)
         xml_path = find_xml(filepath)
         if not xml_path:
             return
