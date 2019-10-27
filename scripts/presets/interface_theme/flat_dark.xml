@@ -714,7 +714,7 @@
         editmesh_active="#ffffff80"
         wire_edit="#c0c0c0"
         edge_select="#ff8500"
-        scope_back="#727272ff"
+        scope_back="#1f1f1fff"
         preview_stitch_face="#7f7f0033"
         preview_stitch_edge="#ff00ff33"
         preview_stitch_vert="#0000ff33"
@@ -976,8 +976,8 @@
     <outliner>
       <ThemeOutliner
         match="#337f33"
-        selected_highlight="#223a5b"
-        active="#3b5689"
+        selected_highlight="#4d4d4d"
+        active="#646464"
         selected_object="#e96a00"
         active_object="#ffaf29"
         edited_object="#00806266"
