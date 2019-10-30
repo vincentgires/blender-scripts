@@ -2,56 +2,32 @@ import bpy
 import math
 import mathutils
 from bpy.app.handlers import persistent
-
-
-custom_nodes_type = [
-    'ColorCombineNodeType',
-    'ColorPaletteNodeType',
-    'ColorSplitNodeType',
-    'ColorNodeType',
-    'DataInputNodeType',
-    'DataOutputNodeType',
-    'DebugNodeType',
-    'ExpressionNodeType',
-    'DistanceNodeType',
-    'FloatNumberNodeType',
-    'FloatSwitchNodeType',
-    'FloatToIntNodeType',
-    'FloatToStringNodeType',
-    'IntToFloatNodeType',
-    'NoteNodeType',
-    'ObjectPropertiesNodeType',
-    'RenderNodeType',
-    'RenderLayersNodeType',
-    'RoundFloatNodeType',
-    'TimeNodeType',
-    'VectorSplitNodeType',
-    'VectorNodeType']
+from .nodes import NODES_TYPES
 
 
 def update_nodes(scene):
     # Update compositing tree
     if scene.node_tree:
         for node in scene.node_tree.nodes:
-            if node.bl_idname in custom_nodes_type:
+            if node.bl_idname in NODES_TYPES:
                 node.update()
     # Update nodes in materials
     for material in bpy.data.materials:
         if material.node_tree:
             for node in material.node_tree.nodes:
-                if node.bl_idname in custom_nodes_type:
+                if node.bl_idname in NODES_TYPES:
                     node.update()
     # Update custom node trees
     for tree in bpy.data.node_groups:
         for node in tree.nodes:
-            if node.bl_idname in custom_nodes_type:
+            if node.bl_idname in NODES_TYPES:
                 node.update()
 
 
-def update_compositing_tree(scene, object, custom_nodes_type):
+def update_compositing_tree(scene, object, NODES_TYPES):
     if scene.use_nodes:
         for node in scene.node_tree.nodes:
-            if node.bl_idname in custom_nodes_type:
+            if node.bl_idname in NODES_TYPES:
                 if node.bl_idname == 'ObjectPropertiesNodeType':
                     if node.data_item == object.name:
                         # Update node property from scene object
@@ -59,22 +35,22 @@ def update_compositing_tree(scene, object, custom_nodes_type):
                 node.update()
 
 
-def update_material_tree(scene, object, custom_nodes_type):
+def update_material_tree(scene, object, NODES_TYPES):
     for material in bpy.data.materials:
         if material.node_tree:
             for node in material.node_tree.nodes:
-                if node.bl_idname in custom_nodes_type:
+                if node.bl_idname in NODES_TYPES:
                     if node.bl_idname == 'ObjectPropertiesNodeType':
                         # Update node property from scene object
                         node.update_props_from_object()
                     node.update()
 
 
-def update_world_tree(scene, object, custom_nodes_type):
+def update_world_tree(scene, object, NODES_TYPES):
     for world in bpy.data.worlds:
         if world.use_nodes:
             for node in scene.world.node_tree.nodes:
-                if node.bl_idname in custom_nodes_type:
+                if node.bl_idname in NODES_TYPES:
                     if node.bl_idname == 'ObjectPropertiesNodeType':
                         if node.data_item == object.name:
                             # Update node property from scene object
@@ -82,10 +58,10 @@ def update_world_tree(scene, object, custom_nodes_type):
                     node.update()
 
 
-def update_custom_tree(scene, object, custom_nodes_type):
+def update_custom_tree(scene, object, NODES_TYPES):
     for tree in bpy.data.node_groups:
         for node in tree.nodes:
-            if node.bl_idname in custom_nodes_type:
+            if node.bl_idname in NODES_TYPES:
                 if node.bl_idname == 'ObjectPropertiesNodeType':
                     # Update node property from scene object
                     node.update_props_from_object()
@@ -99,21 +75,22 @@ def frame_change(scene):
 
 @persistent
 def scene_update(scene):
-    check_objects = bpy.data.objects.is_updated
-    check_scene = bpy.context.scene.is_updated
-    if check_objects:
-        for object in bpy.data.objects:
-            if object.is_updated:
-                update_compositing_tree(scene, object, custom_nodes_type)
-                update_material_tree(scene, object, custom_nodes_type)
-                update_world_tree(scene, object, custom_nodes_type)
-                update_custom_tree(scene, object, custom_nodes_type)
-    if check_scene:
-        for object in bpy.data.objects:
-            update_compositing_tree(scene, object, custom_nodes_type)
-            update_material_tree(scene, object, custom_nodes_type)
-            update_world_tree(scene, object, custom_nodes_type)
-            update_custom_tree(scene, object, custom_nodes_type)
+    print(bpy.context.scene.is_evaluated)
+    #check_objects = bpy.data.objects.is_updated
+    #check_scene = bpy.context.scene.is_updated
+    #if check_objects:
+        #for object in bpy.data.objects:
+            #if object.is_updated:
+                #update_compositing_tree(scene, object, custom_nodes_type)
+                #update_material_tree(scene, object, custom_nodes_type)
+                #update_world_tree(scene, object, custom_nodes_type)
+                #update_custom_tree(scene, object, custom_nodes_type)
+    #if check_scene:
+        #for object in bpy.data.objects:
+            #update_compositing_tree(scene, object, custom_nodes_type)
+            #update_material_tree(scene, object, custom_nodes_type)
+            #update_world_tree(scene, object, custom_nodes_type)
+            #update_custom_tree(scene, object, custom_nodes_type)
 
     # # Node tree update
     # # Update compositing tree

@@ -1,7 +1,7 @@
 import bpy
 import math
 from bpy.types import NodeTree, Node, NodeSocket
-from data_nodes.utils import send_value_link
+from ..utils import send_value_link
 
 
 class ObjectPropertiesNode(Node):

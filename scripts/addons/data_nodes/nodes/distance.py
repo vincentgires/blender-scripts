@@ -2,7 +2,7 @@ import bpy
 import bgl
 import math
 from bpy.types import NodeTree, Node, NodeSocket
-from data_nodes.utils import send_value
+from ..utils import send_value
 
 
 def draw_distance_opengl(self, context):
@@ -42,10 +42,9 @@ class DistanceNode(Node):
         if len(self.inputs) >= 2:
             a = self.inputs['VectorA'].default_value
             b = self.inputs['VectorB'].default_value
-            Distance = math.sqrt(
-                (b[0] - a[0]) ** 2 + (b[1] - a[1]) ** 2 + (b[2] - a[2]) ** 2
-            )
-            send_value(self.outputs, Distance)
+            distance = math.sqrt(
+                (b[0] - a[0]) ** 2 + (b[1] - a[1]) ** 2 + (b[2] - a[2]) ** 2)
+            send_value(self.outputs, distance)
 
     def free(self):
         bpy.types.SpaceView3D.draw_handler_remove(

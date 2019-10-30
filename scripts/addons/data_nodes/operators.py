@@ -1,7 +1,7 @@
 import bpy
 import math
 import mathutils
-from data_nodes.utils import update_nodes
+from .utils import update_nodes
 
 
 class DataNodesUpdate(bpy.types.Operator):
@@ -19,7 +19,7 @@ class DataNodesUpdate(bpy.types.Operator):
         selected_nodes = context.selected_nodes
         active_node = context.active_node
         update_nodes(context.scene)
-        return{'FINISHED'}
+        return {'FINISHED'}
 
 
 class DataNodesGetObject(bpy.types.Operator):
@@ -37,7 +37,7 @@ class DataNodesGetObject(bpy.types.Operator):
         node = context.node
         selected_object = context.object
         node.data_item = selected_object.name
-        return{'FINISHED'}
+        return {'FINISHED'}
 
 
 class DataNodesRemoveInputSockets(bpy.types.Operator):
@@ -56,7 +56,7 @@ class DataNodesRemoveInputSockets(bpy.types.Operator):
         node = context.node
         selected_object = context.object
         node.inputs.clear()
-        return{'FINISHED'}
+        return {'FINISHED'}
 
 
 class DataNodesRemoveOutputSockets(bpy.types.Operator):
@@ -75,7 +75,7 @@ class DataNodesRemoveOutputSockets(bpy.types.Operator):
         node = context.node
         selected_object = context.object
         node.outputs.clear()
-        return{'FINISHED'}
+        return {'FINISHED'}
 
 
 class DataNodesAddOutputSocket(bpy.types.Operator):
@@ -121,7 +121,7 @@ class DataNodesAddOutputSocket(bpy.types.Operator):
             elif len(attribute) == 4:  # RGBA
                 node.outputs.new('NodeSocketColor', node.attribute_property)
 
-        return{'FINISHED'}
+        return {'FINISHED'}
 
 
 class DataNodesAddInputSocket(bpy.types.Operator):
@@ -167,4 +167,4 @@ class DataNodesAddInputSocket(bpy.types.Operator):
             elif len(attribute) == 4:  # RGBA
                 node.inputs.new('NodeSocketColor', node.attribute_property)
 
-        return{'FINISHED'}
+        return {'FINISHED'}

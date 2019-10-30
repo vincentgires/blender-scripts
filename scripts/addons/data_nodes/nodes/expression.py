@@ -1,7 +1,7 @@
 import bpy
 from bpy.types import NodeTree, Node, NodeSocket
 import string
-from data_nodes.utils import send_value
+from ..utils import send_value
 
 operation_items = (
     ('expression', 'Expression', ''),
@@ -92,4 +92,4 @@ class ExpressionNodeAddInputSocket(bpy.types.Operator):
         selected_object = context.object
         alphabet = list(string.ascii_uppercase)
         node.inputs.new('NodeSocketFloat', alphabet[len(node.inputs)])
-        return{'FINISHED'}
+        return {'FINISHED'}

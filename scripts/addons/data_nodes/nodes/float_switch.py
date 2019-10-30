@@ -1,6 +1,6 @@
 import bpy
 from bpy.types import NodeTree, Node, NodeSocket
-from data_nodes.utils import send_value
+from ..utils import send_value
 
 
 class FloatSwitch(Node):
@@ -24,4 +24,4 @@ class FloatSwitch(Node):
             send_value(self.outputs, output)
 
     def draw_label(self):
-        return "Float Switch"
+        return 'Float Switch'

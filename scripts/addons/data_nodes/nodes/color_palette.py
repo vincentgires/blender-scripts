@@ -1,6 +1,6 @@
 import bpy
 from bpy.types import NodeTree, Node, NodeSocket
-from data_nodes.utils import send_value
+from ..utils import send_value
 
 
 class TemplateColorPaletteCollectionUL(bpy.types.UIList):
@@ -22,7 +22,7 @@ class ColorPalette(Node):
 
     settings: bpy.props.BoolProperty(
         name='Settings',
-        default = True)
+        default=True)
 
     palette_id: bpy.props.IntProperty(
         name='Palette ID',
@@ -66,8 +66,14 @@ class ColorPalette(Node):
                 'TemplateColorPaletteCollectionUL', '',
                 context.scene, 'colorpalette_collection', self, 'palette_id')
             col = row.column(align=True)
-            col.operator('color_palette_add_item.btn', icon='ADD', text='')
-            col.operator('color_palette_remove_item.btn', icon='REMOVE', text='')
+            col.operator(
+                'color_palette_add_item.btn',
+                icon='ADD',
+                text='')
+            col.operator(
+                'color_palette_remove_item.btn',
+                icon='REMOVE',
+                text='')
         else:
             row = layout.row()
             row.prop(self, 'settings', text='', icon='TRIA_RIGHT', emboss=False)
@@ -78,8 +84,13 @@ class ColorPalette(Node):
             row.operator('color_palette_add_color.btn', text='', icon='ADD')
             for color_item in palette.color_collection:
                 row.prop(color_item, 'color', text='')
-            row.operator('color_palette_remove_color.btn', text='', icon='REMOVE')
-            row.operator('color_palette_clear_color.btn', text='', icon='X')
+            row.operator(
+                'color_palette_remove_color.btn',
+                text='',
+                icon='REMOVE')
+            row.operator(
+                'color_palette_clear_color.btn',
+                text='', icon='X')
 
     def draw_label(self):
         return 'Color Palette'
@@ -93,7 +104,8 @@ class CustomNodesAddPaletteItem(bpy.types.Operator):
     def poll(cls, context):
         try:
             tree_type = context.space_data.tree_type
-            node_tree = ['ShaderNodeTree', 'CompositorNodeTree', 'DataNodeTree']
+            node_tree = [
+                'ShaderNodeTree', 'CompositorNodeTree', 'DataNodeTree']
             return tree_type in node_tree
         except:
             return False
@@ -107,7 +119,7 @@ class CustomNodesAddPaletteItem(bpy.types.Operator):
         p.color_collection.add()
         p.color_collection.add()
         node.palette_id = len(palette_collection) - 1
-        return{'FINISHED'}
+        return {'FINISHED'}
 
 
 class CustomNodesRemovePaletteItem(bpy.types.Operator):
@@ -127,7 +139,7 @@ class CustomNodesRemovePaletteItem(bpy.types.Operator):
         palette_collection.remove(node.palette_id)
         if node.palette_id > 0:
             node.palette_id -= 1
-        return{'FINISHED'}
+        return {'FINISHED'}
 
 
 class CustomNodesAddPaletteColor(bpy.types.Operator):
@@ -148,7 +160,7 @@ class CustomNodesAddPaletteColor(bpy.types.Operator):
         # Sockets
         if (len(node.outputs) <= len(palette.color_collection) - 1):
             node.outputs.new('NodeSocketColor', 'Color')
-        return{'FINISHED'}
+        return {'FINISHED'}
 
 
 class CustomNodesRemovePaletteColor(bpy.types.Operator):
@@ -166,7 +178,7 @@ class CustomNodesRemovePaletteColor(bpy.types.Operator):
         node = context.node
         palette = context.scene.colorpalette_collection[node.palette_id]
         palette.color_collection.remove(len(palette.color_collection) - 1)
-        return{'FINISHED'}
+        return {'FINISHED'}
 
 
 class CustomNodesClearPaletteColor(bpy.types.Operator):
@@ -184,4 +196,4 @@ class CustomNodesClearPaletteColor(bpy.types.Operator):
         node = context.node
         palette = context.scene.colorpalette_collection[node.palette_id]
         palette.color_collection.clear()
-        return{'FINISHED'}
+        return {'FINISHED'}

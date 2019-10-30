@@ -4,14 +4,15 @@ from bpy.types import NodeTree, Node, NodeSocket
 from bpy.props import StringProperty, CollectionProperty, FloatVectorProperty
 import nodeitems_utils
 from nodeitems_utils import NodeCategory, NodeItem
-from data_nodes.nodes import (
+from .nodes import (
     boolean, color, color_combine, color_palette, color_split, condition,
     data_input, data_output, debug, distance, expression, float_number,
     float_switch, float_to_int, float_to_string, integer, int_to_float, note,
     object_properties, render, render_layer, round_float, time, vector_split,
-    vector)
-from data_nodes import operators
-from data_nodes.utils import *
+    vector, NODES_TYPES)
+from . import operators
+from .utils import (
+    frame_change, scene_update, render_pre_update, render_post_update)
 
 
 bl_info = {
@@ -118,34 +119,8 @@ classes = (
 
 node_categories = [
     # identifier, label, items list
-    DataNodeCategory('DATA', 'Data', items=[
-        NodeItem('ColorCombineNodeType'),
-        NodeItem('BooleanNodeType'),
-        NodeItem('ColorPaletteNodeType'),
-        NodeItem('ColorSplitNodeType'),
-        NodeItem('ColorNodeType'),
-        NodeItem('ConditionNodeType'),
-        NodeItem('DataInputNodeType'),
-        NodeItem('DataOutputNodeType'),
-        NodeItem('DebugNodeType'),
-        NodeItem('ExpressionNodeType'),
-        NodeItem('DistanceNodeType'),
-        NodeItem('FloatSwitchNodeType'),
-        NodeItem('FloatToIntNodeType'),
-        NodeItem('FloatToStringNodeType'),
-        NodeItem('FloatNumberNodeType'),
-        NodeItem('IntegerNodeType'),
-        NodeItem('IntToFloatNodeType'),
-        NodeItem('NoteNodeType'),
-        NodeItem('ObjectPropertiesNodeType'),
-        NodeItem('RenderNodeType'),
-        NodeItem('RenderLayersNodeType'),
-        NodeItem('RoundFloatNodeType'),
-        NodeItem('TimeNodeType'),
-        NodeItem('VectorSplitNodeType'),
-        NodeItem('VectorNodeType'),
-        ]),
-    ]
+    DataNodeCategory(
+        'DATA', 'Data', items=[NodeItem(n) for n in NODES_TYPES])]
 
 
 def register():

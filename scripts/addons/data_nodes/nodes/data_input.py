@@ -1,6 +1,6 @@
 import bpy
 from bpy.types import NodeTree, Node, NodeSocket
-from data_nodes.utils import send_value_link
+from ..utils import send_value_link
 
 
 data_items = (
@@ -34,7 +34,7 @@ data_items = (
 
 
 class DataInputNode(Node):
-    '''Data Input'''
+    """Data Input"""
     bl_idname = 'DataInputNodeType'
     bl_label = 'Data Input'
 

@@ -1,6 +1,6 @@
 import bpy
 from bpy.types import NodeTree, Node, NodeSocket
-from data_nodes.utils import send_value
+from ..utils import send_value
 
 
 class Color(Node):
@@ -29,4 +29,4 @@ class Color(Node):
         layout.prop(self, 'color_prop')
 
     def draw_label(self):
-        return "Color"
+        return 'Color'

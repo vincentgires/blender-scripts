@@ -1,7 +1,7 @@
 import bpy
 from bpy.app.handlers import persistent
 from bpy.types import NodeTree, Node, NodeSocket
-from data_nodes.utils import send_value
+from ..utils import send_value
 
 
 class RenderLayersNode(Node):
