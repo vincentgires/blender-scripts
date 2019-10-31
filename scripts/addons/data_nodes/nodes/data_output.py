@@ -34,7 +34,7 @@ data_items = (
 
 
 class DataOutputNode(Node):
-    """Data Input"""
+    """Data Output"""
     bl_idname = 'DataOutputNodeType'
     bl_label = 'Data Output'
 
