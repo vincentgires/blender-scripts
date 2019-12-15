@@ -150,3 +150,9 @@ def create_adjustment_strip(scene):
     strip.select = True
     scene.sequence_editor.active_strip = strip
     return strip
+
+
+def set_strip_colorspace(strip, colorspace):
+    colorspace_settings = getattr(strip, 'colorspace_settings', None)
+    if colorspace_settings:
+        colorspace_settings.name = colorspace
