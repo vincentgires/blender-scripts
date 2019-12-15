@@ -1,9 +1,13 @@
 import bpy
+from bpy.types import Operator, Panel, OperatorFileListElement
+from bpy.props import StringProperty, CollectionProperty
+from bpy_extras.io_utils import ImportHelper
 import os
-from vgblender.sequencer import create_adjustment_strip
+from vgblender.sequencer import (
+    create_adjustment_strip, load_movie_strip, load_sound_strip)
 
 
-class SequencerCustomPanel(bpy.types.Panel):
+class SequencerCustomPanel(Panel):
     bl_idname = 'CUSTOMTOOLS_PT_sequencer_custom_panel'
     bl_label = 'Custom'
     bl_space_type = 'SEQUENCE_EDITOR'
@@ -20,7 +24,7 @@ class SequencerCustomPanel(bpy.types.Panel):
         col.operator('scene.set_active_scene_from_strip', text='Set active')
 
 
-class OpenStripAsMovieclip(bpy.types.Operator):
+class OpenStripAsMovieclip(Operator):
     bl_idname = 'scene.open_strip_as_movieclip'
     bl_label = 'Open strip as movieclip'
 
@@ -39,7 +43,7 @@ class OpenStripAsMovieclip(bpy.types.Operator):
         return{'FINISHED'}
 
 
-class AddStripAsCompositing(bpy.types.Operator):
+class AddStripAsCompositing(Operator):
     bl_idname = 'scene.add_strip_as_compositing'
     bl_label = 'Add strip as a compositing scene'
 
@@ -80,7 +84,7 @@ class AddStripAsCompositing(bpy.types.Operator):
         return{'FINISHED'}
 
 
-class DisableSceneStrips(bpy.types.Operator):
+class DisableSceneStrips(Operator):
     bl_idname = 'scene.disable_scene_strips'
     bl_label = 'Disable scene strips'
 
@@ -94,7 +98,7 @@ class DisableSceneStrips(bpy.types.Operator):
         return{'FINISHED'}
 
 
-class SetActiveSceneFromStrip(bpy.types.Operator):
+class SetActiveSceneFromStrip(Operator):
     bl_idname = 'scene.set_active_scene_from_strip'
     bl_label = 'Set active scene from selectip strip'
 
@@ -111,7 +115,7 @@ class SetActiveSceneFromStrip(bpy.types.Operator):
         return{'FINISHED'}
 
 
-class CreateAdjustmentStrip(bpy.types.Operator):
+class CreateAdjustmentStrip(Operator):
     bl_idname = 'sequencer.create_adjustment_strip'
     bl_label = 'Create adjustment effect with the active strip range'
 
@@ -123,3 +127,22 @@ class CreateAdjustmentStrip(bpy.types.Operator):
     def execute(self, context):
         create_adjustment_strip(context.scene)
         return{'FINISHED'}
+
+
+class AddMultipleMovies(Operator, ImportHelper):
+    bl_idname = 'scene.add_multiple_movies'
+    bl_label = 'Add multiple movies'
+
+    filter_glob: StringProperty(default='*.mp4;*.mov;*.mkv;*.ogg;*.ogv')
+    files: CollectionProperty(type=OperatorFileListElement)
+    directory = StringProperty(subtype='DIR_PATH')
+
+    def execute(self, context):
+        filepaths = [os.path.join(self.directory, f.name) for f in self.files]
+        for path in filepaths:
+            movie_strip = load_movie_strip(context.scene, path)
+            load_sound_strip(
+                context.scene, path,
+                channel=movie_strip.channel + 1,
+                frame_start=movie_strip.frame_start)
+        return {'FINISHED'}

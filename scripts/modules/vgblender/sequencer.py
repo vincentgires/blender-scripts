@@ -123,6 +123,19 @@ def load_movie_strip(
     return strip
 
 
+def load_sound_strip(
+        scene, soundpath, channel=DEFAULT_CHANNEL, frame_start=None):
+    sequences = scene.sequence_editor.sequences
+    frame_start = frame_start or _get_next_frame_start(scene)
+    strip = sequences.new_sound(
+        name=os.path.basename(soundpath),
+        filepath=normpath(soundpath),
+        channel=channel,
+        frame_start=frame_start)
+    strip.select = False
+    return strip
+
+
 def create_adjustment_strip(scene):
     active_strip = scene.sequence_editor.active_strip
     if not active_strip:

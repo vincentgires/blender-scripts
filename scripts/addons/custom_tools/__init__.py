@@ -30,6 +30,7 @@ def render_menu_draw(self, context):
 
 def sequencer_add_menu_draw(self, context):
     self.layout.separator()
+    self.layout.operator('scene.add_multiple_movies')
     self.layout.operator(
         'sequencer.create_adjustment_strip',
         text='Ajustment Layer from active')
@@ -69,8 +70,9 @@ classes = (
     sequencer.AddStripAsCompositing,
     sequencer.DisableSceneStrips,
     sequencer.SetActiveSceneFromStrip,
-    sequencer.CreateAdjustmentStrip
-)
+    sequencer.CreateAdjustmentStrip,
+    sequencer.AddMultipleMovies)
+
 
 def register():
     for cls in classes:
