@@ -47,16 +47,12 @@ def process():
         node.image = image
         node.frame_duration = end_frame
         node_tree.links.new(node.outputs[0], switchview_node.inputs[index])
-    tonemap_node = node_tree.nodes.new('CompositorNodeTonemap')
-    tonemap_node.tonemap_type = 'RH_SIMPLE'
-    tonemap_node.key = 0.8
     bw_node = node_tree.nodes.new('CompositorNodeRGBToBW')
     scale_node = node_tree.nodes.new('CompositorNodeScale')
     scale_node.space = 'RENDER_SIZE'
     scale_node.frame_method = 'FIT'
     output_node = node_tree.nodes.new('CompositorNodeComposite')
-    node_tree.links.new(switchview_node.outputs[0], tonemap_node.inputs[0])
-    node_tree.links.new(tonemap_node.outputs[0], bw_node.inputs[0])
+    node_tree.links.new(switchview_node.outputs[0], bw_node.inputs[0])
     node_tree.links.new(bw_node.outputs[0], scale_node.inputs[0])
     node_tree.links.new(scale_node.outputs[0], output_node.inputs[0])
 
@@ -66,8 +62,6 @@ def process():
     scene.render.resolution_x = x
     scene.render.resolution_y = y
     scene.render.resolution_percentage = 100
-    scene.view_settings.view_transform = 'Raw'
-    # scene.view_settings.gamma = 2.2
 
     set_scene_from_args(scene)
     render_movie(
