@@ -23,7 +23,7 @@ for f in files:
     image_node = node_tree.nodes.new('CompositorNodeImage')
     output_node = node_tree.nodes.new('CompositorNodeComposite')
     image = data.images.load(f)
-    image.colorspace_settings.name = 'lin_rec709'
+    image.colorspace_settings.name = 'lin_rec2020'
     image_node.image = image
     node_tree.links.new(image_node.outputs[0], output_node.inputs[0])
 
