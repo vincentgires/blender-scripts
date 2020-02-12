@@ -1,11 +1,10 @@
 import bpy
 from bpy.types import Operator, Panel, OperatorFileListElement
-from bpy.props import StringProperty, CollectionProperty
+from bpy.props import StringProperty, CollectionProperty, BoolProperty
 from bpy_extras.io_utils import ImportHelper
 import os
 from vgblender.sequencer import (
-    create_adjustment_strip, load_movie_strip, load_sound_strip,
-    set_strip_colorspace)
+    create_adjustment_strip, load_multiple_movie_strips, set_strip_colorspace)
 
 
 class SequencerCustomPanel(Panel):
@@ -89,7 +88,7 @@ class DisableSceneStrips(Operator):
     bl_idname = 'scene.disable_scene_strips'
     bl_label = 'Disable scene strips'
 
-    mute: bpy.props.BoolProperty(name='Mute', default=True)
+    mute: BoolProperty(name='Mute', default=True)
 
     def execute(self, context):
         scene = context.scene
@@ -136,16 +135,19 @@ class AddMultipleMovies(Operator, ImportHelper):
 
     filter_glob: StringProperty(default='*.mp4;*.mov;*.mkv;*.ogg;*.ogv')
     files: CollectionProperty(type=OperatorFileListElement)
-    directory = StringProperty(subtype='DIR_PATH')
+    directory: StringProperty(subtype='DIR_PATH')
+    content_file: BoolProperty(
+        name='Content file', default=False,
+        description='Using a text file that contains the paths of all videos')
 
     def execute(self, context):
-        filepaths = [os.path.join(self.directory, f.name) for f in self.files]
-        for path in filepaths:
-            movie_strip = load_movie_strip(context.scene, path)
-            load_sound_strip(
-                context.scene, path,
-                channel=movie_strip.channel + 1,
-                frame_start=movie_strip.frame_start)
+        if self.content_file:
+            with open(self.filepath, 'r') as f:
+                filepaths = f.read().split('\n')
+        else:
+            filepaths = [
+                os.path.join(self.directory, f.name) for f in self.files]
+        load_multiple_movie_strips(context.scene, filepaths)
         return {'FINISHED'}
 
 

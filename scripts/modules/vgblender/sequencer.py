@@ -136,6 +136,17 @@ def load_sound_strip(
     return strip
 
 
+def load_multiple_movie_strips(scene, filepaths):
+    for path in filepaths:
+        if not os.path.exists(path):
+            continue
+        movie_strip = load_movie_strip(scene, path)
+        sound_channel = movie_strip.channel + 1
+        sound_frame_start = movie_strip.frame_start
+        load_sound_strip(
+            scene, path, channel=sound_channel, frame_start=sound_frame_start)
+
+
 def create_adjustment_strip(scene):
     active_strip = scene.sequence_editor.active_strip
     if not active_strip:
