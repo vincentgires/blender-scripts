@@ -19,12 +19,14 @@ def load_file_as_image():
     scene.render.resolution_x = x
     scene.render.resolution_y = y
     scene.render.resolution_percentage = 100
+    scene.frame_end = image.frame_duration
 
     scene.use_nodes = True
     node_tree = scene.node_tree
     for node in node_tree.nodes:
         node_tree.nodes.remove(node)
     image_node = node_tree.nodes.new('CompositorNodeImage')
+    image_node.frame_duration = image.frame_duration
     viewer_node = node_tree.nodes.new('CompositorNodeViewer')
     viewer_node.location.x += 300
     image_node.image = image
