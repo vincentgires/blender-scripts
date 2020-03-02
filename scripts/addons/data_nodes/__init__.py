@@ -28,7 +28,7 @@ bl_info = {
 
 
 class ColorPaletteColorProperty(bpy.types.PropertyGroup):
-    color = FloatVectorProperty(
+    color: FloatVectorProperty(
         name='Color',
         subtype='COLOR',
         size=4,
@@ -37,8 +37,8 @@ class ColorPaletteColorProperty(bpy.types.PropertyGroup):
 
 
 class ColorPaletteCollectionProperty(bpy.types.PropertyGroup):
-    name = StringProperty(name='Color Palette name', default='Palette'),
-    color_collection = CollectionProperty(type=ColorPaletteColorProperty)
+    name: StringProperty(name='Color Palette name', default='Palette')
+    color_collection: CollectionProperty(type=ColorPaletteColorProperty)
 
 
 class NodeEditorDataTree(NodeTree):
@@ -48,6 +48,7 @@ class NodeEditorDataTree(NodeTree):
 
 
 class NodeEditorDataNodesPanel(bpy.types.Panel):
+    bl_idname = 'DATANODES_PT_panel'
     bl_label = 'Tools'
     bl_space_type = 'NODE_EDITOR'
     bl_region_type = 'UI'

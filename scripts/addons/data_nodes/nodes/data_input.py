@@ -41,13 +41,13 @@ class DataInputNode(Node):
     def update_attribute(self, context):
         self.update()
 
-    settings = bpy.props.BoolProperty(
+    settings: bpy.props.BoolProperty(
         name='Settings', default=True)
-    data_enum = bpy.props.EnumProperty(
+    data_enum: bpy.props.EnumProperty(
         name='Data',items=data_items, default='objects')
-    data_item = bpy.props.StringProperty(
+    data_item: bpy.props.StringProperty(
         name='Item')
-    attribute_property = bpy.props.StringProperty(
+    attribute_property: bpy.props.StringProperty(
         name='Attribute',update=update_attribute)
 
     def update(self):

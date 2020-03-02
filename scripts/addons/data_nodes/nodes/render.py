@@ -8,7 +8,7 @@ class RenderNode(Node):
     bl_idname = 'RenderNodeType'
     bl_label = 'Render'
 
-    on_render = bpy.props.FloatProperty(
+    on_render: bpy.props.FloatProperty(
         name='On render', default=0)
 
     def init(self, context):

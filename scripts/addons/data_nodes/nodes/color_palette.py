@@ -4,6 +4,8 @@ from ..utils import send_value
 
 
 class TemplateColorPaletteCollectionUL(bpy.types.UIList):
+    bl_idname = 'DATANODES_UL_template_color_palette_collection'
+
     def draw_item(self, context, layout, data, item,
                   icon, active_data, active_propname, index):
         layout.prop(item, 'name', text='', emboss=False)

@@ -11,7 +11,7 @@ class Color(Node):
     def update_props(self, context):
         self.update()
 
-    color_prop = bpy.props.FloatVectorProperty(
+    color_prop: bpy.props.FloatVectorProperty(
         name='Color',
         subtype='COLOR',
         size=4,  # 4 = RGBA

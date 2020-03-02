@@ -11,7 +11,7 @@ class FloatNumber(Node):
     def update_props(self, context):
         self.update()
 
-    float_prop = bpy.props.FloatProperty(
+    float_prop: bpy.props.FloatProperty(
         name='Float', default=1.0, update=update_props)
 
     def init(self, context):

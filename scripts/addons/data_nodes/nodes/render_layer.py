@@ -14,7 +14,7 @@ class RenderLayersNode(Node):
         items = [(layer.name, layer.name, '') for layer in scene.render.layers]
         return items
 
-    render_layers = bpy.props.EnumProperty(
+    render_layers: bpy.props.EnumProperty(
         items=renderlayers_enum, name='Layer')
 
     def init(self, context):

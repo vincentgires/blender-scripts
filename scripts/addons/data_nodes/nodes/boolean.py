@@ -11,7 +11,7 @@ class Boolean(Node):
     def update_props(self, context):
         self.update()
 
-    bool_prop = bpy.props.BoolProperty(
+    bool_prop: bpy.props.BoolProperty(
         name='Bool',
         default=True,
         update=update_props)

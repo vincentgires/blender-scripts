@@ -11,7 +11,7 @@ class FloatToString(Node):
     def update_props(self, context):
         self.update()
 
-    round_prop = bpy.props.BoolProperty(
+    round_prop: bpy.props.BoolProperty(
         name='Round', update=update_props)
 
     def init(self, context):

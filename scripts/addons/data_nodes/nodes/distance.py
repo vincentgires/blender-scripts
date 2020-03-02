@@ -28,7 +28,7 @@ class DistanceNode(Node):
     bl_idname = 'DistanceNodeType'
     bl_label = 'Distance'
 
-    display = bpy.props.BoolProperty(name='display', default=True)
+    display: bpy.props.BoolProperty(name='display', default=True)
     opengl_handle = [None]
 
     def init(self, context):

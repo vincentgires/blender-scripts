@@ -56,31 +56,31 @@ class ObjectPropertiesNode(Node):
                     link.to_node.update()
 
     # Custom Properties
-    data_item = bpy.props.StringProperty(
+    data_item: bpy.props.StringProperty(
         name='Object', update=update_object_name)
-    locationProperty = bpy.props.FloatVectorProperty(
+    locationProperty: bpy.props.FloatVectorProperty(
         name='Location',
         default=(0.0, 0.0, 0.0),
         update=update_object_location)
-    rotationProperty = bpy.props.FloatVectorProperty(
+    rotationProperty: bpy.props.FloatVectorProperty(
         name='Rotation',
         default=(0.0, 0.0, 0.0),
         update=update_object_rotation)
-    scaleProperty = bpy.props.FloatVectorProperty(
+    scaleProperty: bpy.props.FloatVectorProperty(
         name='Scale',
         default=(1.0, 1.0, 1.0),
         update=update_object_scale)
-    invertMatrixProperty = bpy.props.BoolProperty(
+    invertMatrixProperty: bpy.props.BoolProperty(
         name='Invert Matrix',
         default=False,
         update=update_invert_matrix)
-    matrixRow1Property = bpy.props.FloatVectorProperty(
+    matrixRow1Property: bpy.props.FloatVectorProperty(
         name='Matrix Row1', default=(1.0, 0.0, 0.0))
-    matrixRow2Property = bpy.props.FloatVectorProperty(
+    matrixRow2Property: bpy.props.FloatVectorProperty(
         name='Matrix Row2', default=(0.0, 1.0, 0.0))
-    matrixRow3Property = bpy.props.FloatVectorProperty(
+    matrixRow3Property: bpy.props.FloatVectorProperty(
         name='Matrix Row3', default=(0.0, 0.0, 1.0))
-    displayProperty = bpy.props.BoolProperty(
+    displayProperty: bpy.props.BoolProperty(
         name='display properties', default=False)
 
     def init(self, context):

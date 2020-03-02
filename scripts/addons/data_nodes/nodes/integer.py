@@ -11,7 +11,7 @@ class Integer(Node):
     def update_props(self, context):
         self.update()
 
-    int_prop = bpy.props.IntProperty(
+    int_prop: bpy.props.IntProperty(
         name='Int', default=1, update=update_props)
 
     def init(self, context):

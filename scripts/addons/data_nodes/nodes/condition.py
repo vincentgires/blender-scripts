@@ -23,7 +23,7 @@ class Condition(Node):
     def update_props(self, context):
         self.update()
 
-    operation_enum = bpy.props.EnumProperty(
+    operation_enum: bpy.props.EnumProperty(
         name='',
         items=operation_items,
         update=update_props)

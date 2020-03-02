@@ -11,7 +11,7 @@ class NoteNode(Node):
     def update_attribute(self, context):
         self.update()
 
-    note_prop = bpy.props.StringProperty(
+    note_prop: bpy.props.StringProperty(
         name='Note', update=update_attribute)
 
     def init(self, context):
