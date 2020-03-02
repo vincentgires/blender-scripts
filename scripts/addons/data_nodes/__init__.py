@@ -48,7 +48,7 @@ class NodeEditorDataTree(NodeTree):
 
 
 class NodeEditorDataNodesPanel(bpy.types.Panel):
-    bl_idname = 'DATANODES_PT_panel'
+    bl_idname = 'DATANODES_PT_node_editor'
     bl_label = 'Tools'
     bl_space_type = 'NODE_EDITOR'
     bl_region_type = 'UI'
