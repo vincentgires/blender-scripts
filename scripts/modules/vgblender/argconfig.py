@@ -5,16 +5,9 @@ import argparse
 def get_args():
     parser = argparse.ArgumentParser()
     parser.add_argument(
-        '-input',
-        help='File input',
-        required=False)
-    parser.add_argument(
-        '-leftinput',
-        help='File input for stereoscopic render',
-        required=False)
-    parser.add_argument(
-        '-rightinput',
-        help='File input for stereoscopic render',
+        '-inputs',
+        nargs='+',
+        help='File inputs',
         required=False)
     parser.add_argument(
         '-startframe',

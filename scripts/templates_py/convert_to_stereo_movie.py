@@ -36,7 +36,7 @@ def process():
     # Create nodes
     switchview_node = node_tree.nodes.new('CompositorNodeSwitchView')
     images = []
-    view_inputs = (args.leftinput, args.rightinput)
+    view_inputs = (args.inputs[0], args.inputs[1])
     for index, inputpath in enumerate(view_inputs):
         image = data.images.load(normpath(inputpath))
         image.source = 'SEQUENCE'

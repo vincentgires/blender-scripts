@@ -29,7 +29,7 @@ def process():
     start_frame = args.startframe or 1
     end_frame = args.endframe or start_frame
 
-    image = data.images.load(normpath(args.input))
+    image = data.images.load(normpath(args.inputs[0]))
     image.source = 'SEQUENCE'
     if args.colorspace:
         image.colorspace_settings.name = args.colorspace

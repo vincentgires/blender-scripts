@@ -1,6 +1,9 @@
 import bpy
 import sys
 import os
+from vgblender.argconfig import get_args
+
+args = get_args()
 
 data = bpy.data
 context = bpy.context
@@ -18,8 +21,7 @@ node_tree = scene.node_tree
 for node in node_tree.nodes:
     node_tree.nodes.remove(node)
 
-files = sys.argv[sys.argv.index('--') + 1:]
-for f in files:
+for f in args.inputs:
     image_node = node_tree.nodes.new('CompositorNodeImage')
     output_node = node_tree.nodes.new('CompositorNodeComposite')
     image = data.images.load(f)
@@ -35,7 +37,12 @@ for f in files:
     scene.render.image_settings.color_mode = 'RGB'
     scene.render.image_settings.quality = 95
 
-    root, ext = os.path.splitext(f)
-    outputpath = root + '.jpg'
+    if args.output:
+        _, filename = os.path.split(f)
+        outputpath = os.path.join(
+            args.output, os.path.splitext(filename)[0] + '.jpg')
+    else:
+        root, _ = os.path.splitext(f)
+        outputpath = root + '.jpg'
     scene.render.filepath = outputpath
     bpy.ops.render.render(write_still=True)
