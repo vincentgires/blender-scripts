@@ -3,6 +3,8 @@ import sys
 import os
 from vgblender.argconfig import get_args
 
+FILE_EXT = '.jpg'
+
 args = get_args()
 
 data = bpy.data
@@ -38,11 +40,16 @@ for f in args.inputs:
     scene.render.image_settings.quality = 95
 
     if args.output:
-        _, filename = os.path.split(f)
-        outputpath = os.path.join(
-            args.output, os.path.splitext(filename)[0] + '.jpg')
+        if args.output.endswith(FILE_EXT):
+            outputpath = args.output
+        else:
+            # assume that output path is a directory, the filename extension
+            # of each files is then replaced
+            _, filename = os.path.split(f)
+            outputpath = os.path.join(
+                args.output, os.path.splitext(filename)[0] + FILE_EXT)
     else:
         root, _ = os.path.splitext(f)
-        outputpath = root + '.jpg'
+        outputpath = root + FILE_EXT
     scene.render.filepath = outputpath
     bpy.ops.render.render(write_still=True)
