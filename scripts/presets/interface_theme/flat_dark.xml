@@ -8,6 +8,7 @@
         icon_saturation="0.5"
         widget_emboss="#40404000"
         editor_outline="#1f1f1f"
+        widget_text_cursor="#3399e6"
         axis_x="#ff3352"
         axis_y="#8bdc00"
         axis_z="#2890ff"
@@ -377,6 +378,8 @@
         face_dot="#ff8500"
         facedot_size="3"
         freestyle_face_mark="#7fff7f33"
+        face_back="#ff0000b3"
+        face_front="#0000ffb3"
         nurb_uline="#909000"
         nurb_vline="#803060"
         nurb_sel_uline="#f0ff40"
@@ -434,9 +437,9 @@
             >
             <gradients>
               <ThemeGradientColors
-                show_grad="FALSE"
-                high_gradient="#2d2d2d"
-                gradient="#000000"
+                show_grad="TRUE"
+                high_gradient="#4a4a4a"
+                gradient="#434343"
                 >
               </ThemeGradientColors>
             </gradients>
@@ -711,6 +714,8 @@
         face_dot="#ff8500"
         facedot_size="3"
         freestyle_face_mark="#7fff7f33"
+        face_back="#00000000"
+        face_front="#00000000"
         editmesh_active="#ffffff80"
         wire_edit="#c0c0c0"
         edge_select="#ff8500"
@@ -792,6 +797,7 @@
         preview_back="#000000"
         metadatabg="#000000"
         metadatatext="#ffffff"
+        preview_range="#a14d0066"
         >
         <space>
           <ThemeSpaceGeneric
@@ -861,6 +867,7 @@
     </properties>
     <text_editor>
       <ThemeTextEditor
+        line_numbers="#d0d0d0"
         line_numbers_background="#313133"
         selected_text="#333333"
         cursor="#ff0000"
