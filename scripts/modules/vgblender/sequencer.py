@@ -167,3 +167,8 @@ def set_strip_colorspace(strip, colorspace):
     colorspace_settings = getattr(strip, 'colorspace_settings', None)
     if colorspace_settings:
         colorspace_settings.name = colorspace
+
+
+def set_strip_proxy_quality(strip, quality):
+    if getattr(strip, 'proxy', None):
+        strip.proxy.quality = quality

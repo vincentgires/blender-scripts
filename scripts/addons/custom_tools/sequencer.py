@@ -1,10 +1,12 @@
 import bpy
 from bpy.types import Operator, Panel, OperatorFileListElement
-from bpy.props import StringProperty, CollectionProperty, BoolProperty
+from bpy.props import (
+    StringProperty, CollectionProperty, BoolProperty, IntProperty)
 from bpy_extras.io_utils import ImportHelper
 import os
 from vgblender.sequencer import (
-    create_adjustment_strip, load_multiple_movie_strips, set_strip_colorspace)
+    create_adjustment_strip, load_multiple_movie_strips, set_strip_colorspace,
+    set_strip_proxy_quality)
 
 
 class SequencerCustomPanel(Panel):
@@ -167,6 +169,28 @@ class SetStripColorspace(Operator):
         selected_strips = [s for s in sequences if s.select]
         for strip in selected_strips:
             set_strip_colorspace(strip, self.colorspace)
+        return {'FINISHED'}
+
+    def invoke(self, context, event):
+        return context.window_manager.invoke_props_dialog(self)
+
+
+class SetStripProxyQuality(Operator):
+    bl_idname = 'scene.set_strip_proxy_quality'
+    bl_label = 'Set strip proxy quality'
+
+    quality: IntProperty(name='Colorspace', min=1, max=100, default=100)
+
+    @classmethod
+    def poll(cls, context):
+        sequences = context.scene.sequence_editor.sequences
+        return [s for s in sequences if s.select]
+
+    def execute(self, context):
+        sequences = context.scene.sequence_editor.sequences
+        selected_strips = [s for s in sequences if s.select]
+        for strip in selected_strips:
+            set_strip_proxy_quality(strip, self.quality)
         return {'FINISHED'}
 
     def invoke(self, context, event):

@@ -41,6 +41,7 @@ def sequencer_strip_menu_draw(self, context):
     self.layout.operator('scene.open_strip_as_movieclip')
     self.layout.operator('scene.add_strip_as_compositing')
     self.layout.operator('scene.set_strip_colorspace')
+    self.layout.operator('scene.set_strip_proxy_quality')
 
 
 class ResetExposure(bpy.types.Operator):
@@ -73,7 +74,8 @@ classes = (
     sequencer.SetActiveSceneFromStrip,
     sequencer.CreateAdjustmentStrip,
     sequencer.AddMultipleMovies,
-    sequencer.SetStripColorspace)
+    sequencer.SetStripColorspace,
+    sequencer.SetStripProxyQuality)
 
 
 def register():
