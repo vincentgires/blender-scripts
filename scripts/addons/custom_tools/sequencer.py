@@ -179,7 +179,7 @@ class SetStripProxyQuality(Operator):
     bl_idname = 'scene.set_strip_proxy_quality'
     bl_label = 'Set strip proxy quality'
 
-    quality: IntProperty(name='Colorspace', min=1, max=100, default=100)
+    quality: IntProperty(name='Quality', min=1, max=100, default=100)
 
     @classmethod
     def poll(cls, context):
