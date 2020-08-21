@@ -1,4 +1,5 @@
 import bpy
+from bpy.types import Panel, Operator
 import os
 import xml.etree.ElementTree as ET
 
@@ -48,7 +49,53 @@ def draw_info(layout, xml_info):
         row.label(text=v)
 
 
-class SequencerPropertiesPanel(bpy.types.Panel):
+def set_colorspace(strip, xml_path):
+    """Match camera colorspace to ACES OCIO config"""
+    GAMMA = {
+        'rec2100-hlg': 'hlg',
+        's-log2': 'slog2',
+        's-log3': 'slog3'}
+    PRIMARIES = {
+        'rec709': 'rec709',
+        'rec2020': 'rec2020',
+        's-gamut': 'sgamut',
+        's-gamut3': 'sgamut3',
+        's-gamut3cine': 'sgamut3cine'}
+    tree = ET.parse(xml_path)
+    root = tree.getroot()
+    colorspace = {}
+    for c in root[8][0]:
+        if c.attrib['name'] == 'CaptureGammaEquation':
+            colorspace['gamma'] = c.attrib['value']
+        if c.attrib['name'] == 'CaptureColorPrimaries':
+            colorspace['primaries'] = c.attrib['value']
+    ocio_colorspace = '{}_{}'.format(
+        GAMMA[colorspace['gamma']], PRIMARIES[colorspace['primaries']])
+    strip.colorspace_settings.name = ocio_colorspace
+
+
+class SetColorspace(Operator):
+    bl_idname = 'scene.sonycamera_set_colorspace'
+    bl_label = 'Set colorspace'
+    bl_options = {'REGISTER', 'UNDO'}
+
+    @classmethod
+    def poll(cls, context):
+        return context.scene.sequence_editor
+
+    def execute(self, context):
+        scene = context.scene
+        sequences = scene.sequence_editor.sequences_all
+        for strip in sequences:
+            if strip.select:
+                xml_path = find_xml(strip.filepath)
+                if not xml_path:
+                    continue
+                set_colorspace(strip, xml_path)
+        return {'FINISHED'}
+
+
+class SequencerPropertiesPanel(Panel):
     bl_idname = 'SONYCAMERA_PT_SequencerPropertiesPanel'
     bl_label = 'Sony'
     bl_space_type = 'SEQUENCE_EDITOR'
@@ -70,9 +117,10 @@ class SequencerPropertiesPanel(bpy.types.Panel):
         if not xml_path:
             return
         draw_info(layout, get_info_from_xml(xml_path))
+        layout.operator('scene.sonycamera_set_colorspace')
 
 
-class FilebrowserPropertiesPanel(bpy.types.Panel):
+class FilebrowserPropertiesPanel(Panel):
     bl_idname = 'SONYCAMERA_PT_FilebrowserPropertiesPanel'
     bl_label = 'Sony'
     bl_space_type = 'FILE_BROWSER'
@@ -95,6 +143,7 @@ class FilebrowserPropertiesPanel(bpy.types.Panel):
 
 
 classes = [
+    SetColorspace,
     SequencerPropertiesPanel,
     FilebrowserPropertiesPanel]
 
