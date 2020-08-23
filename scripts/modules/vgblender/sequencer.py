@@ -39,6 +39,18 @@ def get_current_strip(scene):
                 return strip
 
 
+def get_current_strips(scene):
+    def frame_end(strip):
+        return strip.frame_start + strip.frame_final_duration
+    frame_current = scene.frame_current
+    if not scene.sequence_editor:
+        return None
+    strips = [
+        strip for strip in scene.sequence_editor.sequences_all
+        if strip.frame_start <= frame_current < frame_end(strip)]
+    return strips
+
+
 def get_first_strip(scene):
     if not is_available_sequences(scene):
         return
@@ -172,3 +184,31 @@ def set_strip_colorspace(strip, colorspace):
 def set_strip_proxy_quality(strip, quality):
     if getattr(strip, 'proxy', None):
         strip.proxy.quality = quality
+
+
+def view_zoom_preview(context):
+    scene = context.scene
+    for region in context.area.regions:
+        if region.type == 'PREVIEW':
+            width = region.width
+            height = region.height
+            rv1 = region.view2d.region_to_view(0, 0)
+            rv2 = region.view2d.region_to_view(width - 1, height - 1)
+            res_percentage = scene.render.resolution_percentage
+            zoom = (1 / (width / (rv2[0] - rv1[0]))) / (res_percentage / 100)
+            return zoom
+
+
+def normalise_mouse_position(context, position):
+    """Normalise coordinates between 0 and 1"""
+    scene = context.scene
+    region = context.region
+    position_x, position_y = position
+    mouse_x, mouse_y = region.view2d.region_to_view(
+        position_x - region.x,
+        position_y - region.y)
+    mouse_x += (scene.render.resolution_x / 2)
+    mouse_y += (scene.render.resolution_y / 2)
+    x = mouse_x / scene.render.resolution_x
+    y = mouse_y / scene.render.resolution_y
+    return (x, y)
