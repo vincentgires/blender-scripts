@@ -54,13 +54,14 @@ def set_colorspace(strip, xml_path):
     GAMMA = {
         'rec2100-hlg': 'hlg',
         's-log2': 'slog2',
-        's-log3': 'slog3'}
+        's-log3': 'slog3',
+        's-log3-cine': 'slog3'}
     PRIMARIES = {
         'rec709': 'rec709',
         'rec2020': 'rec2020',
         's-gamut': 'sgamut',
         's-gamut3': 'sgamut3',
-        's-gamut3cine': 'sgamut3cine'}
+        's-gamut3-cine': 'sgamutcine'}
     tree = ET.parse(xml_path)
     root = tree.getroot()
     colorspace = {}
