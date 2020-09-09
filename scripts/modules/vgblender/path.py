@@ -20,8 +20,9 @@ def normpath(path):
 
 def convert_os_path(path):
     if sys.platform.startswith('linux'):
-        path = path.replace('\\', '/')
-        path = path.replace('//', '/')
-    else:
-        path = path.replace('/', '\\\\')
+        if path.startswith(r'\\'):
+            path = '/' + path[2:]
+    elif sys.platform.startswith('win'):
+        if path.startswith('/') and not path.startswith('//'):
+            path = r'\\' + path[1:]
     return path
