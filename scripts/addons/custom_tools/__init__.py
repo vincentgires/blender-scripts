@@ -16,12 +16,15 @@ bl_info = {
 
 
 def header_color_management(self, context):
-    scene = context.scene
-    layout = self.layout
-    layout.operator('scene.reset_exposure', emboss=False, text='Exposure')
-    layout.prop(scene.view_settings, 'exposure', emboss=False, text='')
-    layout.operator('scene.reset_gamma', emboss=False, text='Gamma')
-    layout.prop(scene.view_settings, 'gamma', emboss=False, text='')
+    if context.region.alignment == 'RIGHT':
+        scene = context.scene
+        layout = self.layout
+        row = layout.row(align=True)
+        row.operator('scene.reset_exposure', text='Exp')
+        row.prop(scene.view_settings, 'exposure', text='')
+        row = layout.row(align=True)
+        row.operator('scene.reset_gamma', text='Y')
+        row.prop(scene.view_settings, 'gamma', text='')
 
 
 def render_menu_draw(self, context):
@@ -46,7 +49,8 @@ def sequencer_strip_menu_draw(self, context):
 
 class ResetExposure(bpy.types.Operator):
     bl_idname = 'scene.reset_exposure'
-    bl_label = 'Reset Exposure'
+    bl_label = 'Reset exposure'
+    bl_description = 'Reset exposure to 0'
 
     def execute(self, context):
         context.scene.view_settings.exposure = 0
@@ -55,7 +59,8 @@ class ResetExposure(bpy.types.Operator):
 
 class ResetGamma(bpy.types.Operator):
     bl_idname = 'scene.reset_gamma'
-    bl_label = 'Reset Gamma'
+    bl_label = 'Reset gamma'
+    bl_description = 'Reset gamma to 1'
 
     def execute(self, context):
         context.scene.view_settings.gamma = 1
@@ -81,7 +86,7 @@ classes = (
 def register():
     for cls in classes:
         bpy.utils.register_class(cls)
-    bpy.types.TOPBAR_HT_upper_bar.append(header_color_management)
+    bpy.types.TOPBAR_HT_upper_bar.prepend(header_color_management)
     bpy.types.TOPBAR_MT_render.append(render_menu_draw)
     bpy.types.SEQUENCER_MT_add.append(sequencer_add_menu_draw)
     bpy.types.SEQUENCER_MT_strip.append(sequencer_strip_menu_draw)
