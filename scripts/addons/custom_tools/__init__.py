@@ -107,7 +107,7 @@ def register():
 def unregister():
     for cls in reversed(classes):
         bpy.utils.unregister_class(cls)
-    bpy.types.INFO_HT_header.remove(header_color_management)
+    bpy.types.TOPBAR_HT_upper_bar.remove(header_color_management)
     bpy.types.TOPBAR_MT_render.remove(render_menu_draw)
     bpy.types.SEQUENCER_MT_add.remove(sequencer_add_menu_draw)
     bpy.types.SEQUENCER_MT_strip.remove(sequencer_strip_menu_draw)
