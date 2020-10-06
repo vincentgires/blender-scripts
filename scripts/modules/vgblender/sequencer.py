@@ -212,3 +212,15 @@ def normalise_mouse_position(context, position):
     x = mouse_x / scene.render.resolution_x
     y = mouse_y / scene.render.resolution_y
     return (x, y)
+
+
+def get_strip_filepath(strip, image_index=0):
+    if strip is None:
+        return
+    if strip.type == 'MOVIE':
+        return strip.filepath
+    elif strip.type == 'IMAGE':
+        dirname = strip.directory
+        basename = strip.elements[image_index].filename
+        filepath = os.path.join(dirname, basename)
+        return filepath
