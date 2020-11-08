@@ -23,9 +23,9 @@ node_tree = scene.node_tree
 for node in node_tree.nodes:
     node_tree.nodes.remove(node)
 
+output_node = node_tree.nodes.new('CompositorNodeComposite')
 for f in args.inputs:
     image_node = node_tree.nodes.new('CompositorNodeImage')
-    output_node = node_tree.nodes.new('CompositorNodeComposite')
     image = data.images.load(f)
     image.colorspace_settings.name = 'lin_rec2020'
     image_node.image = image
