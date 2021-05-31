@@ -1,12 +1,5 @@
 import os
-import sys
 import subprocess
-
-
-if sys.platform.startswith('linux'):
-    MAGICK_BIN = 'magick'
-elif sys.platform.startswith('win'):
-    MAGICK_BIN = 'magick.exe'
 
 
 def sequence_to_gif(
@@ -23,7 +16,7 @@ def sequence_to_gif(
 
     fps = '1x{}'.format(fps)
     command = [
-        MAGICK_BIN,
+        'magick',
         '-delay', fps,
         '-loop', '0']
     command.extend(inputs)
