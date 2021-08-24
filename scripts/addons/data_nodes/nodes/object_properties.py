@@ -11,17 +11,17 @@ class ObjectPropertiesNode(Node):
 
     def update_object_name(self, context):
         # Update properties from the new selected object
-        if self.data_item is not '':
+        if self.data_item:
             self.update_props_from_object()
 
     def update_object_location(self, context):
-        if self.data_item is not '':
+        if self.data_item:
             item = context.scene.objects[self.data_item]
             item.location = self.locationProperty
             self.update()
 
     def update_object_rotation(self, context):
-        if self.data_item is not '':
+        if self.data_item:
             item = context.scene.objects[self.data_item]
             item.rotation_euler[0] = math.radians(self.rotationProperty[0])
             item.rotation_euler[1] = math.radians(self.rotationProperty[1])
@@ -29,17 +29,17 @@ class ObjectPropertiesNode(Node):
             self.update()
 
     def update_object_scale(self, context):
-        if self.data_item is not '':
+        if self.data_item:
             item = context.scene.objects[self.data_item]
             item.scale = self.scaleProperty
             self.update()
 
     def update_invert_matrix(self, context):
-        if self.data_item is not '':
+        if self.data_item:
             self.update()
 
     def update_matrix(self):
-        if self.data_item is not '':
+        if self.data_item:
             object = bpy.context.scene.objects[self.data_item]
             matrix = object.matrix_world.to_3x3()
             if self.invertMatrixProperty:
