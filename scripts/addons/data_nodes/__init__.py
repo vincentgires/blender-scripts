@@ -17,7 +17,7 @@ from .utils import (
 
 bl_info = {
     'name': 'Data Nodes',
-    'author': 'Vincent Gires',
+    'author': 'Vincent Girès',
     'description': (
         'Node utils for Cycles, the compositor'
         'and a custom Data Node Tree'),
