@@ -1,5 +1,4 @@
 import bpy
-import math
 import mathutils
 from .utils import update_nodes
 

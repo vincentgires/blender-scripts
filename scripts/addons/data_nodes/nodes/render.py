@@ -1,5 +1,5 @@
 import bpy
-from bpy.types import NodeTree, Node, NodeSocket
+from bpy.types import Node
 from ..utils import send_value
 
 

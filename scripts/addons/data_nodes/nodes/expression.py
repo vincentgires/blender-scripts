@@ -1,5 +1,5 @@
 import bpy
-from bpy.types import NodeTree, Node, NodeSocket
+from bpy.types import Node
 import string
 from ..utils import send_value
 
@@ -8,8 +8,7 @@ operation_items = (
     ('add', 'Add', ''),
     ('subtract', 'Subtract', ''),
     ('multiply', 'Multiply', ''),
-    ('divide', 'Divide', '')
-)
+    ('divide', 'Divide', ''))
 
 
 class Expression(Node):

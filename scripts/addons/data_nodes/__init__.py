@@ -1,6 +1,5 @@
 import bpy
-from bpy.app.handlers import persistent
-from bpy.types import NodeTree, Node, NodeSocket
+from bpy.types import NodeTree
 from bpy.props import StringProperty, CollectionProperty, FloatVectorProperty
 import nodeitems_utils
 from nodeitems_utils import NodeCategory, NodeItem
