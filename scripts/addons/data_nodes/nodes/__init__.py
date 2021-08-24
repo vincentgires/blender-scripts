@@ -16,6 +16,7 @@ NODES_TYPES = [
     'NoteNodeType',
     'ObjectPropertiesNodeType',
     'RenderNodeType',
+    'RenderEngineNodeType',
     'RenderLayersNodeType',
     'RoundFloatNodeType',
     'TimeNodeType',

@@ -8,8 +8,8 @@ from .nodes import (
     boolean, color, color_combine, color_palette, color_split, condition,
     data_input, data_output, debug, distance, expression, float_number,
     float_switch, float_to_int, float_to_string, integer, int_to_float, note,
-    object_properties, render, render_layer, round_float, time, vector_split,
-    vector, NODES_TYPES)
+    object_properties, render, render_engine, render_layer, round_float, time,
+    vector_split, vector, NODES_TYPES)
 from . import operators
 from .utils import (
     frame_change, scene_update, render_pre_update, render_post_update)
@@ -107,6 +107,7 @@ classes = (
     note.NoteNode,
     object_properties.ObjectPropertiesNode,
     render.RenderNode,
+    render_engine.RenderEngineNode,
     render_layer.RenderLayersNode,
     round_float.RoundFloat,
     time.Time,
