@@ -12,7 +12,7 @@ class RenderNode(Node):
         name='On render', default=0)
 
     def init(self, context):
-        self.outputs.new('NodeSocketFloat', 'on_render')
+        self.outputs.new('NodeSocketFloat', 'On Render')
 
     def update(self):
         send_value(self.outputs, self.on_render)

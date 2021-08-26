@@ -17,12 +17,12 @@ class ViewLayerNode(Node):
         items=view_layer_enum, name='Layer')
 
     def init(self, context):
-        self.outputs.new('NodeSocketFloat', 'is_active')
+        self.outputs.new('NodeSocketFloat', 'Active')
 
     def update(self):
         context = bpy.context
         for output in self.outputs:
-            if output.name == 'is_active':
+            if output.name == 'Active':
                 if self.view_layer == context.view_layer.name:
                     send_value(self.outputs, 1)
                 else:

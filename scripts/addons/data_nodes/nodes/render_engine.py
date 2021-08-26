@@ -15,12 +15,12 @@ class RenderEngineNode(Node):
         name='Engine')
 
     def init(self, context):
-        self.outputs.new('NodeSocketFloat', 'is_active')
+        self.outputs.new('NodeSocketFloat', 'Active')
 
     def update(self):
         scene = bpy.context.scene
         for output in self.outputs:
-            if output.name == 'is_active':
+            if output.name == 'Active':
                 if self.render_engine == scene.render.engine:
                     send_value(self.outputs, 1)
                 else:
