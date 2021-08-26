@@ -29,13 +29,19 @@ def clean_sequencer(scene):
 
 
 def get_current_strip(scene):
-    frame_current = scene.frame_current
     if not scene.sequence_editor:
         return None
+    frame_current = scene.frame_current
+    space_data = bpy.context.space_data
+    if space_data.type == 'SEQUENCE_EDITOR':
+        display_channel = space_data.display_channel
+        channel = DEFAULT_CHANNEL if display_channel == 0 else display_channel
+    else:
+        channel = DEFAULT_CHANNEL
     for strip in scene.sequence_editor.sequences:
         frame_end = strip.frame_start + strip.frame_final_duration
         if strip.frame_start <= frame_current < frame_end:
-            if strip.channel == DEFAULT_CHANNEL:
+            if strip.channel == channel:
                 return strip
 
 
