@@ -17,8 +17,8 @@ NODES_TYPES = [
     'ObjectPropertiesNodeType',
     'RenderNodeType',
     'RenderEngineNodeType',
-    'RenderLayersNodeType',
     'RoundFloatNodeType',
     'TimeNodeType',
     'VectorSplitNodeType',
-    'VectorNodeType']
+    'VectorNodeType',
+    'ViewLayerNodeType']
