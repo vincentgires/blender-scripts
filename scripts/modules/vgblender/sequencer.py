@@ -96,14 +96,15 @@ def _get_next_frame_start(scene):
 
 
 def load_image_strip(
-        scene, image, channel=DEFAULT_CHANNEL,
-        blend_type=DEFAULT_BLEND_TYPE, length=DEFAULT_LENGTH):
+        scene, image, channel=DEFAULT_CHANNEL, blend_type=DEFAULT_BLEND_TYPE,
+        length=DEFAULT_LENGTH, frame_start=None):
     sequences = scene.sequence_editor.sequences
+    frame_start = frame_start or _get_next_frame_start(scene)
     strip = sequences.new_image(
         name=os.path.basename(image),
         filepath=normpath(image),
         channel=channel,
-        frame_start=_get_next_frame_start(scene))
+        frame_start=frame_start)
     strip.select = False
     strip.blend_type = blend_type
     strip.frame_final_duration = length
@@ -111,14 +112,16 @@ def load_image_strip(
 
 
 def load_image_sequence_strip(
-        scene, images, channel=DEFAULT_CHANNEL, blend_type=DEFAULT_BLEND_TYPE):
+        scene, images, channel=DEFAULT_CHANNEL, blend_type=DEFAULT_BLEND_TYPE,
+        frame_start=None):
     sequences = scene.sequence_editor.sequences
+    frame_start = frame_start or _get_next_frame_start(scene)
     first_frame = images[0]
     strip = sequences.new_image(
         name=os.path.basename(first_frame),
         filepath=normpath(first_frame),
         channel=channel,
-        frame_start=_get_next_frame_start(scene))
+        frame_start=frame_start)
     for image in images[1:]:
         name = os.path.basename(image)
         strip.elements.append(name)
@@ -128,14 +131,15 @@ def load_image_sequence_strip(
 
 
 def load_movie_strip(
-        scene, moviepath,
-        channel=DEFAULT_CHANNEL, blend_type=DEFAULT_BLEND_TYPE):
+        scene, moviepath, channel=DEFAULT_CHANNEL,
+        blend_type=DEFAULT_BLEND_TYPE, frame_start=None):
     sequences = scene.sequence_editor.sequences
+    frame_start = frame_start or _get_next_frame_start(scene)
     strip = sequences.new_movie(
         name=os.path.basename(moviepath),
         filepath=normpath(moviepath),
         channel=channel,
-        frame_start=_get_next_frame_start(scene))
+        frame_start=frame_start)
     strip.select = False
     strip.blend_type = blend_type
     return strip
