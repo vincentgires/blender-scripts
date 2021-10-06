@@ -10,11 +10,11 @@ IMAGEMAGICK_BIN = 'magick'
 
 def add_text(strip, text=None, color=None, position=None):
     item = strip.texts.add()
-    if text:
+    if text is not None:
         item.name = text
-    if color:
+    if color is not None:
         item.color = color
-    if position:
+    if position is not None:
         item.position = position
     strip.active_text_index = len(strip.texts) - 1  # Adapt index
     redraw_area(bpy.context)

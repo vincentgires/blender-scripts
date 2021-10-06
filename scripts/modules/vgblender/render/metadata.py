@@ -17,7 +17,7 @@ def set_metadata_overlay(scene, note=None, color=None, size=16):
     scene.render.use_stamp_filename = False
     scene.render.use_stamp_sequencer_strip = False
     scene.render.use_stamp_strip_meta = False
-    if note:
+    if note is not None:
         scene.render.use_stamp_note = True
         scene.render.stamp_note_text = note
     scene.render.use_stamp = True

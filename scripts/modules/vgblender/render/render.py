@@ -12,7 +12,6 @@ def render_movie(scene, codec=None, qscale=None, metadatas=None):
     that gives more control (codecs and metadatas).
     """
     codec = codec or 'mjpeg'
-    qscale = qscale or '1'
 
     TEMPORARY_FORMAT = 'JPEG'
     TEMPORARY_EXT = '.jpg'
@@ -33,9 +32,9 @@ def render_movie(scene, codec=None, qscale=None, metadatas=None):
         '-start_number', str(scene.frame_start),
         '-i', '{}/render.%04d'.format(render_tmp) + TEMPORARY_EXT,
         '-c:v', codec]
-    if qscale:
+    if qscale is not None:
         command.extend(['-q:v', qscale])
-    if metadatas:
+    if metadatas is not None:
         for md in metadatas:
             command.extend(['-metadata', md])
     command.extend([output, '-y'])
