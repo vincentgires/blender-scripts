@@ -30,7 +30,7 @@ class ColorPaletteColorProperty(bpy.types.PropertyGroup):
     color: FloatVectorProperty(
         name='Color',
         subtype='COLOR',
-        size=4,
+        size=4,  # RGBA
         soft_min=0.0, soft_max=1.0,
         default=(0.5, 0.5, 0.5, 1.0))
 

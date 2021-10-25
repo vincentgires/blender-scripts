@@ -14,7 +14,7 @@ class Color(Node):
     color_prop: bpy.props.FloatVectorProperty(
         name='Color',
         subtype='COLOR',
-        size=4,  # 4 = RGBA
+        size=4,  # RGBA
         soft_min=0.0, soft_max=1.0,
         default=(1, 1, 1, 1),
         update=update_props)
