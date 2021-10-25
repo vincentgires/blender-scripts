@@ -1,7 +1,7 @@
 import bpy
 import math
 from bpy.types import Node
-from ..utils import send_value_link, is_updatable
+from ..utils import send_value_link
 
 
 class ObjectPropertiesNode(Node):
@@ -9,80 +9,44 @@ class ObjectPropertiesNode(Node):
     bl_idname = 'ObjectPropertiesNodeType'
     bl_label = 'Object Properties'
 
-    def update_object_name(self, context):
-        # Update properties from the new selected object
-        if self.data_item:
-            self.update_props_from_object()
-
-    def update_object_location(self, context):
-        if self.data_item:
-            item = context.scene.objects[self.data_item]
-            item.location = self.locationProperty
-            self.update()
-
-    def update_object_rotation(self, context):
-        if self.data_item:
-            item = context.scene.objects[self.data_item]
-            item.rotation_euler[0] = math.radians(self.rotationProperty[0])
-            item.rotation_euler[1] = math.radians(self.rotationProperty[1])
-            item.rotation_euler[2] = math.radians(self.rotationProperty[2])
-            self.update()
-
-    def update_object_scale(self, context):
-        if self.data_item:
-            item = context.scene.objects[self.data_item]
-            item.scale = self.scaleProperty
-            self.update()
-
-    def update_invert_matrix(self, context):
-        if self.data_item:
-            self.update()
-
-    def update_matrix(self):
-        if self.data_item:
-            object = bpy.context.scene.objects[self.data_item]
-            matrix = object.matrix_world.to_3x3()
-            if self.invertMatrixProperty:
-                matrix = matrix.inverted()
-            self.matrixRow1Property = matrix[0]
-            self.matrixRow2Property = matrix[1]
-            self.matrixRow3Property = matrix[2]
-
-    def update_target_nodes(self):
-        for output in self.outputs:
-            for link in output.links:
-                if link.is_valid:
-                    # Update connected target nodes
-                    if is_updatable(link.to_node):
-                        link.to_node.update()
-
-    # Custom Properties
     data_item: bpy.props.StringProperty(
-        name='Object', update=update_object_name)
-    locationProperty: bpy.props.FloatVectorProperty(
-        name='Location',
-        default=(0.0, 0.0, 0.0),
-        update=update_object_location)
-    rotationProperty: bpy.props.FloatVectorProperty(
-        name='Rotation',
-        default=(0.0, 0.0, 0.0),
-        update=update_object_rotation)
-    scaleProperty: bpy.props.FloatVectorProperty(
-        name='Scale',
-        default=(1.0, 1.0, 1.0),
-        update=update_object_scale)
-    invertMatrixProperty: bpy.props.BoolProperty(
-        name='Invert Matrix',
-        default=False,
-        update=update_invert_matrix)
-    matrixRow1Property: bpy.props.FloatVectorProperty(
-        name='Matrix Row1', default=(1.0, 0.0, 0.0))
-    matrixRow2Property: bpy.props.FloatVectorProperty(
-        name='Matrix Row2', default=(0.0, 1.0, 0.0))
-    matrixRow3Property: bpy.props.FloatVectorProperty(
-        name='Matrix Row3', default=(0.0, 0.0, 1.0))
-    displayProperty: bpy.props.BoolProperty(
-        name='display properties', default=False)
+        name='Object')
+    invert_matrix: bpy.props.BoolProperty(
+        name='Invert matrix',
+        default=False)
+
+    def get_object(self):
+        if not self.data_item:
+            return
+        ob = bpy.context.scene.objects[self.data_item]
+        return ob
+
+    def get_location(self):
+        ob = self.get_object()
+        if ob is not None:
+            return ob.location
+
+    def get_rotation(self):
+        ob = self.get_object()
+        if ob is not None:
+            return ob.rotation_euler
+
+    def get_scale(self):
+        ob = self.get_object()
+        if ob is not None:
+            return ob.scale
+
+    def get_matrix(self, row=None):
+        ob = self.get_object()
+        if ob is None:
+            return
+        matrix = ob.matrix_world.to_3x3()
+        if self.invert_matrix:
+            matrix = matrix.inverted()
+        if row is None:
+            return matrix
+        else:
+            return matrix[row]
 
     def init(self, context):
         self.outputs.new('NodeSocketVector', 'Location')
@@ -93,43 +57,34 @@ class ObjectPropertiesNode(Node):
         self.outputs.new('NodeSocketVector', 'Matrix Row3')
 
     def update(self):
-        self.update_matrix()
+        if self.get_object() is None:
+            return
         for output in self.outputs:
             for link in output.links:
                 if output.name == 'Location':
-                    output.default_value = self.locationProperty
+                    output.default_value = self.get_location()
                     if link.to_socket.type == 'VECTOR':
-                        send_value_link(link, self.locationProperty)
+                        send_value_link(link, self.get_location())
                 elif output.name == 'Rotation':
-                    output.default_value = self.rotationProperty
+                    output.default_value = self.get_rotation()
                     if link.to_socket.type == 'VECTOR':
-                        send_value_link(link, self.rotationProperty)
+                        send_value_link(link, self.get_rotation())
                 elif output.name == 'Scale':
-                    output.default_value = self.scaleProperty
+                    output.default_value = self.get_scale()
                     if link.to_socket.type == 'VECTOR':
-                        send_value_link(link, self.scaleProperty)
+                        send_value_link(link, self.get_scale())
                 elif output.name == 'Matrix Row1':
-                    output.default_value = self.matrixRow1Property
+                    output.default_value = self.get_matrix(row=0)
                     if link.to_socket.type == 'VECTOR':
-                        send_value_link(link, self.matrixRow1Property)
+                        send_value_link(link, self.get_matrix(row=0))
                 elif output.name == 'Matrix Row2':
-                    output.default_value = self.matrixRow2Property
+                    output.default_value = self.get_matrix(row=1)
                     if link.to_socket.type == 'VECTOR':
-                        send_value_link(link, self.matrixRow2Property)
+                        send_value_link(link, self.get_matrix(row=1))
                 elif output.name == 'Matrix Row3':
-                    output.default_value = self.matrixRow3Property
+                    output.default_value = self.get_matrix(row=2)
                     if link.to_socket.type == 'VECTOR':
-                        send_value_link(link, self.matrixRow3Property)
-        self.update_target_nodes()
-
-    def update_props_from_object(self):
-        scene = bpy.context.scene
-        self.locationProperty = scene.objects[self.data_item].location
-        self.rotationProperty = scene.objects[self.data_item].rotation_euler
-        self.rotationProperty[0] = math.degrees(self.rotationProperty[0])
-        self.rotationProperty[1] = math.degrees(self.rotationProperty[1])
-        self.rotationProperty[2] = math.degrees(self.rotationProperty[2])
-        self.scaleProperty = scene.objects[self.data_item].scale
+                        send_value_link(link, self.get_matrix(row=2))
 
     def draw_buttons(self, context, layout):
         row = layout.row(align=True)
@@ -137,12 +92,7 @@ class ObjectPropertiesNode(Node):
             self, 'data_item', bpy.data, 'objects',
             icon='OBJECT_DATA', text='')
         row.operator('get_object_to_data_node.btn', text='', icon='EYEDROPPER')
-        layout.prop(self, 'displayProperty', text='Properties')
-        if self.displayProperty:
-            layout.prop(self, 'locationProperty')
-            layout.prop(self, 'rotationProperty')
-            layout.prop(self, 'scaleProperty')
-        layout.prop(self, 'invertMatrixProperty')
+        layout.prop(self, 'invert_matrix')
 
     def draw_buttons_ext(self, context, layout):
         row = layout.row(align=True)
@@ -150,23 +100,21 @@ class ObjectPropertiesNode(Node):
             self, 'data_item', bpy.data, 'objects',
             icon='OBJECT_DATA')
         row.operator('get_object_to_data_node.btn', text='', icon='EYEDROPPER')
-        layout.prop(self, 'locationProperty')
-        layout.prop(self, 'rotationProperty')
-        layout.prop(self, 'scaleProperty')
         box = layout.box()
-        box.prop(self, 'invertMatrixProperty')
-        row = box.row()
-        row.label(text=str(self.matrixRow1Property[0]))
-        row.label(text=str(self.matrixRow1Property[1]))
-        row.label(text=str(self.matrixRow1Property[2]))
-        row = box.row()
-        row.label(text=str(self.matrixRow2Property[0]))
-        row.label(text=str(self.matrixRow2Property[1]))
-        row.label(text=str(self.matrixRow2Property[2]))
-        row = box.row()
-        row.label(text=str(self.matrixRow3Property[0]))
-        row.label(text=str(self.matrixRow3Property[1]))
-        row.label(text=str(self.matrixRow3Property[2]))
+        box.prop(self, 'invert_matrix')
+        if self.get_object() is not None:
+            row = box.row()
+            row.label(text=str(self.get_matrix(row=0)[0]))
+            row.label(text=str(self.get_matrix(row=0)[1]))
+            row.label(text=str(self.get_matrix(row=0)[2]))
+            row = box.row()
+            row.label(text=str(self.get_matrix(row=1)[0]))
+            row.label(text=str(self.get_matrix(row=1)[1]))
+            row.label(text=str(self.get_matrix(row=1)[2]))
+            row = box.row()
+            row.label(text=str(self.get_matrix(row=2)[0]))
+            row.label(text=str(self.get_matrix(row=2)[1]))
+            row.label(text=str(self.get_matrix(row=2)[2]))
 
     def draw_label(self):
         return 'Object Properties'

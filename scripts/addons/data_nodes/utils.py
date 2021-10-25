@@ -37,8 +37,6 @@ def update_nodes():
     for node in nodes:
         if is_updatable(node):
             node.update()
-            if node.bl_idname == 'ObjectPropertiesNodeType':
-                node.update_props_from_object()
 
 
 @persistent

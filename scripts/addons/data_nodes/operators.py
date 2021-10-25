@@ -36,6 +36,7 @@ class DataNodesGetObject(bpy.types.Operator):
         node = context.node
         selected_object = context.object
         node.data_item = selected_object.name
+        node.update()
         return {'FINISHED'}
 
 
