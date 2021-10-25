@@ -17,7 +17,7 @@ class DataNodesUpdate(bpy.types.Operator):
     def execute(self, context):
         selected_nodes = context.selected_nodes
         active_node = context.active_node
-        update_nodes(context.scene)
+        update_nodes()
         return {'FINISHED'}
 
 

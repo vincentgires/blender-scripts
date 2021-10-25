@@ -15,9 +15,6 @@ class DebugNode(Node):
         self.inputs.new('NodeSocketString', 'String')
         self.inputs.new('NodeSocketBool', 'Boolean')
 
-    # def update(self):
-    #     pass
-
     def draw_buttons(self, context, layout):
         if self.inputs['Integer'].links:
             layout.label(text='Integer : ' + str(self.inputs['Integer'].default_value))

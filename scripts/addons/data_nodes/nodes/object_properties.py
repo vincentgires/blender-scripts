@@ -1,7 +1,7 @@
 import bpy
 import math
 from bpy.types import Node
-from ..utils import send_value_link
+from ..utils import send_value_link, is_updatable
 
 
 class ObjectPropertiesNode(Node):
@@ -53,7 +53,8 @@ class ObjectPropertiesNode(Node):
             for link in output.links:
                 if link.is_valid:
                     # Update connected target nodes
-                    link.to_node.update()
+                    if is_updatable(link.to_node):
+                        link.to_node.update()
 
     # Custom Properties
     data_item: bpy.props.StringProperty(

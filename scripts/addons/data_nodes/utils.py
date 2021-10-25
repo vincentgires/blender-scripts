@@ -1,162 +1,74 @@
 import bpy
-import math
-import mathutils
 from bpy.app.handlers import persistent
 from .nodes import NODES_TYPES
 
 
-def update_nodes(scene):
-    # Update compositing tree
-    if scene.node_tree:
+def get_all_data_nodes():
+    nodes = []
+    data = bpy.data
+    # Compositing tree
+    for scene in data.scenes:
+        if scene.node_tree is None:
+            continue
         for node in scene.node_tree.nodes:
-            if node.bl_idname in NODES_TYPES:
-                node.update()
-    # Update nodes in materials
-    for material in bpy.data.materials:
-        if material.node_tree:
-            for node in material.node_tree.nodes:
-                if node.bl_idname in NODES_TYPES:
-                    node.update()
-    # Update custom node trees
-    for tree in bpy.data.node_groups:
+            nodes.append(node)
+    # Material trees
+    for material in data.materials:
+        if material.node_tree is None:
+            continue
+        for node in material.node_tree.nodes:
+            nodes.append(node)
+    # Node groups trees
+    for tree in data.node_groups:
         for node in tree.nodes:
-            if node.bl_idname in NODES_TYPES:
-                node.update()
+            nodes.append(node)
+    nodes = [n for n in nodes if n.bl_idname in NODES_TYPES]
+    return nodes
 
 
-def update_compositing_tree(scene, object, NODES_TYPES):
-    if scene.use_nodes:
-        for node in scene.node_tree.nodes:
-            if node.bl_idname in NODES_TYPES:
-                if node.bl_idname == 'ObjectPropertiesNodeType':
-                    if node.data_item == object.name:
-                        # Update node property from scene object
-                        node.update_props_from_object()
-                node.update()
+def is_updatable(node):
+    if hasattr(node, 'update') and callable(getattr(node, 'update')):
+        return True
+    return False
 
 
-def update_material_tree(scene, object, NODES_TYPES):
-    for material in bpy.data.materials:
-        if material.node_tree:
-            for node in material.node_tree.nodes:
-                if node.bl_idname in NODES_TYPES:
-                    if node.bl_idname == 'ObjectPropertiesNodeType':
-                        # Update node property from scene object
-                        node.update_props_from_object()
-                    node.update()
-
-
-def update_world_tree(scene, object, NODES_TYPES):
-    for world in bpy.data.worlds:
-        if world.use_nodes:
-            for node in scene.world.node_tree.nodes:
-                if node.bl_idname in NODES_TYPES:
-                    if node.bl_idname == 'ObjectPropertiesNodeType':
-                        if node.data_item == object.name:
-                            # Update node property from scene object
-                            node.update_props_from_object()
-                    node.update()
-
-
-def update_custom_tree(scene, object, NODES_TYPES):
-    for tree in bpy.data.node_groups:
-        for node in tree.nodes:
-            if node.bl_idname in NODES_TYPES:
-                if node.bl_idname == 'ObjectPropertiesNodeType':
-                    # Update node property from scene object
-                    node.update_props_from_object()
-                node.update()
+def update_nodes():
+    nodes = get_all_data_nodes()
+    for node in nodes:
+        if is_updatable(node):
+            node.update()
+            if node.bl_idname == 'ObjectPropertiesNodeType':
+                node.update_props_from_object()
 
 
 @persistent
 def frame_change(scene):
-    update_nodes(scene)
+    update_nodes()
 
 
 @persistent
 def scene_update(scene):
-    print(bpy.context.scene.is_evaluated)
-    #check_objects = bpy.data.objects.is_updated
-    #check_scene = bpy.context.scene.is_updated
-    #if check_objects:
-        #for object in bpy.data.objects:
-            #if object.is_updated:
-                #update_compositing_tree(scene, object, custom_nodes_type)
-                #update_material_tree(scene, object, custom_nodes_type)
-                #update_world_tree(scene, object, custom_nodes_type)
-                #update_custom_tree(scene, object, custom_nodes_type)
-    #if check_scene:
-        #for object in bpy.data.objects:
-            #update_compositing_tree(scene, object, custom_nodes_type)
-            #update_material_tree(scene, object, custom_nodes_type)
-            #update_world_tree(scene, object, custom_nodes_type)
-            #update_custom_tree(scene, object, custom_nodes_type)
-
-    # # Node tree update
-    # # Update compositing tree
-    # tree =  scene.node_tree
-    # if scene.use_nodes:
-    #     if tree.is_updated:
-    #         update_nodes(scene)
-    #
-    # # Update nodes in materials
-    # for material in bpy.data.materials:
-    #     if material.use_nodes:
-    #         if material.is_updated:
-    #             update_nodes(scene)
-    #
-    # # Update custom node trees
-    # for tree in bpy.data.node_groups:
-    #     if tree.is_updated:
-    #         update_nodes(scene)
+    update_nodes()
 
 
 @persistent
 def render_pre_update(scene):
-    RenderNodeType = ['RenderNodeType']
-    # Update compositing tree
-    if scene.use_nodes:
-        for node in scene.node_tree.nodes:
-            if node.bl_idname in RenderNodeType:
-                node.on_render = 1
-                node.update()
-    # Update nodes in materials
-    for material in bpy.data.materials:
-        if material.node_tree:
-            for node in material.node_tree.nodes:
-                if node.bl_idname in RenderNodeType:
-                    node.on_render = 1
-                    node.update()
-    # Update custom node trees
-    for tree in bpy.data.node_groups:
-        for node in tree.nodes:
-            if node.bl_idname in RenderNodeType:
-                node.on_render = 1
-                node.update()
+    node_types = ['RenderNodeType']
+    nodes = get_all_data_nodes()
+    for node in nodes:
+        if node.bl_idname in node_types:
+            node.on_render = 1
+            node.update()
 
 
 @persistent
 def render_post_update(scene):
-    RenderNodeType = ['RenderNodeType']
-    # Update compositing tree
-    if scene.use_nodes:
-        for node in scene.node_tree.nodes:
-            if node.bl_idname in RenderNodeType:
-                node.on_render = 0
-                node.update()
-    # Update nodes in materials
-    for material in bpy.data.materials:
-        if material.node_tree:
-            for node in material.node_tree.nodes:
-                if node.bl_idname in RenderNodeType:
-                    node.on_render = 0
-                    node.update()
-    # Update custom node trees
-    for tree in bpy.data.node_groups:
-        for node in tree.nodes:
-            if node.bl_idname in RenderNodeType:
-                node.on_render = 0
-                node.update()
+    node_types = ['RenderNodeType']
+    nodes = get_all_data_nodes()
+    for node in nodes:
+        if node.bl_idname in node_types:
+            node.on_render = 0
+            node.update()
 
 
 def send_value(outputs, value):
@@ -171,24 +83,15 @@ def send_value(outputs, value):
                 # Assign value to connected socket
                 link.to_socket.default_value = value
                 # Update connected target nodes
-                link.to_node.update()
-            else:
-                ok = None
-                if output.type == 'VALUE' and link.to_socket.type == 'BOOLEAN':
-                    ok = True
-                elif output.type == 'VALUE' and link.to_socket.type == 'INT':
-                    ok = True
-                elif output.type == 'BOOLEAN' and link.to_socket.type == 'VALUE':
-                    ok = True
-                elif output.type == 'BOOLEAN' and link.to_socket.type == 'INT':
-                    ok = True
-                elif output.type == 'INT' and link.to_socket.type == 'VALUE':
-                    ok = True
-                elif output.type == 'INT' and link.to_socket.type == 'BOOLEAN':
-                    ok = True
-                if ok:
-                    link.to_socket.default_value = value
+                if is_updatable(link.to_node):
                     link.to_node.update()
+            else:
+                value_types = ('VALUE', 'BOOLEAN', 'INT')
+                if (output.type in value_types
+                        and link.to_socket.type in value_types):
+                    link.to_socket.default_value = value
+                    if is_updatable(link.to_node):
+                        link.to_node.update()
 
 
 def send_value_link(link, value):
@@ -202,4 +105,5 @@ def send_value_link(link, value):
             # Assign value to connected socket
             link.to_socket.default_value = value
             # Update connected target nodes
-            link.to_node.update()
+            if is_updatable(link.to_node):
+                link.to_node.update()
