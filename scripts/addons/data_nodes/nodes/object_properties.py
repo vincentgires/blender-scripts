@@ -9,16 +9,16 @@ class ObjectPropertiesNode(Node):
     bl_idname = 'ObjectPropertiesNodeType'
     bl_label = 'Object Properties'
 
-    data_item: bpy.props.StringProperty(
+    item: bpy.props.StringProperty(
         name='Object')
     invert_matrix: bpy.props.BoolProperty(
         name='Invert matrix',
         default=False)
 
     def get_object(self):
-        if not self.data_item:
+        if not self.item:
             return
-        ob = bpy.context.scene.objects[self.data_item]
+        ob = bpy.context.scene.objects[self.item]
         return ob
 
     def get_location(self):
@@ -89,17 +89,17 @@ class ObjectPropertiesNode(Node):
     def draw_buttons(self, context, layout):
         row = layout.row(align=True)
         row.prop_search(
-            self, 'data_item', bpy.data, 'objects',
+            self, 'item', bpy.data, 'objects',
             icon='OBJECT_DATA', text='')
-        row.operator('get_object_to_data_node.btn', text='', icon='EYEDROPPER')
+        row.operator(
+            'scene.get_object_to_data_node', text='', icon='EYEDROPPER')
         layout.prop(self, 'invert_matrix')
 
     def draw_buttons_ext(self, context, layout):
         row = layout.row(align=True)
-        row.prop_search(
-            self, 'data_item', bpy.data, 'objects',
-            icon='OBJECT_DATA')
-        row.operator('get_object_to_data_node.btn', text='', icon='EYEDROPPER')
+        row.prop_search(self, 'item', bpy.data, 'objects', icon='OBJECT_DATA')
+        row.operator(
+            'scene.get_object_to_data_node', text='', icon='EYEDROPPER')
         box = layout.box()
         box.prop(self, 'invert_matrix')
         if self.get_object() is not None:

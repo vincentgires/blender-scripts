@@ -1,35 +1,7 @@
 import bpy
 from bpy.types import Node
+from . import DATA_ITEMS
 from ..utils import send_value
-
-data_items = (
-    ('actions', 'actions', ''),
-    ('armatures', 'armatures', ''),
-    ('brushes', 'brushes', ''),
-    ('cameras', 'cameras', ''),
-    ('curves', 'curves', ''),
-    ('fonts', 'fonts', ''),
-    ('groups', 'groups', ''),
-    ('images', 'images', ''),
-    ('lamps', 'lamps', ''),
-    ('lattices', 'lattices', ''),
-    ('linestyles', 'linestyles', ''),
-    ('masks', 'masks', ''),
-    ('materials', 'materials', ''),
-    ('meshes', 'meshes', ''),
-    ('metaballs', 'metaballs', ''),
-    ('movieclips', 'movieclips', ''),
-    ('node_groups', 'node_groups', ''),
-    ('objects', 'objects', ''),
-    ('particles', 'particles', ''),
-    ('scenes', 'scenes', ''),
-    ('shape_keys', 'shape_keys', ''),
-    ('sounds', 'sounds', ''),
-    ('speakers', 'speakers', ''),
-    ('texts', 'texts', ''),
-    ('textures', 'textures', ''),
-    ('worlds', 'worlds', ''))
-
 
 
 class DataOutputNode(Node):
@@ -42,51 +14,64 @@ class DataOutputNode(Node):
 
     settings: bpy.props.BoolProperty(
         name='Settings', default=True)
-    data_enum: bpy.props.EnumProperty(
-        name='Data',items=data_items, default='objects')
-    data_item: bpy.props.StringProperty(
+    data: bpy.props.EnumProperty(
+        name='Data', items=DATA_ITEMS, default='objects')
+    item: bpy.props.StringProperty(
         name='Item')
-    attribute_property: bpy.props.StringProperty(
+    attribute: bpy.props.StringProperty(
         name='Attribute', update=update_attribute)
 
     def update(self):
-        # Set data value
-        if self.data_item:
-            data_path = 'bpy.data.' + self.data_enum + '["' + self.data_item+'"]'
-            data_path = eval(data_path)
+        if not self.item:
+            return
+        data_collection = getattr(bpy.data, self.data)
+        item = data_collection.get(self.item)
 
-            for input in self.inputs:
-                for link in input.links:
-                    if link.is_valid:
-                        value = input.default_value
-                        exec('data_path.' + input.name + '=value')
+        for input in self.inputs:
+            for link in input.links:
+                if not link.is_valid:
+                    continue
+                value = input.default_value
+                exec(f'item.{input.name} = value')
 
     def draw_buttons(self, context, layout):
         if self.settings:
-            row = layout.row()
+            col = layout.column(align=True)
+            row = col.row(align=True)
             row.prop(self, 'settings', text='', icon='TRIA_DOWN', emboss=False)
-            layout.prop(self, 'data_enum')
-            row = layout.row(align=True)
-            row.prop_search(self, 'data_item', bpy.data, self.data_enum, text='')
-            row.operator('get_object_to_data_node.btn', text='', icon='EYEDROPPER')
-            row = layout.row(align=True)
-            row.prop(self, 'attribute_property', text='')
-            row.operator('add_input_socket_to_data_node.btn', text='', icon='ADD')
-            layout.operator('remove_input_sockets.btn', text='Clear', icon='X')
+            row.prop(self, 'data')
+            row = col.row(align=True)
+            row.prop_search(self, 'item', bpy.data, self.data, text='')
+            row.operator(
+                'scene.get_object_to_data_node', text='', icon='EYEDROPPER')
+            row = col.row(align=True)
+            row.prop(self, 'attribute', text='')
+            add_socket = row.operator(
+                'scene.add_socket_to_data_node', text='', icon='ADD')
+            add_socket.socket_type = 'INPUT'
+            remove_sockets = col.operator(
+                'scene.remove_sockets', text='Clear', icon='X')
+            remove_sockets.socket_type = 'INPUT'
         else:
-            row = layout.row()
-            row.prop(self, 'settings', text='', icon='TRIA_RIGHT', emboss=False)
-            row.label(text=self.data_item)
+            row = layout.row(align=True)
+            row.prop(
+                self, 'settings', text='', icon='TRIA_RIGHT', emboss=False)
+            row.label(text=self.item)
 
     def draw_buttons_ext(self, context, layout):
-        layout.prop(self, 'data_enum')
+        layout.prop(self, 'data')
         row = layout.row(align=True)
-        row.prop_search(self, 'data_item', bpy.data, self.data_enum, text='')
-        row.operator('get_object_to_data_node.btn', text='', icon=('EYEDROPPER'))
+        row.prop_search(self, 'item', bpy.data, self.data, text='')
+        row.operator(
+            'scene.get_object_to_data_node', text='', icon=('EYEDROPPER'))
         row = layout.row(align=True)
-        row.prop(self, 'attribute_property', text='')
-        row.operator('add_input_socket_to_data_node.btn', text='', icon='ADD')
-        layout.operator('remove_input_sockets.btn', text='Clear', icon='X')
+        row.prop(self, 'attribute', text='')
+        add_socket = row.operator(
+            'scene.add_socket_to_data_node', text='', icon='ADD')
+        add_socket.socket_type = 'INPUT'
+        remove_sockets = layout.operator(
+            'scene.remove_sockets', text='Clear', icon='X')
+        remove_sockets.socket_type = 'INPUT'
 
     def draw_label(self):
         return 'Data Output'

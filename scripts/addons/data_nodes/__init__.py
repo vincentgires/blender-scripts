@@ -75,10 +75,8 @@ class DataNodeCategory(NodeCategory):
 classes = (
     operators.DataNodesUpdate,
     operators.DataNodesGetObject,
-    operators.DataNodesRemoveInputSockets,
-    operators.DataNodesRemoveOutputSockets,
-    operators.DataNodesAddOutputSocket,
-    operators.DataNodesAddInputSocket,
+    operators.DataNodesRemoveSockets,
+    operators.DataNodesAddSocket,
     boolean.Boolean,
     color.Color,
     color_combine.ColorCombine,

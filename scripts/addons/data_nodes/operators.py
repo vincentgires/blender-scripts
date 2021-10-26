@@ -1,6 +1,7 @@
 import bpy
 import mathutils
 from .utils import update_nodes
+from operator import attrgetter
 
 
 class DataNodesUpdate(bpy.types.Operator):
@@ -22,7 +23,7 @@ class DataNodesUpdate(bpy.types.Operator):
 
 
 class DataNodesGetObject(bpy.types.Operator):
-    bl_idname = 'get_object_to_data_node.btn'
+    bl_idname = 'scene.get_object_to_data_node'
     bl_label = 'Get object'
     bl_description = 'Get selected object from scene'
 
@@ -35,136 +36,78 @@ class DataNodesGetObject(bpy.types.Operator):
     def execute(self, context):
         node = context.node
         selected_object = context.object
-        node.data_item = selected_object.name
+        node.item = selected_object.name
         node.update()
         return {'FINISHED'}
 
 
-class DataNodesRemoveInputSockets(bpy.types.Operator):
-    bl_idname = 'remove_input_sockets.btn'
+class DataNodesRemoveSockets(bpy.types.Operator):
+    bl_idname = 'scene.remove_sockets'
     bl_label = 'Remove input sockets'
     bl_description = 'Remove input sockets'
 
-    @classmethod
-    def poll(cls, context):
-        tree_type = context.space_data.tree_type
-        node = context.node
-        node_tree = ['ShaderNodeTree', 'CompositorNodeTree', 'DataNodeTree']
-        return tree_type in node_tree and node.inputs
+    socket_type: bpy.props.EnumProperty(
+        name='Socket type',
+        items=(('OUTPUT', 'output', ''),
+               ('INPUT', 'input', '')),
+        default='OUTPUT')
 
     def execute(self, context):
         node = context.node
-        selected_object = context.object
-        node.inputs.clear()
+        if self.socket_type == 'OUTPUT':
+            node.outputs.clear()
+        elif self.socket_type == 'INPUT':
+            node.inputs.clear()
         return {'FINISHED'}
 
 
-class DataNodesRemoveOutputSockets(bpy.types.Operator):
-    bl_idname = 'remove_output_sockets.btn'
-    bl_label = 'Remove output sockets'
-    bl_description = 'Remove output sockets'
+class DataNodesAddSocket(bpy.types.Operator):
+    bl_idname = 'scene.add_socket_to_data_node'
+    bl_label = 'Add socket'
+    bl_description = 'Add socket to the node'
 
-    @classmethod
-    def poll(cls, context):
-        tree_type = context.space_data.tree_type
-        node = context.node
-        node_tree = ['ShaderNodeTree', 'CompositorNodeTree', 'DataNodeTree']
-        return tree_type in node_tree and node.outputs
-
-    def execute(self, context):
-        node = context.node
-        selected_object = context.object
-        node.outputs.clear()
-        return {'FINISHED'}
-
-
-class DataNodesAddOutputSocket(bpy.types.Operator):
-    bl_idname = 'add_output_socket_to_data_node.btn'
-    bl_label = 'Add output socket'
-    bl_description = 'Add output socket to the node'
+    socket_type: bpy.props.EnumProperty(
+        name='Socket type',
+        items=(('OUTPUT', 'output', ''),
+               ('INPUT', 'input', '')),
+        default='OUTPUT')
 
     @classmethod
     def poll(cls, context):
         tree_type = context.space_data.tree_type
         node_tree = ['ShaderNodeTree', 'CompositorNodeTree', 'DataNodeTree']
-        return tree_type in node_tree and context.node.attribute_property
+        return tree_type in node_tree and context.node.attribute
 
     def execute(self, context):
         node = context.node
-        selected_object = context.object
+        if not node.item:
+            return
 
-        # get attribute value and type
-        data_path = 'bpy.data.' + node.data_enum + '["' + node.data_item + '"]'
-        data_path = eval(data_path)
-        try:
-            attribute = eval('data_path.' + node.attribute_property)
-        except:
-            attribute = None
+        data_collection = getattr(bpy.data, node.data)
+        item = data_collection.get(node.item)
 
-        if attribute is not None:
-            if isinstance(attribute, str):
-                node.outputs.new('NodeSocketString', node.attribute_property)
-            elif isinstance(attribute, bool):
-                node.outputs.new('NodeSocketBool', node.attribute_property)
-            elif isinstance(attribute, int):
-                node.outputs.new('NodeSocketInt', node.attribute_property)
-            elif isinstance(attribute, float):
-                node.outputs.new('NodeSocketFloat', node.attribute_property)
-            elif isinstance(attribute, mathutils.Color):
-                node.outputs.new('NodeSocketColor', node.attribute_property)
-            elif isinstance(attribute, mathutils.Vector):
-                node.outputs.new('NodeSocketVector', node.attribute_property)
-            elif isinstance(attribute, mathutils.Euler):
-                node.outputs.new('NodeSocketVector', node.attribute_property)
-            elif isinstance(attribute, mathutils.Quaternion):
-                node.outputs.new('NodeSocketVector', node.attribute_property)
-            elif len(attribute) == 4:  # RGBA
-                node.outputs.new('NodeSocketColor', node.attribute_property)
+        if item is None:
+            return {'CANCELLED'}
 
-        return {'FINISHED'}
+        attribute = attrgetter(node.attribute)(item)
+        vector_sockets = (mathutils.Vector, mathutils.Euler, mathutils.Euler)
+        if self.socket_type == 'OUTPUT':
+            socket = node.outputs
+        elif self.socket_type == 'INPUT':
+            socket = node.inputs
 
-
-class DataNodesAddInputSocket(bpy.types.Operator):
-    bl_idname = 'add_input_socket_to_data_node.btn'
-    bl_label = 'Add input socket'
-    bl_description = 'Add input socket to the node'
-
-    @classmethod
-    def poll(cls, context):
-        tree_type = context.space_data.tree_type
-        node_tree = ['ShaderNodeTree', 'CompositorNodeTree', 'DataNodeTree']
-        return tree_type in node_tree and context.node.attribute_property
-
-    def execute(self, context):
-        node = context.node
-        selected_object = context.object
-
-        # get attribute value and type
-        data_path = 'bpy.data.' + node.data_enum + '["' + node.data_item + '"]'
-        data_path = eval(data_path)
-        try:
-            attribute = eval('data_path.' + node.attribute_property)
-        except:
-            attribute = None
-
-        if attribute is not None:
-            if isinstance(attribute, str):
-                node.inputs.new('NodeSocketString', node.attribute_property)
-            elif isinstance(attribute, bool):
-                node.inputs.new('NodeSocketBool', node.attribute_property)
-            elif isinstance(attribute, int):
-                node.inputs.new('NodeSocketInt', node.attribute_property)
-            elif isinstance(attribute, float):
-                node.inputs.new('NodeSocketFloat', node.attribute_property)
-            elif isinstance(attribute, mathutils.Color):
-                node.inputs.new('NodeSocketColor', node.attribute_property)
-            elif isinstance(attribute, mathutils.Vector):
-                node.inputs.new('NodeSocketVector', node.attribute_property)
-            elif isinstance(attribute, mathutils.Euler):
-                node.inputs.new('NodeSocketVector', node.attribute_property)
-            elif isinstance(attribute, mathutils.Quaternion):
-                node.inputs.new('NodeSocketVector', node.attribute_property)
-            elif len(attribute) == 4:  # RGBA
-                node.inputs.new('NodeSocketColor', node.attribute_property)
-
+        if isinstance(attribute, str):
+            socket.new('NodeSocketString', node.attribute)
+        elif isinstance(attribute, bool):
+            socket.new('NodeSocketBool', node.attribute)
+        elif isinstance(attribute, int):
+            socket.new('NodeSocketInt', node.attribute)
+        elif isinstance(attribute, float):
+            socket.new('NodeSocketFloat', node.attribute)
+        elif isinstance(attribute, mathutils.Color):
+            socket.new('NodeSocketColor', node.attribute)
+        elif isinstance(attribute, vector_sockets):
+            socket.new('NodeSocketVector', node.attribute)
+        elif len(attribute) == 4:  # RGBA
+            socket.new('NodeSocketColor', node.attribute)
         return {'FINISHED'}

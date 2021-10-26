@@ -69,7 +69,9 @@ class Expression(Node):
             layout.prop(self, 'expr_prop')
         row = layout.row(align=True)
         row.operator('add_input_socket_to_expression_node.btn', icon='ADD')
-        row.operator('remove_input_sockets.btn', text='', icon='X')
+        remove_sockets = row.operator(
+            'scene.remove_sockets', text='', icon='X')
+        remove_sockets.socket_type = 'INPUT'
 
     def draw_label(self):
         return 'Expression'
