@@ -1,7 +1,6 @@
 import bpy
 from bpy.types import Node
 from . import DATA_ITEMS
-from ..utils import send_value
 from functools import reduce
 
 
