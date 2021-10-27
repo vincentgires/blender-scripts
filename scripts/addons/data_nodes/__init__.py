@@ -35,9 +35,9 @@ class ColorPaletteColorProperty(bpy.types.PropertyGroup):
         default=(0.5, 0.5, 0.5, 1.0))
 
 
-class ColorPaletteCollectionProperty(bpy.types.PropertyGroup):
+class ColorPaletteProperties(bpy.types.PropertyGroup):
     name: StringProperty(name='Color Palette name', default='Palette')
-    color_collection: CollectionProperty(type=ColorPaletteColorProperty)
+    colors: CollectionProperty(type=ColorPaletteColorProperty)
 
 
 class NodeEditorDataTree(NodeTree):
@@ -82,11 +82,10 @@ classes = (
     color_combine.ColorCombine,
     color_palette.TemplateColorPaletteCollectionUL,
     color_palette.ColorPalette,
-    color_palette.CustomNodesAddPaletteItem,
-    color_palette.CustomNodesRemovePaletteItem,
-    color_palette.CustomNodesAddPaletteColor,
-    color_palette.CustomNodesRemovePaletteColor,
-    color_palette.CustomNodesClearPaletteColor,
+    color_palette.ColorPaletteAdd,
+    color_palette.ColorPaletteRemove,
+    color_palette.ColorPaletteAddColor,
+    color_palette.ColorPaletteRemoveColor,
     color_split.ColorSplit,
     condition.Condition,
     data_input.DataInputNode,
@@ -111,7 +110,7 @@ classes = (
     vector.Vector,
     vector_split.VectorSplit,
     ColorPaletteColorProperty,
-    ColorPaletteCollectionProperty,
+    ColorPaletteProperties,
     NodeEditorDataTree,
     NodeEditorDataNodesPanel)
 
@@ -124,8 +123,8 @@ def register():
     for cls in classes:
         bpy.utils.register_class(cls)
     nodeitems_utils.register_node_categories('DATA_NODES', node_categories)
-    bpy.types.Scene.colorpalette_collection = CollectionProperty(
-        type=ColorPaletteCollectionProperty)
+    bpy.types.Scene.color_palettes = CollectionProperty(
+        type=ColorPaletteProperties)
 
     bpy.app.handlers.frame_change_post.append(frame_change)
     bpy.app.handlers.depsgraph_update_post.append(scene_update)
@@ -137,7 +136,7 @@ def unregister():
     for cls in reversed(classes):
         bpy.utils.unregister_class(cls)
     nodeitems_utils.unregister_node_categories('DATA_NODES')
-    del bpy.types.Scene.colorpalette_collection
+    del bpy.types.Scene.color_palettes
 
     bpy.app.handlers.frame_change_post.remove(frame_change)
     bpy.app.handlers.depsgraph_update_post.remove(scene_update)
