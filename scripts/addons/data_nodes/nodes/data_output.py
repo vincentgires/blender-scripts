@@ -2,6 +2,7 @@ import bpy
 from bpy.types import Node
 from . import DATA_ITEMS
 from ..utils import send_value
+from functools import reduce
 
 
 class DataOutputNode(Node):
@@ -32,7 +33,8 @@ class DataOutputNode(Node):
                 if not link.is_valid:
                     continue
                 value = input.default_value
-                exec(f'item.{input.name} = value')
+                attrs = input.name.split('.')
+                setattr(reduce(getattr, attrs[:-1], item), attrs[-1], value)
 
     def draw_buttons(self, context, layout):
         if self.settings:
