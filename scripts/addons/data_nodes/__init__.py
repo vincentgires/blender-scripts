@@ -113,19 +113,17 @@ classes = (
     ColorPaletteColorProperty,
     ColorPaletteCollectionProperty,
     NodeEditorDataTree,
-    NodeEditorDataNodesPanel
-)
+    NodeEditorDataNodesPanel)
 
 node_categories = [
     # identifier, label, items list
-    DataNodeCategory(
-        'DATA', 'Data', items=[NodeItem(n) for n in NODES_TYPES])]
+    DataNodeCategory('DATA', 'Data', items=[NodeItem(n) for n in NODES_TYPES])]
 
 
 def register():
     for cls in classes:
         bpy.utils.register_class(cls)
-    nodeitems_utils.register_node_categories('NODE_UTILS', node_categories)
+    nodeitems_utils.register_node_categories('DATA_NODES', node_categories)
     bpy.types.Scene.colorpalette_collection = CollectionProperty(
         type=ColorPaletteCollectionProperty)
 
@@ -138,7 +136,7 @@ def register():
 def unregister():
     for cls in reversed(classes):
         bpy.utils.unregister_class(cls)
-    nodeitems_utils.unregister_node_categories('NODE_UTILS')
+    nodeitems_utils.unregister_node_categories('DATA_NODES')
     del bpy.types.Scene.colorpalette_collection
 
     bpy.app.handlers.frame_change_post.remove(frame_change)
