@@ -2,13 +2,14 @@ import bpy
 from bpy.types import Node
 import string
 from ..utils import send_value
+import numpy
 
 operation_items = (
-    ('expression', 'Expression', ''),
-    ('add', 'Add', ''),
-    ('subtract', 'Subtract', ''),
-    ('multiply', 'Multiply', ''),
-    ('divide', 'Divide', ''))
+    ('EXPRESSION', 'Expression', ''),
+    ('ADD', 'Add', ''),
+    ('SUBTRACT', 'Subtract', ''),
+    ('MULTIPLY', 'Multiply', ''),
+    ('DIVIDE', 'Divide', ''))
 
 
 class Expression(Node):
@@ -19,10 +20,10 @@ class Expression(Node):
     def update_props(self, context):
         self.update()
 
-    operation_enum: bpy.props.EnumProperty(
-        name='', items=operation_items, update=update_props)
-    expr_prop: bpy.props.StringProperty(
-        name='', update=update_props)
+    operation: bpy.props.EnumProperty(
+        name='Operation', items=operation_items, update=update_props)
+    expression: bpy.props.StringProperty(
+        name='Expression', update=update_props)
 
     def init(self, context):
         self.inputs.new('NodeSocketFloat', 'A')
@@ -30,45 +31,39 @@ class Expression(Node):
         self.outputs.new('NodeSocketFloat', 'Value')
 
     def update(self):
-        # Create variable for all inputs
-        for input in self.inputs:
-            exec(input.name + '=' + str(input.default_value))
-
-        if self.operation_enum == 'expression':
-            if self.expr_prop:
-                output_value = eval(self.expr_prop)
-            else:
-                output_value = None
-        else:
-            try:
-                output_value = self.inputs[0].default_value
-            except:
-                output_value = None
-            if self.operation_enum == 'add':
-                for input in self.inputs[1:]:
-                    output_value = output_value + input.default_value
-            if self.operation_enum == 'subtract':
-                for input in self.inputs[1:]:
-                    output_value = output_value - input.default_value
-            if self.operation_enum == 'multiply':
-                for input in self.inputs[1:]:
-                    output_value = output_value * input.default_value
-            if self.operation_enum == 'divide':
-                for input in self.inputs[1:]:
-                    output_value = output_value / input.default_value
-
-        if isinstance(output_value, float) or isinstance(output_value, int):
-            # Send data value to connected nodes
-            send_value(self.outputs, output_value)
+        if not self.inputs:
+            return
+        values = {i.name: i.default_value for i in self.inputs}
+        if self.operation == 'EXPRESSION':
+            if not self.expression:
+                return
+            expr = list(self.expression)
+            for index, i in enumerate(expr):
+                v = values.get(i)
+                if v is not None:
+                    expr[index] = str(v)
+            send_value(self.outputs, eval(''.join(expr)))
+        elif self.operation == 'ADD':
+            send_value(self.outputs, numpy.sum(list(values.values())))
+        elif self.operation == 'SUBTRACT':
+            vv = list(values.values())
+            v = [vv[0]] + [v * -1 for v in vv[1:]]
+            send_value(self.outputs, numpy.sum(v))
+        elif self.operation == 'MULTIPLY':
+            send_value(self.outputs, numpy.prod(list(values.values())))
+        elif self.operation == 'DIVIDE':
+            vv = list(values.values())
+            v = [vv[0]] + [1 / v for v in vv[1:]]
+            send_value(self.outputs, numpy.prod(v))
 
     def draw_buttons(self, context, layout):
         """Additional buttons displayed on the node"""
 
-        layout.prop(self, 'operation_enum')
-        if self.operation_enum == 'expression':
-            layout.prop(self, 'expr_prop')
+        layout.prop(self, 'operation')
+        if self.operation == 'EXPRESSION':
+            layout.prop(self, 'expression')
         row = layout.row(align=True)
-        row.operator('add_input_socket_to_expression_node.btn', icon='ADD')
+        row.operator('scene.add_input_socket_to_expression_node', icon='ADD')
         remove_sockets = row.operator(
             'scene.remove_sockets', text='', icon='X')
         remove_sockets.socket_type = 'INPUT'
@@ -78,7 +73,7 @@ class Expression(Node):
 
 
 class ExpressionNodeAddInputSocket(bpy.types.Operator):
-    bl_idname = 'add_input_socket_to_expression_node.btn'
+    bl_idname = 'scene.add_input_socket_to_expression_node'
     bl_label = 'Add input'
     bl_description = 'Add input socket to the node'
 

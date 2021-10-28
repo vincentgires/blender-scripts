@@ -6,7 +6,7 @@ from ..utils import send_value
 class FloatNumber(Node):
     """Float number node"""
     bl_idname = 'FloatNumberNodeType'
-    bl_label = 'FloatNumber'
+    bl_label = 'Float Number'
 
     def update_props(self, context):
         self.update()

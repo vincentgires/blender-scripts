@@ -9,9 +9,9 @@ operation_items = (
     ('>=', '>=', ''),
     ('<', '<', ''),
     ('<=', '<=', ''),
-    ('and', 'and', ''),
-    ('or', 'or', ''),
-    ('not', 'not', ''))
+    ('AND', 'and', ''),
+    ('OR', 'or', ''),
+    ('NOT', 'not', ''))
 
 
 class Condition(Node):
@@ -22,8 +22,8 @@ class Condition(Node):
     def update_props(self, context):
         self.update()
 
-    operation_enum: bpy.props.EnumProperty(
-        name='',
+    operation: bpy.props.EnumProperty(
+        name='Operation',
         items=operation_items,
         update=update_props)
 
@@ -34,31 +34,29 @@ class Condition(Node):
 
     def update(self):
         if len(self.inputs) >= 2:
-            A = self.inputs['A'].default_value
-            B = self.inputs['B'].default_value
-            if self.operation_enum == '==':
-                send_value(self.outputs, A == B)
-            elif self.operation_enum == '!=':
-                send_value(self.outputs, A != B)
-            elif self.operation_enum == '>':
-                send_value(self.outputs, A > B)
-            elif self.operation_enum == '>=':
-                send_value(self.outputs, A >= B)
-            elif self.operation_enum == '<':
-                send_value(self.outputs, A < B)
-            elif self.operation_enum == '<=':
-                send_value(self.outputs, A <= B)
-            elif self.operation_enum == 'and':
-                send_value(self.outputs, A and B)
-            elif self.operation_enum == 'or':
-                send_value(self.outputs, A or B)
-            elif self.operation_enum == 'not':
-                send_value(self.outputs, not A)
-            else:
-                send_value(self.outputs, False)
+            a = self.inputs['A'].default_value
+            b = self.inputs['B'].default_value
+            if self.operation == '==':
+                send_value(self.outputs, a == b)
+            elif self.operation == '!=':
+                send_value(self.outputs, a != b)
+            elif self.operation == '>':
+                send_value(self.outputs, a > b)
+            elif self.operation == '>=':
+                send_value(self.outputs, a >= b)
+            elif self.operation == '<':
+                send_value(self.outputs, a < b)
+            elif self.operation == '<=':
+                send_value(self.outputs, a <= b)
+            elif self.operation == 'AND':
+                send_value(self.outputs, a and b)
+            elif self.operation == 'OR':
+                send_value(self.outputs, a or b)
+            elif self.operation == 'NOT':
+                send_value(self.outputs, not a)
 
     def draw_buttons(self, context, layout):
-        layout.prop(self, 'operation_enum')
+        layout.prop(self, 'operation')
 
     def draw_label(self):
         return 'Condition'

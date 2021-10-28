@@ -11,17 +11,17 @@ class Integer(Node):
     def update_props(self, context):
         self.update()
 
-    int_prop: bpy.props.IntProperty(
+    integer: bpy.props.IntProperty(
         name='Int', default=1, update=update_props)
 
     def init(self, context):
         self.outputs.new('NodeSocketInt', 'Int')
 
     def update(self):
-        send_value(self.outputs, self.int_prop)
+        send_value(self.outputs, self.integer)
 
     def draw_buttons(self, context, layout):
-        layout.prop(self, 'int_prop')
+        layout.prop(self, 'integer')
 
     def draw_label(self):
         return 'Int'
