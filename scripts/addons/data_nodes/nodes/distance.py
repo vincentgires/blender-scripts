@@ -1,26 +1,38 @@
+# TODO BUG:
+# - draw handler does not load on existing node opened in a blend file
+# - crash when removing the node
+
 import bpy
 import bgl
 import math
 from bpy.types import Node
 from ..utils import send_value
+import gpu
+from gpu_extras.batch import batch_for_shader
+
+shader_3d_uniform = (
+    gpu.shader.from_builtin('3D_UNIFORM_COLOR')
+    if not bpy.app.background else None)
+
+
+def draw_line(v1, v2, color, width=2):
+    if shader_3d_uniform is None:
+        return
+    bgl.glEnable(bgl.GL_BLEND)
+    bgl.glLineWidth(width)
+    coords = [(v1[0], v1[1], v1[2]), (v2[0], v2[1], v2[2])]
+    batch = batch_for_shader(shader_3d_uniform, 'LINES', {'pos': coords})
+    shader_3d_uniform.bind()
+    shader_3d_uniform.uniform_float('color', color)
+    batch.draw(shader_3d_uniform)
+    bgl.glLineWidth(1)
+    bgl.glDisable(bgl.GL_BLEND)
 
 
 def draw_distance_opengl(self, context):
-    bgl.glPointSize(10)
-    bgl.glColor3f(1.0, 0.0, 0.0)
-    bgl.glBegin(bgl.GL_POINTS)
-    bgl.glVertex3f(1.0, 1.0, 1.0)
-    bgl.glEnd()
-    bgl.glPointSize(50)
-    bgl.glColor3f(0.0, 0.0, 1.0)
-    bgl.glBegin(bgl.GL_POINTS)
-    bgl.glVertex3f(-1.0, 0.0, 2.0)
-    bgl.glEnd()
-
-    # Restore opengl defaults
-    bgl.glLineWidth(1)
-    bgl.glDisable(bgl.GL_BLEND)
-    bgl.glColor4f(0.0, 0.0, 0.0, 1.0)
+    a = tuple(self.inputs['VectorA'].default_value)
+    b = tuple(self.inputs['VectorB'].default_value)
+    draw_line(a, b, (1.0, 1.0, 1.0))
 
 
 class DistanceNode(Node):
@@ -28,14 +40,11 @@ class DistanceNode(Node):
     bl_idname = 'DistanceNodeType'
     bl_label = 'Distance'
 
-    display: bpy.props.BoolProperty(name='display', default=True)
-    opengl_handle = [None]
-
     def init(self, context):
         self.inputs.new('NodeSocketVector', 'VectorA')
         self.inputs.new('NodeSocketVector', 'VectorB')
         self.outputs.new('NodeSocketFloat', 'Distance')
-        self.opengl_handle[0] = bpy.types.SpaceView3D.draw_handler_add(
+        self.draw_handler = bpy.types.SpaceView3D.draw_handler_add(
             draw_distance_opengl, (self, context), 'WINDOW', 'POST_VIEW')
 
     def update(self):
@@ -46,9 +55,13 @@ class DistanceNode(Node):
                 (b[0] - a[0]) ** 2 + (b[1] - a[1]) ** 2 + (b[2] - a[2]) ** 2)
             send_value(self.outputs, distance)
 
+            # Force redraw 3d view
+            for area in bpy.context.screen.areas:
+                if area.type in 'VIEW_3D':
+                    area.tag_redraw()
+
     def free(self):
-        bpy.types.SpaceView3D.draw_handler_remove(
-            self.opengl_handle[0], 'WINDOW')
+        bpy.types.SpaceView3D.draw_handler_remove(self.draw_handler, 'WINDOW')
 
     def draw_label(self):
         return 'Distance'
