@@ -11,17 +11,17 @@ class FloatNumber(Node):
     def update_props(self, context):
         self.update()
 
-    float_prop: bpy.props.FloatProperty(
+    value: bpy.props.FloatProperty(
         name='Float', default=1.0, update=update_props)
 
     def init(self, context):
         self.outputs.new('NodeSocketFloat', 'Float')
 
     def update(self):
-        send_value(self.outputs, self.float_prop)
+        send_value(self.outputs, self.value)
 
     def draw_buttons(self, context, layout):
-        layout.prop(self, 'float_prop')
+        layout.prop(self, 'value')
 
     def draw_label(self):
         return 'Float number'

@@ -11,7 +11,7 @@ class FloatToString(Node):
     def update_props(self, context):
         self.update()
 
-    round_prop: bpy.props.BoolProperty(
+    value: bpy.props.BoolProperty(
         name='Round', update=update_props)
 
     def init(self, context):
@@ -20,14 +20,14 @@ class FloatToString(Node):
 
     def update(self):
         input_value = self.inputs['Float'].default_value
-        if self.round_prop:
+        if self.value:
             input_value = round(input_value)
         input_value = str(input_value)
         # Send data value to connected nodes
         send_value(self.outputs, input_value)
 
     def draw_buttons(self, context, layout):
-        layout.prop(self, 'round_prop')
+        layout.prop(self, 'value')
 
     def draw_label(self):
         return 'Float To String'

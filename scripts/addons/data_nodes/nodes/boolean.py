@@ -11,7 +11,7 @@ class Boolean(Node):
     def update_props(self, context):
         self.update()
 
-    bool_prop: bpy.props.BoolProperty(
+    value: bpy.props.BoolProperty(
         name='Bool',
         default=True,
         update=update_props)
@@ -20,10 +20,10 @@ class Boolean(Node):
         self.outputs.new('NodeSocketBool', 'Boolean')
 
     def update(self):
-        send_value(self.outputs, self.bool_prop)
+        send_value(self.outputs, self.value)
 
     def draw_buttons(self, context, layout):
-        layout.prop(self, 'bool_prop')
+        layout.prop(self, 'value')
 
     def draw_label(self):
         return 'Boolean'

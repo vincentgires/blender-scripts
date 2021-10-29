@@ -11,7 +11,7 @@ class Color(Node):
     def update_props(self, context):
         self.update()
 
-    color_prop: bpy.props.FloatVectorProperty(
+    value: bpy.props.FloatVectorProperty(
         name='Color',
         subtype='COLOR',
         size=4,  # RGBA
@@ -23,10 +23,10 @@ class Color(Node):
         self.outputs.new('NodeSocketColor', 'Color')
 
     def update(self):
-        send_value(self.outputs, self.color_prop)
+        send_value(self.outputs, self.value)
 
     def draw_buttons(self, context, layout):
-        layout.prop(self, 'color_prop')
+        layout.prop(self, 'value')
 
     def draw_label(self):
         return 'Color'
