@@ -35,24 +35,28 @@ class DataOutputNode(Node):
                 attrs = input.name.split('.')
                 setattr(reduce(getattr, attrs[:-1], item), attrs[-1], value)
 
+    def _draw_settings(self, layout, display_settings_prop=False):
+        col = layout.column(align=True)
+        row = col.row(align=True)
+        if display_settings_prop:
+            row.prop(self, 'settings', text='', icon='TRIA_DOWN', emboss=False)
+        row.prop(self, 'data')
+        row = col.row(align=True)
+        row.prop_search(self, 'item', bpy.data, self.data, text='')
+        row.operator(
+            'scene.get_object_to_data_node', text='', icon='EYEDROPPER')
+        row = col.row(align=True)
+        row.prop(self, 'attribute', text='')
+        add_socket = row.operator(
+            'scene.add_socket_to_data_node', text='', icon='ADD')
+        add_socket.socket_type = 'INPUT'
+        remove_sockets = col.operator(
+            'scene.remove_sockets', text='Clear', icon='X')
+        remove_sockets.socket_type = 'INPUT'
+
     def draw_buttons(self, context, layout):
         if self.settings:
-            col = layout.column(align=True)
-            row = col.row(align=True)
-            row.prop(self, 'settings', text='', icon='TRIA_DOWN', emboss=False)
-            row.prop(self, 'data')
-            row = col.row(align=True)
-            row.prop_search(self, 'item', bpy.data, self.data, text='')
-            row.operator(
-                'scene.get_object_to_data_node', text='', icon='EYEDROPPER')
-            row = col.row(align=True)
-            row.prop(self, 'attribute', text='')
-            add_socket = row.operator(
-                'scene.add_socket_to_data_node', text='', icon='ADD')
-            add_socket.socket_type = 'INPUT'
-            remove_sockets = col.operator(
-                'scene.remove_sockets', text='Clear', icon='X')
-            remove_sockets.socket_type = 'INPUT'
+            self._draw_settings(layout, display_settings_prop=True)
         else:
             row = layout.row(align=True)
             row.prop(
@@ -60,19 +64,7 @@ class DataOutputNode(Node):
             row.label(text=self.item)
 
     def draw_buttons_ext(self, context, layout):
-        layout.prop(self, 'data')
-        row = layout.row(align=True)
-        row.prop_search(self, 'item', bpy.data, self.data, text='')
-        row.operator(
-            'scene.get_object_to_data_node', text='', icon=('EYEDROPPER'))
-        row = layout.row(align=True)
-        row.prop(self, 'attribute', text='')
-        add_socket = row.operator(
-            'scene.add_socket_to_data_node', text='', icon='ADD')
-        add_socket.socket_type = 'INPUT'
-        remove_sockets = layout.operator(
-            'scene.remove_sockets', text='Clear', icon='X')
-        remove_sockets.socket_type = 'INPUT'
+        self._draw_settings(layout)
 
     def draw_label(self):
         return 'Data Output'
