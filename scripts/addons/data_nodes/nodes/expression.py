@@ -1,7 +1,7 @@
 import bpy
 from bpy.types import Node
 import string
-from ..utils import send_value
+from ..utils import send_value, AVAILABLE_NTREES
 import numpy
 
 operation_items = (
@@ -77,9 +77,7 @@ class ExpressionNodeAddInputSocket(bpy.types.Operator):
 
     @classmethod
     def poll(cls, context):
-        tree_type = context.space_data.tree_type
-        node_tree = ['ShaderNodeTree', 'CompositorNodeTree', 'DataNodeTree']
-        return tree_type in node_tree
+        return context.space_data.tree_type in AVAILABLE_NTREES
 
     def execute(self, context):
         node = context.node

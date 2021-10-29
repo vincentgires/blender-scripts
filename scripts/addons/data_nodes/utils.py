@@ -2,6 +2,9 @@ import bpy
 from bpy.app.handlers import persistent
 from .nodes import NODES_TYPES
 
+AVAILABLE_NTREES = [
+    'DataNodeTree', 'ShaderNodeTree', 'CompositorNodeTree', 'GeometryNodeTree']
+
 
 def get_all_data_nodes():
     nodes = []

@@ -1,6 +1,6 @@
 import bpy
 import mathutils
-from .utils import update_nodes
+from .utils import update_nodes, AVAILABLE_NTREES
 from operator import attrgetter
 
 
@@ -11,11 +11,10 @@ class DataNodesUpdate(bpy.types.Operator):
 
     @classmethod
     def poll(cls, context):
-        tree_type = context.space_data.tree_type
-        node_tree = ['ShaderNodeTree', 'CompositorNodeTree', 'DataNodeTree']
-        return tree_type in node_tree
+        return context.space_data.tree_type in AVAILABLE_NTREES
 
     def execute(self, context):
+        print(context.space_data.tree_type)
         selected_nodes = context.selected_nodes
         active_node = context.active_node
         update_nodes()
@@ -29,9 +28,7 @@ class DataNodesGetObject(bpy.types.Operator):
 
     @classmethod
     def poll(cls, context):
-        tree_type = context.space_data.tree_type
-        node_tree = ['ShaderNodeTree', 'CompositorNodeTree', 'DataNodeTree']
-        return tree_type in node_tree
+        return context.space_data.tree_type in AVAILABLE_NTREES
 
     def execute(self, context):
         node = context.node
@@ -74,9 +71,7 @@ class DataNodesAddSocket(bpy.types.Operator):
 
     @classmethod
     def poll(cls, context):
-        tree_type = context.space_data.tree_type
-        node_tree = ['ShaderNodeTree', 'CompositorNodeTree', 'DataNodeTree']
-        return tree_type in node_tree and context.node.attribute
+        return context.space_data.tree_type in AVAILABLE_NTREES
 
     def execute(self, context):
         node = context.node

@@ -11,7 +11,8 @@ from .nodes import (
     vector_split, vector, NODES_TYPES)
 from . import operators
 from .utils import (
-    frame_change, scene_update, render_pre_update, render_post_update)
+    frame_change, scene_update, render_pre_update, render_post_update,
+    AVAILABLE_NTREES)
 
 
 bl_info = {
@@ -55,9 +56,7 @@ class NodeEditorDataNodesPanel(bpy.types.Panel):
 
     @classmethod
     def poll(cls, context):
-        tree_type = context.space_data.tree_type
-        node_tree = ['ShaderNodeTree', 'CompositorNodeTree', 'DataNodeTree']
-        return tree_type in node_tree
+        return context.space_data.tree_type in AVAILABLE_NTREES
 
     def draw(self, context):
         layout = self.layout
@@ -67,9 +66,7 @@ class NodeEditorDataNodesPanel(bpy.types.Panel):
 class DataNodeCategory(NodeCategory):
     @classmethod
     def poll(cls, context):
-        tree_type = context.space_data.tree_type
-        node_tree = ['ShaderNodeTree', 'CompositorNodeTree', 'DataNodeTree']
-        return tree_type in node_tree
+        return context.space_data.tree_type in AVAILABLE_NTREES
 
 
 classes = (

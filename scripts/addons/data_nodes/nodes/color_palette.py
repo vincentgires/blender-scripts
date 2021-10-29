@@ -1,6 +1,6 @@
 import bpy
 from bpy.types import Node
-from ..utils import send_value_link
+from ..utils import send_value_link, AVAILABLE_NTREES
 
 
 class TemplateColorPaletteCollectionUL(bpy.types.UIList):
@@ -88,10 +88,7 @@ class ColorPaletteAdd(bpy.types.Operator):
 
     @classmethod
     def poll(cls, context):
-        tree_type = context.space_data.tree_type
-        node_tree = [
-            'ShaderNodeTree', 'CompositorNodeTree', 'DataNodeTree']
-        return tree_type in node_tree
+        return context.space_data.tree_type in AVAILABLE_NTREES
 
     def execute(self, context):
         node = context.node
@@ -110,10 +107,7 @@ class ColorPaletteRemove(bpy.types.Operator):
 
     @classmethod
     def poll(cls, context):
-        tree_type = context.space_data.tree_type
-        node = context.node
-        node_tree = ['ShaderNodeTree', 'CompositorNodeTree', 'DataNodeTree']
-        return tree_type in node_tree
+        return context.space_data.tree_type in AVAILABLE_NTREES
 
     def execute(self, context):
         node = context.node
@@ -130,10 +124,7 @@ class ColorPaletteAddColor(bpy.types.Operator):
 
     @classmethod
     def poll(cls, context):
-        tree_type = context.space_data.tree_type
-        node = context.node
-        node_tree = ['ShaderNodeTree', 'CompositorNodeTree', 'DataNodeTree']
-        return tree_type in node_tree
+        return context.space_data.tree_type in AVAILABLE_NTREES
 
     def execute(self, context):
         node = context.node
@@ -151,10 +142,7 @@ class ColorPaletteRemoveColor(bpy.types.Operator):
 
     @classmethod
     def poll(cls, context):
-        tree_type = context.space_data.tree_type
-        node = context.node
-        node_tree = ['ShaderNodeTree', 'CompositorNodeTree', 'DataNodeTree']
-        return tree_type in node_tree
+        return context.space_data.tree_type in AVAILABLE_NTREES
 
     def execute(self, context):
         node = context.node
