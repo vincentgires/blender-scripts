@@ -5,7 +5,7 @@ from operator import attrgetter
 
 
 class DataNodesUpdate(bpy.types.Operator):
-    bl_idname = 'update_data_node.btn'
+    bl_idname = 'scene.update_data_node'
     bl_label = 'Update nodes'
     bl_description = 'Force update data nodes'
 

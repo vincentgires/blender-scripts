@@ -60,7 +60,7 @@ class NodeEditorDataNodesPanel(bpy.types.Panel):
 
     def draw(self, context):
         layout = self.layout
-        layout.operator('update_data_node.btn', icon='FILE_REFRESH')
+        layout.operator('scene.update_data_node', icon='FILE_REFRESH')
 
 
 class DataNodeCategory(NodeCategory):
