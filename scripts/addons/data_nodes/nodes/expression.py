@@ -57,8 +57,6 @@ class Expression(Node):
             send_value(self.outputs, numpy.prod(v))
 
     def draw_buttons(self, context, layout):
-        """Additional buttons displayed on the node"""
-
         layout.prop(self, 'operation')
         if self.operation == 'EXPRESSION':
             layout.prop(self, 'expression')
