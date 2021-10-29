@@ -12,7 +12,7 @@ shader_3d_uniform = (
 draw_handler = {}
 
 
-def draw_line(v1, v2, color, width=2):
+def draw_line(v1, v2, color, width=1):
     if shader_3d_uniform is None:
         return
     bgl.glEnable(bgl.GL_BLEND)
@@ -27,9 +27,11 @@ def draw_line(v1, v2, color, width=2):
 
 
 def draw_distance_opengl(node, context):
+    if not node.display:
+        return
     a = tuple(node.inputs['VectorA'].default_value)
     b = tuple(node.inputs['VectorB'].default_value)
-    draw_line(a, b, (1.0, 1.0, 1.0))
+    draw_line(a, b, node.color, node.width)
 
 
 def _force_redraw_view3d():
@@ -42,6 +44,21 @@ class DistanceNode(Node):
     """Distance node"""
     bl_idname = 'DistanceNodeType'
     bl_label = 'Distance'
+
+    def update_props(self, context):
+        self.update()
+
+    display: bpy.props.BoolProperty(
+        name='Display', default=False)
+    color: bpy.props.FloatVectorProperty(
+        name='Color',
+        subtype='COLOR',
+        size=4,  # RGBA
+        soft_min=0.0, soft_max=1.0,
+        default=(1.0, 1.0, 1.0, 1.0),
+        update=update_props)
+    width: bpy.props.IntProperty(
+        name='Width', default=1, update=update_props)
 
     def _set_draw_handler(self):
         # Use memory address to get unique key used in draw handler
@@ -73,6 +90,12 @@ class DistanceNode(Node):
         SpaceView3D.draw_handler_remove(
             draw_handler[self.as_pointer()], 'WINDOW')
         _force_redraw_view3d()
+
+    def draw_buttons_ext(self, context, layout):
+        col = layout.column(align=True)
+        col.prop(self, 'display')
+        col.prop(self, 'color')
+        col.prop(self, 'width')
 
     def draw_label(self):
         return 'Distance'
