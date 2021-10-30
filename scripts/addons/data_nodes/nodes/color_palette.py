@@ -35,10 +35,16 @@ class ColorPalette(Node):
         default=0,
         update=update_props)
 
-    def init(self, context):
+    def set_sockets(self):
         items = [p.colors for p in bpy.context.scene.color_palettes]
-        for i in range(_find_maximum_length(items)):
+        length = _find_maximum_length(items)
+        for i in range(length):
+            if len(self.outputs) >= length:
+                break
             self.outputs.new('NodeSocketColor', 'Color')
+
+    def init(self, context):
+        self.set_sockets()
 
     def update(self):
         scene = bpy.context.scene
@@ -98,6 +104,7 @@ class ColorPaletteAdd(bpy.types.Operator):
         for i in range(3):
             p.colors.add()
         node.palette_index = len(color_palettes) - 1
+        node.set_sockets()
         return {'FINISHED'}
 
 
