@@ -50,9 +50,6 @@ class DataOutputNode(Node):
         add_socket = row.operator(
             'scene.add_socket_to_data_node', text='', icon='ADD')
         add_socket.socket_type = 'INPUT'
-        remove_sockets = col.operator(
-            'scene.remove_sockets', text='Clear', icon='X')
-        remove_sockets.socket_type = 'INPUT'
 
     def draw_buttons(self, context, layout):
         if self.settings:

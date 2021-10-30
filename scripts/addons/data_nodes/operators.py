@@ -4,8 +4,8 @@ from .utils import update_nodes, AVAILABLE_NTREES
 from operator import attrgetter
 
 SOCKET_TYPE_ITEMS = (
-    ('OUTPUT', 'output', ''),
-    ('INPUT', 'input', ''))
+    ('OUTPUT', 'Output', ''),
+    ('INPUT', 'Input', ''))
 
 
 class DataNodesUpdate(bpy.types.Operator):
@@ -49,13 +49,20 @@ class DataNodesRemoveSockets(bpy.types.Operator):
         name='Socket type',
         items=SOCKET_TYPE_ITEMS,
         default='OUTPUT')
+    executed_from: bpy.props.EnumProperty(
+        name='Socket type',
+        items=(('NODE', 'Node', ''),
+               ('PANEL', 'Panel', '')))
 
     @classmethod
     def poll(cls, context):
         return context.space_data.tree_type in AVAILABLE_NTREES
 
     def execute(self, context):
-        node = context.node
+        if hasattr(context, 'node'):
+            node = context.node
+        else:
+            node = context.active_node
         if self.socket_type == 'OUTPUT':
             node.outputs.clear()
         elif self.socket_type == 'INPUT':

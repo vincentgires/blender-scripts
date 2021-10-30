@@ -61,13 +61,40 @@ class NodeEditorDataNodesPanel(bpy.types.Panel):
     def draw(self, context):
         layout = self.layout
         layout.operator('scene.update_data_node', icon='FILE_REFRESH')
+
+
+class SocketsPanel(bpy.types.Panel):
+    bl_idname = 'DATANODES_PT_sockets'
+    bl_label = 'Sockets'
+    bl_space_type = 'NODE_EDITOR'
+    bl_region_type = 'UI'
+    bl_category = 'Data'
+
+    @classmethod
+    def poll(cls, context):
+        return context.space_data.tree_type in AVAILABLE_NTREES
+
+    def draw(self, context):
+        layout = self.layout
         col = layout.column(align=True)
-        col.label(text='Sockets')
-        row = col.row(align=True)
-        row.operator_menu_enum(
-            'scene.remove_input_socket', 'socket', text='Remove input')
-        row.operator_menu_enum(
+        fac = 0.3
+        sub = col.split(factor=fac)
+        sub.label(text='Remove')
+        sub.operator_menu_enum(
+            'scene.remove_input_socket', 'socket', text='input')
+        sub = col.split(factor=fac)
+        sub.separator()
+        sub.operator_menu_enum(
             'scene.remove_output_socket', 'socket', text='output')
+        col = layout.column(align=True)
+        sub = col.split(factor=fac)
+        sub.label(text='Clear')
+        input_op = sub.operator('scene.remove_sockets', text='input')
+        input_op.socket_type = 'INPUT'
+        sub = col.split(factor=fac)
+        sub.separator()
+        output_op = sub.operator('scene.remove_sockets', text='output')
+        output_op.socket_type = 'OUTPUT'
 
 
 class DataNodeCategory(NodeCategory):
@@ -119,7 +146,8 @@ classes = (
     ColorPaletteColorProperty,
     ColorPaletteProperties,
     NodeEditorDataTree,
-    NodeEditorDataNodesPanel)
+    NodeEditorDataNodesPanel,
+    SocketsPanel)
 
 node_categories = [
     # identifier, label, items list
