@@ -61,6 +61,13 @@ class NodeEditorDataNodesPanel(bpy.types.Panel):
     def draw(self, context):
         layout = self.layout
         layout.operator('scene.update_data_node', icon='FILE_REFRESH')
+        col = layout.column(align=True)
+        col.label(text='Sockets')
+        row = col.row(align=True)
+        row.operator_menu_enum(
+            'scene.remove_input_socket', 'socket', text='Remove input')
+        row.operator_menu_enum(
+            'scene.remove_output_socket', 'socket', text='output')
 
 
 class DataNodeCategory(NodeCategory):
@@ -73,6 +80,9 @@ classes = (
     operators.DataNodesUpdate,
     operators.DataNodesGetObject,
     operators.DataNodesRemoveSockets,
+    operators.DataNodesRemoveSocket,
+    operators.DataNodesRemoveInputSocket,
+    operators.DataNodesRemoveOutputSocket,
     operators.DataNodesAddSocket,
     boolean.Boolean,
     color.Color,

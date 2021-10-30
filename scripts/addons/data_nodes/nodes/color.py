@@ -20,6 +20,7 @@ class Color(Node):
         update=update_props)
 
     def init(self, context):
+        self.inputs.new('NodeSocketColor', 'Color')
         self.outputs.new('NodeSocketColor', 'Color')
 
     def update(self):
