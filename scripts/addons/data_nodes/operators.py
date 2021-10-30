@@ -144,22 +144,25 @@ class DataNodesAddSocket(bpy.types.Operator):
         attribute = attrgetter(node.attribute)(item)
         vector_sockets = (mathutils.Vector, mathutils.Euler, mathutils.Euler)
         if self.socket_type == 'OUTPUT':
-            socket = node.outputs
+            sockets = node.outputs
         elif self.socket_type == 'INPUT':
-            socket = node.inputs
+            sockets = node.inputs
+
+        if node.attribute in sockets:
+            return {'CANCELLED'}
 
         if isinstance(attribute, str):
-            socket.new('NodeSocketString', node.attribute)
+            sockets.new('NodeSocketString', node.attribute)
         elif isinstance(attribute, bool):
-            socket.new('NodeSocketBool', node.attribute)
+            sockets.new('NodeSocketBool', node.attribute)
         elif isinstance(attribute, int):
-            socket.new('NodeSocketInt', node.attribute)
+            sockets.new('NodeSocketInt', node.attribute)
         elif isinstance(attribute, float):
-            socket.new('NodeSocketFloat', node.attribute)
+            sockets.new('NodeSocketFloat', node.attribute)
         elif isinstance(attribute, mathutils.Color):
-            socket.new('NodeSocketColor', node.attribute)
+            sockets.new('NodeSocketColor', node.attribute)
         elif isinstance(attribute, vector_sockets):
-            socket.new('NodeSocketVector', node.attribute)
+            sockets.new('NodeSocketVector', node.attribute)
         elif len(attribute) == 4:  # RGBA
-            socket.new('NodeSocketColor', node.attribute)
+            sockets.new('NodeSocketColor', node.attribute)
         return {'FINISHED'}
