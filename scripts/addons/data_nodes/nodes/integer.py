@@ -1,6 +1,6 @@
 import bpy
 from bpy.types import Node
-from ..utils import send_value
+from ..utils import set_sockets
 
 
 class Integer(Node):
@@ -18,7 +18,8 @@ class Integer(Node):
         self.outputs.new('NodeSocketInt', 'Int')
 
     def update(self):
-        send_value(self.outputs, self.value)
+        for output in self.outputs:
+            set_sockets(output, self.value)
 
     def draw_buttons(self, context, layout):
         layout.prop(self, 'value')

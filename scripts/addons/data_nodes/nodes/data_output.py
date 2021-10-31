@@ -26,7 +26,6 @@ class DataOutputNode(Node):
             return
         data_collection = getattr(bpy.data, self.data)
         item = data_collection.get(self.item)
-
         for input in self.inputs:
             for link in input.links:
                 if not link.is_valid:

@@ -1,6 +1,6 @@
 import bpy
 from bpy.types import Node
-from ..utils import send_value
+from ..utils import set_sockets
 
 
 class Time(Node):
@@ -12,7 +12,8 @@ class Time(Node):
         self.outputs.new('NodeSocketFloat', 'Frame')
 
     def update(self):
-        send_value(self.outputs, bpy.context.scene.frame_current)
+        for output in self.outputs:
+            set_sockets(output, bpy.context.scene.frame_current)
 
     def draw_label(self):
         return 'Time'

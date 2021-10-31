@@ -1,6 +1,6 @@
 import bpy
 from bpy.types import Node
-from ..utils import send_value_link, AVAILABLE_NTREES
+from ..utils import set_sockets, AVAILABLE_NTREES
 
 
 class TemplateColorPaletteCollectionUL(bpy.types.UIList):
@@ -48,16 +48,14 @@ class ColorPalette(Node):
 
     def update(self):
         scene = bpy.context.scene
-        if scene.color_palettes:
-            palette = scene.color_palettes[self.palette_index]
-
-            # Send data value to connected nodes
-            for index, output in enumerate(self.outputs):
-                if index >= len(palette.colors):
-                    continue
-                for link in output.links:
-                    value = palette.colors[index].color
-                    send_value_link(link, value)
+        if not scene.color_palettes:
+            return
+        palette = scene.color_palettes[self.palette_index]
+        for index, output in enumerate(self.outputs):
+            if index >= len(palette.colors):
+                continue
+            value = palette.colors[index].color
+            set_sockets(output, value)
 
     def draw_buttons(self, context, layout):
         if self.settings:

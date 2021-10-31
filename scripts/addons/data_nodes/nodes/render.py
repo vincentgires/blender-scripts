@@ -1,6 +1,6 @@
 import bpy
 from bpy.types import Node
-from ..utils import send_value
+from ..utils import set_sockets
 
 
 class RenderNode(Node):
@@ -15,7 +15,8 @@ class RenderNode(Node):
         self.outputs.new('NodeSocketFloat', 'On Render')
 
     def update(self):
-        send_value(self.outputs, self.on_render)
+        for output in self.outputs:
+            set_sockets(output, self.on_render)
 
     def draw_label(self):
         return 'Render'

@@ -1,6 +1,6 @@
 import bpy
 from bpy.types import Node
-from ..utils import send_value
+from ..utils import set_sockets
 
 
 class NoteNode(Node):
@@ -18,7 +18,8 @@ class NoteNode(Node):
         self.outputs.new('NodeSocketString', 'String')
 
     def update(self):
-        send_value(self.outputs, self.note)
+        for output in self.outputs:
+            set_sockets(output, self.note)
 
     def draw_buttons(self, context, layout):
         layout.prop(self, 'note', text='')

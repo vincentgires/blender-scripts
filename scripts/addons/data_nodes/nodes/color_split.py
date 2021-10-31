@@ -1,6 +1,6 @@
 import bpy
 from bpy.types import Node
-from ..utils import send_value_link
+from ..utils import set_sockets
 
 
 class ColorSplit(Node):
@@ -16,21 +16,15 @@ class ColorSplit(Node):
         self.outputs.new('NodeSocketFloat', 'A')
 
     def update(self):
-        # Send data value to connected nodes
         for output in self.outputs:
-            for link in output.links:
-                if output.name == 'R':
-                    send_value_link(
-                        link, self.inputs['Color'].default_value[0])
-                elif output.name == 'G':
-                    send_value_link(
-                        link, self.inputs['Color'].default_value[1])
-                elif output.name == 'B':
-                    send_value_link(
-                        link, self.inputs['Color'].default_value[2])
-                elif output.name == 'A':
-                    send_value_link(
-                        link, self.inputs['Color'].default_value[3])
+            if output.name == 'R':
+                set_sockets(output, self.inputs['Color'].default_value[0])
+            elif output.name == 'G':
+                set_sockets(output, self.inputs['Color'].default_value[1])
+            elif output.name == 'B':
+                set_sockets(output, self.inputs['Color'].default_value[2])
+            elif output.name == 'A':
+                set_sockets(output, self.inputs['Color'].default_value[3])
 
     def draw_label(self):
         return 'Color Split'

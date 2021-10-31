@@ -2,7 +2,7 @@ import bpy
 import bgl
 import math
 from bpy.types import Node, SpaceView3D
-from ..utils import send_value
+from ..utils import set_sockets
 import gpu
 from gpu_extras.batch import batch_for_shader
 
@@ -80,7 +80,8 @@ class DistanceNode(Node):
             b = self.inputs['VectorB'].default_value
             distance = math.sqrt(
                 (b[0] - a[0]) ** 2 + (b[1] - a[1]) ** 2 + (b[2] - a[2]) ** 2)
-            send_value(self.outputs, distance)
+            for output in self.outputs:
+                set_sockets(output, distance)
             _force_redraw_view3d()
 
     def copy(self, node):

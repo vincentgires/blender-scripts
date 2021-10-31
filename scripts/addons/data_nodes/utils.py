@@ -72,39 +72,23 @@ def render_post_update(scene):
             node.update()
 
 
-def send_value(outputs, value):
-    for output in outputs:
-        for link in output.links:
-            if not link.is_valid:
-                continue
-            if link.to_node.type == 'REROUTE':
-                reroute = link.to_node
-                send_value(reroute.outputs, value)
-            elif output.type == link.to_socket.type:
-                # Assign value to connected socket
-                link.to_socket.default_value = value
-                # Update connected target nodes
-                if is_updatable(link.to_node):
-                    link.to_node.update()
-            else:
-                value_types = ('VALUE', 'BOOLEAN', 'INT')
-                if (output.type in value_types
-                        and link.to_socket.type in value_types):
-                    link.to_socket.default_value = value
-                    if is_updatable(link.to_node):
-                        link.to_node.update()
-
-
-def send_value_link(link, value):
-    if link.is_valid:
+def set_sockets(output, value):
+    for link in output.links:
+        if not link.is_valid:
+            continue
         if link.to_node.type == 'REROUTE':
             reroute = link.to_node
-            reroute_links = reroute.outputs[0].links
-            for reroute_link in reroute_links:
-                send_value(reroute_link, value)
-        else:
+            set_sockets(reroute.outputs[0], value)
+        elif output.type == link.to_socket.type:
             # Assign value to connected socket
             link.to_socket.default_value = value
             # Update connected target nodes
             if is_updatable(link.to_node):
                 link.to_node.update()
+        else:
+            value_types = ('VALUE', 'BOOLEAN', 'INT')
+            if (output.type in value_types
+                    and link.to_socket.type in value_types):
+                link.to_socket.default_value = value
+                if is_updatable(link.to_node):
+                    link.to_node.update()

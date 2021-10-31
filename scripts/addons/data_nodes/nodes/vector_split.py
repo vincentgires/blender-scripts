@@ -1,6 +1,6 @@
 import bpy
 from bpy.types import Node
-from ..utils import send_value_link
+from ..utils import set_sockets
 
 
 class VectorSplit(Node):
@@ -15,18 +15,13 @@ class VectorSplit(Node):
         self.outputs.new('NodeSocketFloat', 'Z')
 
     def update(self):
-        # Send data value to connected nodes
         for output in self.outputs:
-            for link in output.links:
-                if output.name == 'X':
-                    send_value_link(
-                        link, self.inputs['Vector'].default_value[0])
-                elif output.name == 'Y':
-                    send_value_link(
-                        link, self.inputs['Vector'].default_value[1])
-                elif output.name == 'Z':
-                    send_value_link(
-                        link, self.inputs['Vector'].default_value[2])
+            if output.name == 'X':
+                set_sockets(output, self.inputs['Vector'].default_value[0])
+            elif output.name == 'Y':
+                set_sockets(output, self.inputs['Vector'].default_value[1])
+            elif output.name == 'Z':
+                set_sockets(output, self.inputs['Vector'].default_value[2])
 
     def draw_label(self):
         return 'Vector Split'

@@ -1,7 +1,7 @@
 import bpy
 from bpy.types import Node
 from . import DATA_ITEMS
-from ..utils import send_value_link
+from ..utils import set_sockets
 from operator import attrgetter
 
 
@@ -30,9 +30,8 @@ class DataInputNode(Node):
         if item is None:
             return
         for output in self.outputs:
-            for link in output.links:
-                value = attrgetter(output.name)(item)
-                send_value_link(link, value)
+            value = attrgetter(output.name)(item)
+            set_sockets(output, value)
 
     def _draw_settings(self, layout, display_settings_prop=False):
         col = layout.column(align=True)

@@ -1,6 +1,6 @@
 import bpy
 from bpy.types import Node
-from ..utils import send_value
+from ..utils import set_sockets
 
 
 class FloatSwitch(Node):
@@ -17,11 +17,11 @@ class FloatSwitch(Node):
     def update(self):
         if len(self.inputs) >= 3:
             if self.inputs['Switch'].default_value > 0.0:
-                output = self.inputs['B'].default_value
+                value = self.inputs['B'].default_value
             else:
-                output = self.inputs['A'].default_value
-            # Send data value to connected nodes
-            send_value(self.outputs, output)
+                value = self.inputs['A'].default_value
+            for output in self.outputs:
+                set_sockets(output, value)
 
     def draw_label(self):
         return 'Float Switch'

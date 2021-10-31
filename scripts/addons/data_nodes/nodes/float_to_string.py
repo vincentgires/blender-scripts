@@ -1,6 +1,6 @@
 import bpy
 from bpy.types import Node
-from ..utils import send_value
+from ..utils import set_sockets
 
 
 class FloatToString(Node):
@@ -11,7 +11,7 @@ class FloatToString(Node):
     def update_props(self, context):
         self.update()
 
-    value: bpy.props.BoolProperty(
+    round: bpy.props.BoolProperty(
         name='Round', update=update_props)
 
     def init(self, context):
@@ -19,12 +19,11 @@ class FloatToString(Node):
         self.outputs.new('NodeSocketString', 'String')
 
     def update(self):
-        input_value = self.inputs['Float'].default_value
-        if self.value:
-            input_value = round(input_value)
-        input_value = str(input_value)
-        # Send data value to connected nodes
-        send_value(self.outputs, input_value)
+        value = self.inputs['Float'].default_value
+        if self.round:
+            value = round(value)
+        for output in self.outputs:
+            set_sockets(output, str(value))
 
     def draw_buttons(self, context, layout):
         layout.prop(self, 'value')

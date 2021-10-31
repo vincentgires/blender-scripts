@@ -1,6 +1,6 @@
 import bpy
 from bpy.types import Node
-from ..utils import send_value
+from ..utils import set_sockets
 
 
 class RenderEngineNode(Node):
@@ -20,11 +20,10 @@ class RenderEngineNode(Node):
     def update(self):
         scene = bpy.context.scene
         for output in self.outputs:
-            if output.name == 'Active':
-                if self.render_engine == scene.render.engine:
-                    send_value(self.outputs, 1)
-                else:
-                    send_value(self.outputs, 0)
+            if self.render_engine == scene.render.engine:
+                set_sockets(output, 1)
+            else:
+                set_sockets(output, 0)
 
     def draw_buttons(self, context, layout):
         layout.prop(self, 'render_engine')

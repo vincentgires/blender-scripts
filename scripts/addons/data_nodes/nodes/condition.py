@@ -1,6 +1,6 @@
 import bpy
 from bpy.types import Node
-from ..utils import send_value
+from ..utils import set_sockets
 
 operation_items = (
     ('==', '==', ''),
@@ -36,24 +36,25 @@ class Condition(Node):
         if len(self.inputs) >= 2:
             a = self.inputs['A'].default_value
             b = self.inputs['B'].default_value
-            if self.operation == '==':
-                send_value(self.outputs, a == b)
-            elif self.operation == '!=':
-                send_value(self.outputs, a != b)
-            elif self.operation == '>':
-                send_value(self.outputs, a > b)
-            elif self.operation == '>=':
-                send_value(self.outputs, a >= b)
-            elif self.operation == '<':
-                send_value(self.outputs, a < b)
-            elif self.operation == '<=':
-                send_value(self.outputs, a <= b)
-            elif self.operation == 'AND':
-                send_value(self.outputs, a and b)
-            elif self.operation == 'OR':
-                send_value(self.outputs, a or b)
-            elif self.operation == 'NOT':
-                send_value(self.outputs, not a)
+            for output in self.outputs:
+                if self.operation == '==':
+                    set_sockets(output, a == b)
+                elif self.operation == '!=':
+                    set_sockets(output, a != b)
+                elif self.operation == '>':
+                    set_sockets(output, a > b)
+                elif self.operation == '>=':
+                    set_sockets(output, a >= b)
+                elif self.operation == '<':
+                    set_sockets(output, a < b)
+                elif self.operation == '<=':
+                    set_sockets(output, a <= b)
+                elif self.operation == 'AND':
+                    set_sockets(output, a and b)
+                elif self.operation == 'OR':
+                    set_sockets(output, a or b)
+                elif self.operation == 'NOT':
+                    set_sockets(output, not a)
 
     def draw_buttons(self, context, layout):
         layout.prop(self, 'operation')

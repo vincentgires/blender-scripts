@@ -1,7 +1,7 @@
 import bpy
 import mathutils
 from bpy.types import Node
-from ..utils import send_value
+from ..utils import set_sockets
 
 
 class ColorCombine(Node):
@@ -23,7 +23,8 @@ class ColorCombine(Node):
             color[1] = self.inputs[1].default_value
             color[2] = self.inputs[2].default_value
             color[3] = self.inputs[3].default_value
-            send_value(self.outputs, color)
+            for output in self.outputs:
+                set_sockets(output, color)
 
     def draw_label(self):
         return 'Color Combine'

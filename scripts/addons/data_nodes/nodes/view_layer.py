@@ -1,6 +1,6 @@
 import bpy
 from bpy.types import Node
-from ..utils import send_value
+from ..utils import set_sockets
 
 
 class ViewLayerNode(Node):
@@ -22,11 +22,10 @@ class ViewLayerNode(Node):
     def update(self):
         context = bpy.context
         for output in self.outputs:
-            if output.name == 'Active':
-                if self.view_layer == context.view_layer.name:
-                    send_value(self.outputs, 1)
-                else:
-                    send_value(self.outputs, 0)
+            if self.view_layer == context.view_layer.name:
+                set_sockets(output, 1)
+            else:
+                set_sockets(output, 0)
 
     def draw_buttons(self, context, layout):
         layout.prop(self, 'view_layer')

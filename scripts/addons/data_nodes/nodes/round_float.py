@@ -1,6 +1,6 @@
 import bpy
 from bpy.types import Node
-from ..utils import send_value
+from ..utils import set_sockets
 
 
 class RoundFloat(Node):
@@ -14,9 +14,9 @@ class RoundFloat(Node):
         self.outputs.new('NodeSocketInt', 'Int')
 
     def update(self):
-        input_value = self.inputs['Float'].default_value
-        input_value = round(input_value)
-        send_value(self.outputs, input_value)
+        value = round(self.inputs['Float'].default_value)
+        for output in self.outputs:
+            set_sockets(output, value)
 
     def draw_label(self):
         return 'Round'

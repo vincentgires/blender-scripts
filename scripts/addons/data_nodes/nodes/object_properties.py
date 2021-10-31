@@ -1,7 +1,7 @@
 import bpy
 import math
 from bpy.types import Node
-from ..utils import send_value_link
+from ..utils import set_sockets
 
 
 class ObjectPropertiesNode(Node):
@@ -60,31 +60,18 @@ class ObjectPropertiesNode(Node):
         if self.get_object() is None:
             return
         for output in self.outputs:
-            for link in output.links:
-                if output.name == 'Location':
-                    output.default_value = self.get_location()
-                    if link.to_socket.type == 'VECTOR':
-                        send_value_link(link, self.get_location())
-                elif output.name == 'Rotation':
-                    output.default_value = self.get_rotation()
-                    if link.to_socket.type == 'VECTOR':
-                        send_value_link(link, self.get_rotation())
-                elif output.name == 'Scale':
-                    output.default_value = self.get_scale()
-                    if link.to_socket.type == 'VECTOR':
-                        send_value_link(link, self.get_scale())
-                elif output.name == 'Matrix Row1':
-                    output.default_value = self.get_matrix(row=0)
-                    if link.to_socket.type == 'VECTOR':
-                        send_value_link(link, self.get_matrix(row=0))
-                elif output.name == 'Matrix Row2':
-                    output.default_value = self.get_matrix(row=1)
-                    if link.to_socket.type == 'VECTOR':
-                        send_value_link(link, self.get_matrix(row=1))
-                elif output.name == 'Matrix Row3':
-                    output.default_value = self.get_matrix(row=2)
-                    if link.to_socket.type == 'VECTOR':
-                        send_value_link(link, self.get_matrix(row=2))
+            if output.name == 'Location':
+                set_sockets(output, self.get_location())
+            elif output.name == 'Rotation':
+                set_sockets(output, self.get_rotation())
+            elif output.name == 'Scale':
+                set_sockets(output, self.get_scale())
+            elif output.name == 'Matrix Row1':
+                set_sockets(output, self.get_matrix(row=0))
+            elif output.name == 'Matrix Row2':
+                set_sockets(output, self.get_matrix(row=1))
+            elif output.name == 'Matrix Row3':
+                set_sockets(output, self.get_matrix(row=2))
 
     def draw_buttons(self, context, layout):
         row = layout.row(align=True)

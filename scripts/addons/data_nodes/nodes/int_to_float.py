@@ -1,6 +1,6 @@
 import bpy
 from bpy.types import Node
-from ..utils import send_value
+from ..utils import set_sockets
 
 
 class IntToFloat(Node):
@@ -13,10 +13,9 @@ class IntToFloat(Node):
         self.outputs.new('NodeSocketFloat', 'Float')
 
     def update(self):
-        input_value = self.inputs['Int'].default_value
-        input_value = float(input_value)
-        # Send data value to connected nodes
-        send_value(self.outputs, input_value)
+        value = self.inputs['Int'].default_value
+        for output in self.outputs:
+            set_sockets(output, float(value))
 
     def draw_label(self):
-        return 'Int to float'
+        return 'Int To Float'
