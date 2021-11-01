@@ -10,10 +10,8 @@ class ColorSplit(Node):
 
     def init(self, context):
         self.inputs.new('NodeSocketColor', 'Color')
-        self.outputs.new('NodeSocketFloat', 'R')
-        self.outputs.new('NodeSocketFloat', 'G')
-        self.outputs.new('NodeSocketFloat', 'B')
-        self.outputs.new('NodeSocketFloat', 'A')
+        for socket_name in ('R', 'G', 'B', 'A'):
+            self.outputs.new('NodeSocketFloat', socket_name)
 
     def update(self):
         for output in self.outputs:

@@ -10,9 +10,8 @@ class VectorSplit(Node):
 
     def init(self, context):
         self.inputs.new('NodeSocketVector', 'Vector')
-        self.outputs.new('NodeSocketFloat', 'X')
-        self.outputs.new('NodeSocketFloat', 'Y')
-        self.outputs.new('NodeSocketFloat', 'Z')
+        for socket_name in ('X', 'Y', 'Z'):
+            self.outputs.new('NodeSocketFloat', socket_name)
 
     def update(self):
         for output in self.outputs:

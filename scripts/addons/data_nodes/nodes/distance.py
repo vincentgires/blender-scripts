@@ -68,8 +68,8 @@ class DistanceNode(Node):
             draw_distance_opengl, (self, bpy.context), 'WINDOW', 'POST_VIEW')
 
     def init(self, context):
-        self.inputs.new('NodeSocketVector', 'VectorA')
-        self.inputs.new('NodeSocketVector', 'VectorB')
+        for socket_name in ('VectorA', 'VectorB'):
+            self.inputs.new('NodeSocketVector', socket_name)
         self.outputs.new('NodeSocketFloat', 'Distance')
         self._set_draw_handler()
 

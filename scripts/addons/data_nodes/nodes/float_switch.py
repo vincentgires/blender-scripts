@@ -9,9 +9,8 @@ class FloatSwitch(Node):
     bl_label = 'Float Switch'
 
     def init(self, context):
-        self.inputs.new('NodeSocketFloat', 'A')
-        self.inputs.new('NodeSocketFloat', 'B')
-        self.inputs.new('NodeSocketFloat', 'Switch')
+        for socket_name in ('A', 'B', 'Switch'):
+            self.inputs.new('NodeSocketFloat', socket_name)
         self.outputs.new('NodeSocketFloat', 'Value')
 
     def update(self):

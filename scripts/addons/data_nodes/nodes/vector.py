@@ -13,16 +13,13 @@ class Vector(Node):
         self.update()
 
     def init(self, context):
-        self.inputs.new('NodeSocketFloat', 'X')
-        self.inputs.new('NodeSocketFloat', 'Y')
-        self.inputs.new('NodeSocketFloat', 'Z')
+        for socket_name in ('X', 'Y', 'Z'):
+            self.inputs.new('NodeSocketFloat', socket_name)
         self.outputs.new('NodeSocketVector', 'Vector')
 
     def update(self):
         if len(self.inputs) >= 3:
-            x = self.inputs['X'].default_value
-            y = self.inputs['Y'].default_value
-            z = self.inputs['Z'].default_value
+            x, y, z = (self.inputs[i].default_value for i in ('X', 'Y', 'Z'))
             vector = mathutils.Vector((x, y, z))
             for output in self.outputs:
                 set_sockets(output, vector)

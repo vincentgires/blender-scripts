@@ -49,12 +49,10 @@ class ObjectPropertiesNode(Node):
             return matrix[row]
 
     def init(self, context):
-        self.outputs.new('NodeSocketVector', 'Location')
-        self.outputs.new('NodeSocketVector', 'Rotation')
-        self.outputs.new('NodeSocketVector', 'Scale')
-        self.outputs.new('NodeSocketVector', 'Matrix Row1')
-        self.outputs.new('NodeSocketVector', 'Matrix Row2')
-        self.outputs.new('NodeSocketVector', 'Matrix Row3')
+        for socket_name in (
+                'Location', 'Rotation', 'Scale',
+                'Matrix Row1', 'Matrix Row2', 'Matrix Row3'):
+            self.outputs.new('NodeSocketVector', socket_name)
 
     def update(self):
         if self.get_object() is None:

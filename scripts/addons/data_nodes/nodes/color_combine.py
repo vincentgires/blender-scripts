@@ -10,10 +10,8 @@ class ColorCombine(Node):
     bl_label = 'Color Combine'
 
     def init(self, context):
-        self.inputs.new('NodeSocketFloat', 'R')
-        self.inputs.new('NodeSocketFloat', 'G')
-        self.inputs.new('NodeSocketFloat', 'B')
-        self.inputs.new('NodeSocketFloat', 'A')
+        for socket_name in ('R', 'G', 'B', 'A'):
+            self.inputs.new('NodeSocketFloat', socket_name)
         self.outputs.new('NodeSocketColor', 'Color')
 
     def update(self):

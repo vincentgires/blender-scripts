@@ -26,8 +26,8 @@ class Expression(Node):
         name='Expression', update=update_props)
 
     def init(self, context):
-        self.inputs.new('NodeSocketFloat', 'A')
-        self.inputs.new('NodeSocketFloat', 'B')
+        for socket_name in ('A', 'B'):
+            self.inputs.new('NodeSocketFloat', socket_name)
         self.outputs.new('NodeSocketFloat', 'Value')
 
     def update(self):
