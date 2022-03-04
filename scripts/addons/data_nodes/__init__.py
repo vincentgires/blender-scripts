@@ -7,8 +7,8 @@ from .nodes import (
     boolean, color, color_combine, color_palette, color_split, condition,
     data_input, data_output, debug, distance, expression, float_number,
     float_switch, float_to_int, float_to_string, integer, int_to_float, note,
-    object_properties, render, render_engine, view_layer, round_float, time,
-    vector_split, vector, NODES_TYPES)
+    object_properties, render, render_engine, round_float, scene, time,
+    vector_split, vector, view_layer, NODES_TYPES)
 from . import operators
 from .utils import (
     frame_change, scene_update, render_pre_update, render_post_update,
@@ -140,6 +140,7 @@ classes = (
     render_engine.RenderEngineNode,
     view_layer.ViewLayerNode,
     round_float.RoundFloat,
+    scene.SceneNode,
     time.Time,
     vector.Vector,
     vector_split.VectorSplit,

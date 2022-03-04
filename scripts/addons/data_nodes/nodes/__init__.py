@@ -21,6 +21,7 @@ NODES_TYPES = [
     'RenderNodeType',
     'RenderEngineNodeType',
     'RoundFloatNodeType',
+    'SceneNodeType',
     'TimeNodeType',
     'VectorNodeType',
     'VectorSplitNodeType',
