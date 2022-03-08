@@ -5,8 +5,9 @@ from bpy.props import (
 from bpy_extras.io_utils import ImportHelper
 import os
 from vgblender.sequencer import (
-    create_adjustment_strip, load_multiple_movie_strips, set_strip_colorspace,
+    create_adjustment_strip, load_multiple_movie_strips,
     set_strip_proxy_quality)
+from .colorspace import SetInputTransform
 
 
 class SequencerCustomPanel(Panel):
@@ -153,26 +154,20 @@ class AddMultipleMovies(Operator, ImportHelper):
         return {'FINISHED'}
 
 
-class SetStripColorspace(Operator):
-    bl_idname = 'scene.set_strip_colorspace'
-    bl_label = 'Set strip colorspace'
-
-    colorspace: StringProperty(name='Colorspace')
+class SetStripInputTransform(SetInputTransform):
+    bl_idname = 'scene.set_strip_input_transform'
+    bl_label = 'Set strip input transform'
 
     @classmethod
     def poll(cls, context):
         sequences = context.scene.sequence_editor.sequences
         return [s for s in sequences if s.select]
 
-    def execute(self, context):
+    def get_datablocks(self, context):
         sequences = context.scene.sequence_editor.sequences
         selected_strips = [s for s in sequences if s.select]
         for strip in selected_strips:
-            set_strip_colorspace(strip, self.colorspace)
-        return {'FINISHED'}
-
-    def invoke(self, context, event):
-        return context.window_manager.invoke_props_dialog(self)
+            yield strip
 
 
 class SetStripProxyQuality(Operator):

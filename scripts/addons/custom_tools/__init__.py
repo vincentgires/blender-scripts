@@ -1,10 +1,10 @@
 import bpy
-from . import render
+from bpy.types import Operator
+from . import image, movieclip, render, sequencer
 #from . import lighting
 #from . import animation
 #from . import look_through
 #from . import node
-from . import sequencer
 
 
 bl_info = {
@@ -27,6 +27,16 @@ def header_color_management(self, context):
         row.prop(scene.view_settings, 'gamma', text='')
 
 
+def image_image_menu_draw(self, context):
+    self.layout.separator()
+    self.layout.operator('scene.set_image_input_transform')
+
+
+def clip_clip_menu_draw(self, context):
+    self.layout.separator()
+    self.layout.operator('scene.set_movieclip_input_transform')
+
+
 def render_menu_draw(self, context):
     self.layout.operator('render.render_gif')
 
@@ -43,11 +53,11 @@ def sequencer_strip_menu_draw(self, context):
     self.layout.separator()
     self.layout.operator('scene.open_strip_as_movieclip')
     self.layout.operator('scene.add_strip_as_compositing')
-    self.layout.operator('scene.set_strip_colorspace')
+    self.layout.operator('scene.set_strip_input_transform')
     self.layout.operator('scene.set_strip_proxy_quality')
 
 
-class ResetExposure(bpy.types.Operator):
+class ResetExposure(Operator):
     bl_idname = 'scene.reset_exposure'
     bl_label = 'Reset exposure'
     bl_description = 'Reset exposure to 0'
@@ -57,7 +67,7 @@ class ResetExposure(bpy.types.Operator):
         return{'FINISHED'}
 
 
-class ResetGamma(bpy.types.Operator):
+class ResetGamma(Operator):
     bl_idname = 'scene.reset_gamma'
     bl_label = 'Reset gamma'
     bl_description = 'Reset gamma to 1'
@@ -71,6 +81,8 @@ keymaps = list()
 classes = (
     ResetExposure,
     ResetGamma,
+    image.SetImageInputTransform,
+    movieclip.SetMovieClipInputTransform,
     render.RenderToGif,
     sequencer.SequencerCustomPanel,
     sequencer.OpenStripAsMovieclip,
@@ -79,7 +91,7 @@ classes = (
     sequencer.SetActiveSceneFromStrip,
     sequencer.CreateAdjustmentStrip,
     sequencer.AddMultipleMovies,
-    sequencer.SetStripColorspace,
+    sequencer.SetStripInputTransform,
     sequencer.SetStripProxyQuality)
 
 
@@ -87,6 +99,8 @@ def register():
     for cls in classes:
         bpy.utils.register_class(cls)
     bpy.types.TOPBAR_HT_upper_bar.prepend(header_color_management)
+    bpy.types.IMAGE_MT_image.append(image_image_menu_draw)
+    bpy.types.CLIP_MT_clip.append(clip_clip_menu_draw)
     bpy.types.TOPBAR_MT_render.append(render_menu_draw)
     bpy.types.SEQUENCER_MT_add.append(sequencer_add_menu_draw)
     bpy.types.SEQUENCER_MT_strip.append(sequencer_strip_menu_draw)
@@ -108,6 +122,8 @@ def unregister():
     for cls in reversed(classes):
         bpy.utils.unregister_class(cls)
     bpy.types.TOPBAR_HT_upper_bar.remove(header_color_management)
+    bpy.types.IMAGE_MT_image.remove(image_image_menu_draw)
+    bpy.types.CLIP_MT_clip.remove(clip_clip_menu_draw)
     bpy.types.TOPBAR_MT_render.remove(render_menu_draw)
     bpy.types.SEQUENCER_MT_add.remove(sequencer_add_menu_draw)
     bpy.types.SEQUENCER_MT_strip.remove(sequencer_strip_menu_draw)
