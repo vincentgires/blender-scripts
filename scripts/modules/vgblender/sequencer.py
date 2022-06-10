@@ -146,7 +146,8 @@ def load_movie_strip(
 
 
 def load_sound_strip(
-        scene, soundpath, channel=DEFAULT_CHANNEL, frame_start=None):
+        scene, soundpath, channel=DEFAULT_CHANNEL, frame_start=None,
+        show_waveform=False):
     sequences = scene.sequence_editor.sequences
     frame_start = frame_start or _get_next_frame_start(scene)
     strip = sequences.new_sound(
@@ -155,6 +156,7 @@ def load_sound_strip(
         channel=channel,
         frame_start=frame_start)
     strip.select = False
+    strip.show_waveform = show_waveform
     return strip
 
 
