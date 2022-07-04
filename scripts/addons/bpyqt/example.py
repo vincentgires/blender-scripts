@@ -1,7 +1,7 @@
 import bpy
 import sys
 from PySide2 import QtWidgets, QtCore
-from qtutils import QtWindowEventLoop
+from bpyqt import QtWindowEventLoop
 
 
 class ExampleWidget(QtWidgets.QWidget):

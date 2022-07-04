@@ -12,7 +12,7 @@ if qt_binding:
 else:
     from PySide2 import QtWidgets, QtCore
 
-logger = logging.getLogger('qtutils')
+logger = logging.getLogger('bpyqt')
 
 
 class QtWindowEventLoop(bpy.types.Operator):

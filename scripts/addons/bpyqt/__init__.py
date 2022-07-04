@@ -1,8 +1,8 @@
 import bpy
-from qtutils.core import QtWindowEventLoop
+from bpyqt.core import QtWindowEventLoop
 
 bl_info = {
-    'name': 'qtutils',
+    'name': 'bpyqt',
     'author': 'Vincent Girès',
     'description': 'Qt Integration',
     'version': (0, 0, 1),
@@ -12,7 +12,7 @@ bl_info = {
 
 def register():
     bpy.utils.register_class(QtWindowEventLoop)
-    from qtutils import example
+    from bpyqt import example
     bpy.utils.register_class(example.CustomWindowOperator)
     bpy.utils.register_class(example.QtPanelExample)
 
