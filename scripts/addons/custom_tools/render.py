@@ -2,7 +2,7 @@ import bpy
 import os
 import shutil
 import tempfile
-from convert import sequence_to_gif
+from vgenc.convert import convert_to_gif
 
 
 class RenderToGif(bpy.types.Operator):
@@ -29,7 +29,7 @@ class RenderToGif(bpy.types.Operator):
         scene.render.image_settings.file_format = 'PNG'
 
         bpy.ops.render.render(animation=True)
-        sequence_to_gif(
+        convert_to_gif(
             render_tmp, output, fps=scene.render.fps,
             optimize=self.optimize, depth=self.depth, bounce=self.bounce)
 
