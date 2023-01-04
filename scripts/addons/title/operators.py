@@ -1,8 +1,9 @@
 import bpy
 import json
 from . import gldraw
-from .core import add_text, remove_item_from_collection
+from .core import add_text
 from vgblender.area import redraw_area
+from vgblender.datautils import remove_item_from_collection
 
 
 class TitleAddText(bpy.types.Operator):

@@ -11,7 +11,6 @@ TEXT_MARGIN = 10
 shader_2d_uniform = (
     gpu.shader.from_builtin('2D_UNIFORM_COLOR')
     if not bpy.app.background else None)
-font_id = blf.load(FONT_SANS)
 
 
 def draw_poly(coords, color, width=1):
@@ -56,7 +55,7 @@ def draw_rectangle(v1, v2, color):
         bgl.glDisable(bgl.GL_BLEND)
 
 
-def draw_text(text, position, color, size):
+def draw_text(text, position, color, size, font_id):
     bgl.glEnable(bgl.GL_BLEND)
     blf.size(font_id, size, DPI)
     blf.position(font_id, *position)
@@ -65,11 +64,11 @@ def draw_text(text, position, color, size):
     bgl.glDisable(bgl.GL_BLEND)
 
 
-def draw_text_line(packed_strings, x, y, size):
+def draw_text_line(packed_strings, x, y, size, font_id):
     blf.size(font_id, size, DPI)
     x_offset = 0
     for pstr, pcol in packed_strings:
         text_width, text_height = blf.dimensions(font_id, pstr)
         position = (x + x_offset, y, 0)
-        draw_text(pstr, position, pcol, size)
+        draw_text(pstr, position, pcol, size, font_id)
         x_offset += text_width

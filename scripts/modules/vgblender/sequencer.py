@@ -82,7 +82,7 @@ def set_frame_range(scene):
     first_strip = get_first_strip(scene)
     last_strip = get_last_strip(scene)
     if first_strip and last_strip:
-        scene.frame_start = first_strip.frame_start
+        scene.frame_start = int(first_strip.frame_start)
         scene.frame_end = last_strip.frame_final_end - 1
 
 
@@ -91,7 +91,7 @@ def _get_next_frame_start(scene):
     frame_start = (
         last_strip.frame_start + last_strip.frame_final_duration
         if last_strip else 1)
-    return frame_start
+    return int(frame_start)
 
 
 def load_image_strip(
@@ -103,7 +103,7 @@ def load_image_strip(
         name=os.path.basename(image),
         filepath=normpath(image),
         channel=channel,
-        frame_start=frame_start)
+        frame_start=int(frame_start))
     strip.select = False
     strip.blend_type = blend_type
     strip.frame_final_duration = length
@@ -112,7 +112,7 @@ def load_image_strip(
 
 def load_image_sequence_strip(
         scene, images, channel=DEFAULT_CHANNEL, blend_type=DEFAULT_BLEND_TYPE,
-        frame_start=None):
+        frame_start=None, colorspace=None):
     sequences = scene.sequence_editor.sequences
     frame_start = frame_start or _get_next_frame_start(scene)
     first_frame = images[0]
@@ -120,12 +120,14 @@ def load_image_sequence_strip(
         name=os.path.basename(first_frame),
         filepath=normpath(first_frame),
         channel=channel,
-        frame_start=frame_start)
+        frame_start=int(frame_start))
     for image in images[1:]:
         name = os.path.basename(image)
         strip.elements.append(name)
     strip.select = False
     strip.blend_type = blend_type
+    if colorspace is not None:
+        strip.colorspace_settings.name = colorspace
     return strip
 
 
@@ -138,7 +140,7 @@ def load_movie_strip(
         name=os.path.basename(moviepath),
         filepath=normpath(moviepath),
         channel=channel,
-        frame_start=frame_start)
+        frame_start=int(frame_start))
     strip.select = False
     strip.blend_type = blend_type
     return strip
@@ -153,9 +155,26 @@ def load_sound_strip(
         name=os.path.basename(soundpath),
         filepath=normpath(soundpath),
         channel=channel,
-        frame_start=frame_start)
+        frame_start=int(frame_start))
     strip.select = False
     strip.show_waveform = show_waveform
+    return strip
+
+
+def load_scene_strip(
+        scene, strip_scene, channel=DEFAULT_CHANNEL,
+        blend_type=DEFAULT_BLEND_TYPE, length=DEFAULT_LENGTH,
+        frame_start=None):
+    sequences = scene.sequence_editor.sequences
+    frame_start = frame_start or _get_next_frame_start(scene)
+    strip = sequences.new_scene(
+        name=strip_scene.name,
+        scene=strip_scene,
+        channel=channel,
+        frame_start=int(frame_start))
+    strip.select = False
+    strip.blend_type = blend_type
+    strip.frame_final_duration = length
     return strip
 
 
@@ -219,6 +238,41 @@ def normalise_mouse_position(context, position):
     return (x, y)
 
 
+def iterate_over_selected_strips(scene):
+    if not scene.sequence_editor:
+        return
+    sequences = scene.sequence_editor.sequences
+    sequences = sorted(
+        sequences, key=lambda x: (x.info.sequence, x.info.shot))
+    for strip in sequences:
+        if strip.select:
+            yield strip
+
+
+def strip_path_replace(strip, find_text, replace_text):
+    if strip is None:
+        return
+    match strip.type:
+        case 'MOVIE':
+            dirname, basename = os.path.split(strip.filepath)
+            basename = basename.replace(find_text, replace_text)
+            filepath = os.path.join(dirname, basename)
+            if os.path.isfile(filepath):
+                strip.filepath = filepath
+                strip.name = basename
+                return filepath
+        case 'IMAGE':
+            dirname = strip.directory
+            basename = strip.elements[0].filename
+            basename = basename.replace(find_text, replace_text)
+            filepath = os.path.join(dirname, basename)
+            if os.path.isfile(filepath):
+                strip.directory = dirname
+                strip.elements[0].filename = basename
+                strip.name = basename
+                return filepath
+
+
 def get_strip_filepath(strip, image_index=0):
     if strip is None:
         return
@@ -229,3 +283,17 @@ def get_strip_filepath(strip, image_index=0):
         basename = strip.elements[image_index].filename
         filepath = os.path.join(dirname, basename)
         return filepath
+
+
+def mute_channel(scene, channel):
+    sequences = scene.sequence_editor.sequences
+    for strip in sequences:
+        if strip.channel == channel:
+            strip.mute = True
+
+
+def unmute_channel(scene, channel):
+    sequences = scene.sequence_editor.sequences
+    for strip in sequences:
+        if strip.channel == channel:
+            strip.mute = False

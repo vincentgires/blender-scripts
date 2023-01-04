@@ -21,17 +21,6 @@ def add_text(strip, text=None, color=None, position=None):
     return item
 
 
-def remove_item_from_collection(collection, properties, index_name):
-    if index_name in properties:
-        index = properties[index_name]
-        # Adapt index of note collection's items
-        if (len(collection) - 1) >= index:
-            if properties[index_name] > 0:
-                properties[index_name] -= 1
-        # Remove item
-        collection.remove(index)
-
-
 def export_texts(scene, output_path, input_path=None):
     """Create note with ImageMagick"""
     width = scene.render.resolution_x
