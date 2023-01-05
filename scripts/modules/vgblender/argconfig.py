@@ -53,7 +53,7 @@ def get_args():
         help='File output',
         required=False)
     parser.add_argument(
-        '-metadatas',
+        '-metadata',
         nargs='+',
         required=False)
     parser.add_argument(

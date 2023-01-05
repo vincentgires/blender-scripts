@@ -65,7 +65,7 @@ def process():
 
     set_scene_from_args(scene)
     render_movie(
-        scene, metadatas=args.metadatas, codec=args.codec, qscale=args.qscale)
+        scene, metadata=args.metadata, codec=args.codec, qscale=args.qscale)
 
     # Debug file
     # bpy.ops.wm.save_as_mainfile(

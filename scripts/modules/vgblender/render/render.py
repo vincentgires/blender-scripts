@@ -5,11 +5,11 @@ import shutil
 import subprocess
 
 
-def render_movie(scene, codec=None, qscale=None, metadatas=None):
+def render_movie(scene, codec=None, qscale=None, metadata=None):
     """Wrapper around bpy.ops.render.render()
 
     Always render as image sequence and convert the result with FFmpeg
-    that gives more control (codecs and metadatas).
+    that gives more control (codecs and metadata).
     """
     codec = codec or 'mjpeg'
 
@@ -34,8 +34,8 @@ def render_movie(scene, codec=None, qscale=None, metadatas=None):
         '-c:v', codec]
     if qscale is not None:
         command.extend(['-q:v', qscale])
-    if metadatas is not None:
-        for md in metadatas:
+    if metadata is not None:
+        for md in metadata:
             command.extend(['-metadata', md])
     command.extend([output, '-y'])
 
