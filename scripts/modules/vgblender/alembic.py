@@ -1,4 +1,5 @@
 import bpy
+from .path import normpath
 
 
 def load_objects_from_alembic(path, filter_type=None):
@@ -8,7 +9,7 @@ def load_objects_from_alembic(path, filter_type=None):
 
     temporary_scene = data.scenes.new(name='tmp scene')
     context.window.scene = temporary_scene
-    bpy.ops.wm.alembic_import(filepath=path)
+    bpy.ops.wm.alembic_import(filepath=normpath(path))
     if filter_type is None:
         objects = [ob for ob in temporary_scene.objects]
     else:
