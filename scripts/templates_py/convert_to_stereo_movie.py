@@ -1,11 +1,65 @@
+import argparse
 import bpy
-
 from vgblender.path import normpath
 from vgblender.argconfig import get_args
 from vgblender.scene import set_scene_from_args
 from vgblender.render.render import render_movie
 
-args = get_args()
+parser = argparse.ArgumentParser()
+parser.add_argument(
+    '-inputs',
+    nargs='+',
+    help='File inputs',
+    required=False)
+parser.add_argument(
+    '-startframe',
+    type=int,
+    help='Start frame to begin the clip',
+    required=False)
+parser.add_argument(
+    '-endframe',
+    type=int,
+    help='End frame',
+    required=False)
+parser.add_argument(
+    '-fps',
+    type=int,
+    help='FPS',
+    required=False)
+parser.add_argument(
+    '-resolution',
+    nargs='+',
+    type=int,
+    help='Resolution X Y',
+    required=False)
+parser.add_argument(
+    '-colordepth',
+    help='Color depth',
+    required=False)
+parser.add_argument(
+    '-colorspace',
+    help='Footage colorspace',
+    required=False)
+parser.add_argument(
+    '-viewtransform',
+    help='OCIO View Transform',
+    required=False)
+parser.add_argument(
+    '-output',
+    help='File output',
+    required=False)
+parser.add_argument(
+    '-metadata',
+    nargs='+',
+    required=False)
+parser.add_argument(
+    '-codec',
+    required=False)
+parser.add_argument(
+    '-qscale',
+    required=False)
+
+args = get_args(parser)
 
 data = bpy.data
 context = bpy.context
@@ -63,7 +117,19 @@ def process():
     scene.render.resolution_y = y
     scene.render.resolution_percentage = 100
 
-    set_scene_from_args(scene)
+    if args.fps:
+        scene.render.fps = args.fps
+    if args.resolution:
+        x, y = args.resolution
+        scene.render.resolution_x = x
+        scene.render.resolution_y = y
+    if args.viewtransform:
+        scene.view_settings.view_transform = args.viewtransform
+    if args.colordepth:
+        scene.render.image_settings.color_depth = args.colordepth
+    if args.output:
+        scene.render.filepath = args.output
+
     render_movie(
         scene, metadata=args.metadata, codec=args.codec, qscale=args.qscale)
 
