@@ -242,8 +242,7 @@ def iterate_over_selected_strips(scene):
     if not scene.sequence_editor:
         return
     sequences = scene.sequence_editor.sequences
-    sequences = sorted(
-        sequences, key=lambda x: (x.info.sequence, x.info.shot))
+    sequences = sorted(sequences, key=lambda x: x.frame_start)
     for strip in sequences:
         if strip.select:
             yield strip
