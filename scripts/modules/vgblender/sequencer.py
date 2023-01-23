@@ -249,7 +249,7 @@ def iterate_over_selected_strips(scene):
             yield strip
 
 
-def strip_path_replace(strip, find_text, replace_text):
+def replace_path(strip, find_text, replace_text, exists_only=True):
     if strip is None:
         return
     match strip.type:
@@ -257,20 +257,22 @@ def strip_path_replace(strip, find_text, replace_text):
             dirname, basename = os.path.split(strip.filepath)
             basename = basename.replace(find_text, replace_text)
             filepath = os.path.join(dirname, basename)
-            if os.path.isfile(filepath):
-                strip.filepath = filepath
-                strip.name = basename
-                return filepath
+            if not os.path.isfile(filepath) and exists_only:
+                return
+            strip.filepath = filepath
+            strip.name = basename
+            return filepath
         case 'IMAGE':
-            dirname = strip.directory
-            basename = strip.elements[0].filename
-            basename = basename.replace(find_text, replace_text)
-            filepath = os.path.join(dirname, basename)
-            if os.path.isfile(filepath):
-                strip.directory = dirname
-                strip.elements[0].filename = basename
-                strip.name = basename
-                return filepath
+            filepath = os.path.join(
+                strip.directory,
+                strip.elements[0].filename.replace(find_text, replace_text))
+            if not os.path.isfile(filepath) and exists_only:
+                return
+            for e in strip.elements:
+                elem_filename = e.filename.replace(find_text, replace_text)
+                e.filename = elem_filename
+            strip.name = strip.elements[0].filename
+            return filepath
 
 
 def get_strip_filepath(strip, image_index=0):
