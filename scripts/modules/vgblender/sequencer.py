@@ -287,15 +287,8 @@ def get_strip_filepath(strip, image_index=0):
         return filepath
 
 
-def mute_channel(scene, channel):
+def mute_channel(scene, channel, unmute=False):
     sequences = scene.sequence_editor.sequences
     for strip in sequences:
         if strip.channel == channel:
-            strip.mute = True
-
-
-def unmute_channel(scene, channel):
-    sequences = scene.sequence_editor.sequences
-    for strip in sequences:
-        if strip.channel == channel:
-            strip.mute = False
+            strip.mute = not unmute
