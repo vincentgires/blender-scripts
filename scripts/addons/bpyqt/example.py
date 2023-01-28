@@ -1,5 +1,4 @@
 import bpy
-import sys
 from PySide2 import QtWidgets, QtCore
 from bpyqt import QtWindowEventLoop
 
@@ -30,21 +29,22 @@ class CustomWindowOperator(QtWindowEventLoop):
     bl_label = 'Custom window'
 
     def __init__(self):
-        super().__init__(ExampleWidget, 'LABEL_NAME', text='a text')
+        super().__init__(ExampleWidget, 'Label name', text='A text')
 
 
 class QtPanelExample(bpy.types.Panel):
+    bl_idname = 'BPYQT_PT_ExamplePanel'
     bl_label = 'Qt'
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'UI'
-    bl_category = 'Custom'
+    bl_category = 'bpyqt'
 
     def draw(self, context):
-        scene = context.scene
         layout = self.layout
         layout.operator('screen.custom_window')
 
 
 if __name__ == '__main__':
     bpy.utils.register_class(CustomWindowOperator)
+    bpy.utils.register_class(QtPanelExample)
     bpy.ops.screen.custom_window()
