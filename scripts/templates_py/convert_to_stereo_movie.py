@@ -2,7 +2,6 @@ import argparse
 import bpy
 from vgblender.path import normpath
 from vgblender.argconfig import get_args
-from vgblender.scene import set_scene_from_args
 from vgblender.render.render import render_movie
 
 parser = argparse.ArgumentParser()
