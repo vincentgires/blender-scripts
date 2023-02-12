@@ -10,7 +10,6 @@ filepath = normpath(sys.argv[-1])
 def load_file_as_image():
     if not os.path.exists(filepath):
         return
-    scene = bpy.context.scene
     image = bpy.data.images.load(filepath)
     image.use_view_as_render = True
     screen = bpy.context.screen

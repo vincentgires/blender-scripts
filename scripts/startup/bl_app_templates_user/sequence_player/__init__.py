@@ -28,7 +28,7 @@ class ExportMovie(bpy.types.Operator):
         output = os.path.join(dirpath, f'export.{self.container}')
         scene.render.filepath = output
         render_movie(scene, codec=self.codec, qscale=self.qscale)
-        return{'FINISHED'}
+        return {'FINISHED'}
 
     def invoke(self, context, event):
         return context.window_manager.invoke_props_dialog(self)
@@ -44,7 +44,7 @@ def load_file_as_clip():
     scene = bpy.context.scene
     clip = bpy.data.movieclips.load(filepath)
     sequences = scene.sequence_editor.sequences
-    strip = sequences.new_clip(
+    sequences.new_clip(
         name=os.path.basename(filepath),
         clip=clip,
         channel=1,
