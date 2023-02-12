@@ -178,10 +178,9 @@ class PointCloudGenerateOpenGl(bpy.types.Operator):
         return position and color
 
     def execute(self, context):
-        scene = context.scene
         set_coordinates_and_colors(context)
         batch_pointcloud()
-        return{'FINISHED'}
+        return {'FINISHED'}
 
 
 class PointCloudClearOpenGl(bpy.types.Operator):
@@ -198,7 +197,7 @@ class PointCloudClearOpenGl(bpy.types.Operator):
         pointcloud['colors'].clear()
         pointcloud['batch'] = None
         redraw_view_3d()
-        return{'FINISHED'}
+        return {'FINISHED'}
 
 
 class PointCloudGenerateMesh(bpy.types.Operator):
@@ -212,12 +211,10 @@ class PointCloudGenerateMesh(bpy.types.Operator):
         return position
 
     def execute(self, context):
-        scene = context.scene
         coordinates = get_positions(context)
         origin = (0, 0, 0)
-        position_objects = create_mesh(
-            'Position_Cloud', origin, coordinates, [], [])
-        return{'FINISHED'}
+        create_mesh('Position_Cloud', origin, coordinates, [], [])
+        return {'FINISHED'}
 
 
 draw_handler = {}
