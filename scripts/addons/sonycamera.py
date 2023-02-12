@@ -129,7 +129,6 @@ class FilebrowserPropertiesPanel(Panel):
     bl_options = {'DEFAULT_CLOSED'}
 
     def draw(self, context):
-        scene = context.scene
         layout = self.layout
         space = context.space_data
         directory = space.params.directory
