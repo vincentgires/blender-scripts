@@ -31,7 +31,7 @@ class ColorPalette(Node):
         name='Settings',
         default=True)
     palette_index: bpy.props.IntProperty(
-        name='Palette ID',
+        name='Palette Index',
         default=0,
         update=update_props)
 
@@ -88,7 +88,7 @@ class ColorPalette(Node):
 
 class ColorPaletteAdd(bpy.types.Operator):
     bl_idname = 'scene.add_color_palette'
-    bl_label = 'Add color palette'
+    bl_label = 'Add Color Palette'
 
     @classmethod
     def poll(cls, context):
@@ -108,7 +108,7 @@ class ColorPaletteAdd(bpy.types.Operator):
 
 class ColorPaletteRemove(bpy.types.Operator):
     bl_idname = 'scene.remove_color_palette'
-    bl_label = 'Remove color palette'
+    bl_label = 'Remove Color Palette'
 
     @classmethod
     def poll(cls, context):
@@ -125,7 +125,7 @@ class ColorPaletteRemove(bpy.types.Operator):
 
 class ColorPaletteAddColor(bpy.types.Operator):
     bl_idname = 'scene.add_color_palette_color'
-    bl_label = 'Add color palette color'
+    bl_label = 'Add Color'
 
     @classmethod
     def poll(cls, context):
@@ -143,7 +143,7 @@ class ColorPaletteAddColor(bpy.types.Operator):
 
 class ColorPaletteRemoveColor(bpy.types.Operator):
     bl_idname = 'scene.remove_color_palette_color'
-    bl_label = 'Remove color palette color'
+    bl_label = 'Remove Color'
 
     @classmethod
     def poll(cls, context):

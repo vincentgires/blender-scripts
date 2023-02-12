@@ -9,7 +9,7 @@ class RenderNode(Node):
     bl_label = 'Render'
 
     on_render: bpy.props.FloatProperty(
-        name='On render', default=0)
+        name='On Render', default=0)
 
     def init(self, context):
         self.outputs.new('NodeSocketFloat', 'On Render')

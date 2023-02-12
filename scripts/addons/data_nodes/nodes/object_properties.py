@@ -1,5 +1,4 @@
 import bpy
-import math
 from bpy.types import Node
 from ..utils import set_sockets
 

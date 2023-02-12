@@ -10,7 +10,7 @@ SOCKET_TYPE_ITEMS = (
 
 class DataNodesUpdate(bpy.types.Operator):
     bl_idname = 'scene.update_data_node'
-    bl_label = 'Update nodes'
+    bl_label = 'Update Nodes'
     bl_description = 'Force update data nodes'
 
     @classmethod
@@ -18,15 +18,13 @@ class DataNodesUpdate(bpy.types.Operator):
         return context.space_data.tree_type in AVAILABLE_NTREES
 
     def execute(self, context):
-        selected_nodes = context.selected_nodes
-        active_node = context.active_node
         update_nodes()
         return {'FINISHED'}
 
 
 class DataNodesGetObject(bpy.types.Operator):
     bl_idname = 'scene.get_object_to_data_node'
-    bl_label = 'Get object'
+    bl_label = 'Get Object'
     bl_description = 'Get selected object from scene'
 
     @classmethod
@@ -43,16 +41,12 @@ class DataNodesGetObject(bpy.types.Operator):
 
 class DataNodesRemoveSockets(bpy.types.Operator):
     bl_idname = 'scene.remove_sockets'
-    bl_label = 'Remove sockets'
+    bl_label = 'Remove Sockets'
 
     socket_type: bpy.props.EnumProperty(
-        name='Socket type',
+        name='Socket Type',
         items=SOCKET_TYPE_ITEMS,
         default='OUTPUT')
-    executed_from: bpy.props.EnumProperty(
-        name='Socket type',
-        items=(('NODE', 'Node', ''),
-               ('PANEL', 'Panel', '')))
 
     @classmethod
     def poll(cls, context):
@@ -72,7 +66,7 @@ class DataNodesRemoveSockets(bpy.types.Operator):
 
 class DataNodesRemoveSocket(bpy.types.Operator):
     bl_idname = 'scene.remove_socket'
-    bl_label = 'Remove socket'
+    bl_label = 'Remove Socket'
 
     def _get_socket_items(self, context):
         node = context.active_node
@@ -83,12 +77,12 @@ class DataNodesRemoveSocket(bpy.types.Operator):
         return ((s.name, s.name, '') for s in sockets)
 
     socket_type: bpy.props.EnumProperty(
-        name='Socket type',
+        name='Socket Type',
         items=SOCKET_TYPE_ITEMS,
         default='OUTPUT')
     socket: bpy.props.EnumProperty(
         items=_get_socket_items,
-        name='Node sockets')
+        name='Node Sockets')
 
     @classmethod
     def poll(cls, context):
@@ -106,23 +100,23 @@ class DataNodesRemoveSocket(bpy.types.Operator):
 
 class DataNodesRemoveInputSocket(DataNodesRemoveSocket):
     bl_idname = 'scene.remove_input_socket'
-    bl_label = 'Remove input socket'
-    socket_type: bpy.props.StringProperty(name='Socket type', default='INPUT')
+    bl_label = 'Remove Input Socket'
+    socket_type: bpy.props.StringProperty(name='Socket Type', default='INPUT')
 
 
 class DataNodesRemoveOutputSocket(DataNodesRemoveSocket):
     bl_idname = 'scene.remove_output_socket'
-    bl_label = 'Remove output socket'
-    socket_type: bpy.props.StringProperty(name='Socket type', default='OUTPUT')
+    bl_label = 'Remove Output Socket'
+    socket_type: bpy.props.StringProperty(name='Socket Type', default='OUTPUT')
 
 
 class DataNodesAddSocket(bpy.types.Operator):
     bl_idname = 'scene.add_socket_to_data_node'
-    bl_label = 'Add socket'
+    bl_label = 'Add Socket'
     bl_description = 'Add socket to the node'
 
     socket_type: bpy.props.EnumProperty(
-        name='Socket type',
+        name='Socket Type',
         items=SOCKET_TYPE_ITEMS,
         default='OUTPUT')
 

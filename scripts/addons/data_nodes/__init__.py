@@ -81,19 +81,19 @@ class SocketsPanel(bpy.types.Panel):
         sub = col.split(factor=fac)
         sub.label(text='Remove')
         sub.operator_menu_enum(
-            'scene.remove_input_socket', 'socket', text='input')
+            'scene.remove_input_socket', 'socket', text='Input')
         sub = col.split(factor=fac)
         sub.separator()
         sub.operator_menu_enum(
-            'scene.remove_output_socket', 'socket', text='output')
+            'scene.remove_output_socket', 'socket', text='Output')
         col = layout.column(align=True)
         sub = col.split(factor=fac)
         sub.label(text='Clear')
-        input_op = sub.operator('scene.remove_sockets', text='input')
+        input_op = sub.operator('scene.remove_sockets', text='Input')
         input_op.socket_type = 'INPUT'
         sub = col.split(factor=fac)
         sub.separator()
-        output_op = sub.operator('scene.remove_sockets', text='output')
+        output_op = sub.operator('scene.remove_sockets', text='Output')
         output_op.socket_type = 'OUTPUT'
 
 

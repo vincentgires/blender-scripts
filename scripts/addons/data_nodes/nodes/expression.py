@@ -73,7 +73,7 @@ class Expression(Node):
 
 class ExpressionNodeAddInputSocket(bpy.types.Operator):
     bl_idname = 'scene.add_input_socket_to_expression_node'
-    bl_label = 'Add input'
+    bl_label = 'Add Input'
     bl_description = 'Add input socket to the node'
 
     @classmethod
@@ -82,7 +82,6 @@ class ExpressionNodeAddInputSocket(bpy.types.Operator):
 
     def execute(self, context):
         node = context.node
-        selected_object = context.object
         alphabet = list(string.ascii_uppercase)
         node.inputs.new('NodeSocketFloat', alphabet[len(node.inputs)])
         return {'FINISHED'}

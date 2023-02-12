@@ -6,7 +6,7 @@ from ..utils import set_sockets
 class Time(Node):
     """Time node"""
     bl_idname = 'TimeNodeType'
-    bl_label = 'Time info'
+    bl_label = 'Time Info'
 
     def init(self, context):
         self.outputs.new('NodeSocketFloat', 'Frame')

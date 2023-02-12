@@ -1,4 +1,3 @@
-import bpy
 from bpy.types import Node
 from ..utils import set_sockets
 
@@ -6,7 +5,7 @@ from ..utils import set_sockets
 class RoundFloat(Node):
     """Round float"""
     bl_idname = 'RoundFloatNodeType'
-    bl_label = 'Round float'
+    bl_label = 'Round Float'
 
     def init(self, context):
         self.inputs.new('NodeSocketFloat', 'Float')
