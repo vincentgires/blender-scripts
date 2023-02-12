@@ -37,7 +37,9 @@ def get_enum_previews_from_file(self, context):
     if not context:
         return enum_items
     pcoll = preview_images['images']
-    images = [i for i in bpy.data.images if i.type == 'IMAGE' and i.preview is not None]
+    images = [
+        i for i in bpy.data.images
+        if i.type == 'IMAGE' and i.preview is not None]
     for index, image in enumerate(images):
         enum_items.append((
             image.filepath,
