@@ -1,7 +1,7 @@
 import bpy
 from operator import attrgetter
 
-assignation = {
+preferences_assignation = {
     'use_preferences_save': False,  # Auto save preferences
     'view': {
         'show_splash': False,
@@ -22,15 +22,25 @@ assignation = {
     }
 }
 
-preferences = bpy.context.preferences
+keyconfigs_assignation = {
+    'select_mouse': 'RIGHT',
+    'use_file_single_click': True  # Open folder on single click
+}
 
-for k, v in assignation.items():
-    if not isinstance(v, dict):
-        setattr(preferences, k, v)
-    else:
+
+def set_preferences(prefs, assignation):
+    for k, v in assignation.items():
+        if not isinstance(v, dict):
+            setattr(prefs, k, v)
+            continue
         for attr_name, attr_value in v.items():
-            obj = attrgetter(k)(preferences)
+            obj = attrgetter(k)(prefs)
             setattr(obj, attr_name, attr_value)
 
+
+preferences = bpy.context.preferences
 wm = bpy.context.window_manager
-wm.keyconfigs['Blender'].preferences.select_mouse = 'RIGHT'
+kc_preferences = wm.keyconfigs['Blender'].preferences
+
+set_preferences(preferences, preferences_assignation)
+set_preferences(kc_preferences, keyconfigs_assignation)
