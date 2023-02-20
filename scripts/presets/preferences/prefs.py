@@ -2,7 +2,7 @@ import bpy
 from operator import attrgetter
 
 assignation = {
-    'use_preferences_save': False,
+    'use_preferences_save': False,  # Auto save preferences
     'view': {
         'show_splash': False,
         'show_developer_ui': True,
@@ -10,8 +10,8 @@ assignation = {
     },
     'inputs': {
         'use_emulate_numpad': True,
-        'use_mouse_continuous': True,
-        'use_drag_immediately': False
+        'use_mouse_continuous': True,  # Continuous grab
+        'use_drag_immediately': False  # Release confirms
     },
     'system': {
         'memory_cache_limit': 12288,
