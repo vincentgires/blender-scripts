@@ -44,3 +44,5 @@ kc_preferences = wm.keyconfigs['Blender'].preferences
 
 set_preferences(preferences, preferences_assignation)
 set_preferences(kc_preferences, keyconfigs_assignation)
+
+bpy.ops.wm.save_userpref()
