@@ -191,6 +191,7 @@ def load_multiple_movie_strips(scene, filepaths):
 
 def create_adjustment_strip(scene):
     active_strip = scene.sequence_editor.active_strip
+    active_start = int(active_strip.frame_start)
     if not active_strip:
         return
     sequences = scene.sequence_editor.sequences
@@ -198,8 +199,8 @@ def create_adjustment_strip(scene):
         name='Adjustment',
         type='ADJUSTMENT',
         channel=active_strip.channel + 1,
-        frame_start=active_strip.frame_start,
-        frame_end=active_strip.frame_start + active_strip.frame_final_duration)
+        frame_start=active_start,
+        frame_end=active_start + active_strip.frame_final_duration)
     strip.select = True
     scene.sequence_editor.active_strip = strip
     return strip
