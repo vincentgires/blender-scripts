@@ -7,7 +7,7 @@ def load_objects_from_alembic(path, filter_type=None):
     data = bpy.data
     current_scene = context.scene
 
-    temporary_scene = data.scenes.new(name='tmp scene')
+    temporary_scene = data.scenes.new(name='Temp Scene')
     context.window.scene = temporary_scene
     bpy.ops.wm.alembic_import(filepath=normpath(path))
     if filter_type is None:
