@@ -1,6 +1,6 @@
 import bpy
 from bpy.types import Operator
-from . import image, movieclip, render, sequencer
+from . import image, movieclip, render, sequencer, node
 #from . import lighting
 #from . import animation
 #from . import look_through
@@ -35,6 +35,11 @@ def image_image_menu_draw(self, context):
 def clip_clip_menu_draw(self, context):
     self.layout.separator()
     self.layout.operator('scene.set_movieclip_input_transform')
+
+
+def node_node_menu_draw(self, context):
+    self.layout.separator()
+    self.layout.operator('scene.set_image_node_input_transform')
 
 
 def render_menu_draw(self, context):
@@ -83,6 +88,7 @@ classes = (
     ResetGamma,
     image.SetImageInputTransform,
     movieclip.SetMovieClipInputTransform,
+    node.SetImageNodeInputTransform,
     render.RenderToGif,
     sequencer.SequencerCustomPanel,
     sequencer.OpenStripAsMovieclip,
@@ -101,6 +107,7 @@ def register():
     bpy.types.TOPBAR_HT_upper_bar.prepend(header_color_management)
     bpy.types.IMAGE_MT_image.append(image_image_menu_draw)
     bpy.types.CLIP_MT_clip.append(clip_clip_menu_draw)
+    bpy.types.NODE_MT_node.append(node_node_menu_draw)
     bpy.types.TOPBAR_MT_render.append(render_menu_draw)
     bpy.types.SEQUENCER_MT_add.append(sequencer_add_menu_draw)
     bpy.types.SEQUENCER_MT_strip.append(sequencer_strip_menu_draw)
@@ -124,6 +131,7 @@ def unregister():
     bpy.types.TOPBAR_HT_upper_bar.remove(header_color_management)
     bpy.types.IMAGE_MT_image.remove(image_image_menu_draw)
     bpy.types.CLIP_MT_clip.remove(clip_clip_menu_draw)
+    bpy.types.NODE_MT_node.remove(node_node_menu_draw)
     bpy.types.TOPBAR_MT_render.remove(render_menu_draw)
     bpy.types.SEQUENCER_MT_add.remove(sequencer_add_menu_draw)
     bpy.types.SEQUENCER_MT_strip.remove(sequencer_strip_menu_draw)

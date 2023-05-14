@@ -2,6 +2,7 @@ import bpy
 import bgl
 import blf
 import math
+from .colorspace import SetInputTransform
 
 
 class GetMaskFromNode(bpy.types.Operator):
@@ -381,3 +382,15 @@ class CustomToolsCompoNodeTransformGrab(bpy.types.Operator):
 
         context.window_manager.modal_handler_add(self)
         return {'RUNNING_MODAL'}
+
+
+class SetImageNodeInputTransform(SetInputTransform):
+    bl_idname = 'scene.set_image_node_input_transform'
+    bl_label = 'Set Image Node Input Transform'
+
+    @classmethod
+    def poll(cls, context):
+        return context.active_node
+
+    def get_datablocks(self, context):
+        return [context.active_node.image]
