@@ -3,7 +3,7 @@ from .colorspace import SetInputTransform
 
 class SetImageInputTransform(SetInputTransform):
     bl_idname = 'scene.set_image_input_transform'
-    bl_label = 'Set image input transform'
+    bl_label = 'Set Image Input Transform'
 
     @classmethod
     def poll(cls, context):

@@ -5,9 +5,9 @@ from vgblender.colorspace import set_input_transform
 
 class SetInputTransform(Operator):
     bl_idname = 'scene.set_input_transform'
-    bl_label = 'Set input transform'
+    bl_label = 'Set Input Transform'
 
-    input_transform: StringProperty(name='Input transform')
+    input_transform: StringProperty(name='Input Transform')
 
     def get_datablocks(self, context):
         raise NotImplementedError

@@ -29,7 +29,7 @@ class SequencerCustomPanel(Panel):
 
 class OpenStripAsMovieclip(Operator):
     bl_idname = 'scene.open_strip_as_movieclip'
-    bl_label = 'Open strip as movieclip'
+    bl_label = 'Open Strip As Movieclip'
 
     @classmethod
     def poll(cls, context):
@@ -43,12 +43,12 @@ class OpenStripAsMovieclip(Operator):
         strip = scene.sequence_editor.active_strip
         movie = data.movieclips.load(filepath=strip.filepath)
         movie.frame_start = strip.frame_start
-        return{'FINISHED'}
+        return {'FINISHED'}
 
 
 class AddStripAsCompositing(Operator):
     bl_idname = 'scene.add_strip_as_compositing'
-    bl_label = 'Add strip as a compositing scene'
+    bl_label = 'Add Strip As Compositing Scene'
 
     @classmethod
     def poll(cls, context):
@@ -84,12 +84,12 @@ class AddStripAsCompositing(Operator):
         sequence_editor.sequences.new_scene(
             scene.name, scene, strip.channel + 1, strip.frame_start)
 
-        return{'FINISHED'}
+        return {'FINISHED'}
 
 
 class DisableSceneStrips(Operator):
     bl_idname = 'scene.disable_scene_strips'
-    bl_label = 'Disable scene strips'
+    bl_label = 'Disable Scene Strips'
 
     mute: BoolProperty(name='Mute', default=True)
 
@@ -98,12 +98,12 @@ class DisableSceneStrips(Operator):
         for strip in scene.sequence_editor.sequences_all:
             if strip.type == 'SCENE':
                 strip.mute = self.mute
-        return{'FINISHED'}
+        return {'FINISHED'}
 
 
 class SetActiveSceneFromStrip(Operator):
     bl_idname = 'scene.set_active_scene_from_strip'
-    bl_label = 'Set active scene from selectip strip'
+    bl_label = 'Set Active Scene From Selected Strip'
 
     @classmethod
     def poll(cls, context):
@@ -115,12 +115,12 @@ class SetActiveSceneFromStrip(Operator):
         scene = context.scene
         strip = scene.sequence_editor.active_strip
         context.window.scene = strip.scene
-        return{'FINISHED'}
+        return {'FINISHED'}
 
 
 class CreateAdjustmentStrip(Operator):
     bl_idname = 'sequencer.create_adjustment_strip'
-    bl_label = 'Create adjustment effect with the active strip range'
+    bl_label = 'Create Adjustment Effect With Active Strip Range'
 
     @classmethod
     def poll(cls, context):
@@ -129,18 +129,18 @@ class CreateAdjustmentStrip(Operator):
 
     def execute(self, context):
         create_adjustment_strip(context.scene)
-        return{'FINISHED'}
+        return {'FINISHED'}
 
 
 class AddMultipleMovies(Operator, ImportHelper):
     bl_idname = 'scene.add_multiple_movies'
-    bl_label = 'Add multiple movies'
+    bl_label = 'Add Multiple Movies'
 
     filter_glob: StringProperty(default='*.mp4;*.mov;*.mkv;*.ogg;*.ogv')
     files: CollectionProperty(type=OperatorFileListElement)
     directory: StringProperty(subtype='DIR_PATH')
     content_file: BoolProperty(
-        name='Content file', default=False,
+        name='Content File', default=False,
         description='Using a text file that contains the paths of all videos')
 
     def execute(self, context):
@@ -156,7 +156,7 @@ class AddMultipleMovies(Operator, ImportHelper):
 
 class SetStripInputTransform(SetInputTransform):
     bl_idname = 'scene.set_strip_input_transform'
-    bl_label = 'Set strip input transform'
+    bl_label = 'Set Strip Input Transform'
 
     @classmethod
     def poll(cls, context):
@@ -172,7 +172,7 @@ class SetStripInputTransform(SetInputTransform):
 
 class SetStripProxyQuality(Operator):
     bl_idname = 'scene.set_strip_proxy_quality'
-    bl_label = 'Set strip proxy quality'
+    bl_label = 'Set Strip Proxy Quality'
 
     quality: IntProperty(name='Quality', min=1, max=100, default=100)
 

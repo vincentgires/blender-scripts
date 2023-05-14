@@ -3,7 +3,7 @@ from .colorspace import SetInputTransform
 
 class SetMovieClipInputTransform(SetInputTransform):
     bl_idname = 'scene.set_movieclip_input_transform'
-    bl_label = 'Set movieclip input transform'
+    bl_label = 'Set Movieclip Input Transform'
 
     @classmethod
     def poll(cls, context):

@@ -1,21 +1,9 @@
 import bpy
 
 
-class DeleteActions(bpy.types.Operator):
-    bl_idname = 'scene.customtools_delete_actions'
-    bl_label = 'Delete actions'
-    bl_description = 'Delete actions with no users'
-
-    def execute(self, context):
-        for action in bpy.data.actions:
-            if not action.users:
-                bpy.data.actions.remove(action)
-        return{'FINISHED'}
-
-
 class PoseToEmpty(bpy.types.Operator):
-    bl_idname = 'scene.customtools_pose_to_empty'
-    bl_label = 'Pose to empty'
+    bl_idname = 'scene.pose_to_empty'
+    bl_label = 'Pose To Empty'
 
     @classmethod
     def poll(cls, context):
@@ -32,20 +20,9 @@ class PoseToEmpty(bpy.types.Operator):
         object_location = active_armature.matrix_world.translation
         empty_location = bone_location + object_location
 
-        bpy.ops.object.mode_set(mode='OBJECT')
-        bpy.ops.object.empty_add(
-            type='PLAIN_AXES',
-            radius=1,
-            view_align=False,
-            location=empty_location,
-            rotation=bone_rotation)
+        empty_object = bpy.data.objects.new('Empty', None)
+        context.scene.collection.objects.link(empty_object)
+        empty_object.location = empty_location
+        empty_object.rotation_euler = bone_rotation
 
-        empty = context.object
-        empty.select = False
-        bpy.ops.object.select_all(action='TOGGLE')
-        bpy.ops.object.select_all(action='DESELECT')
-        context.scene.objects.active = active_armature
-        active_armature.select = True
-        bpy.ops.object.mode_set(mode='POSE')
-
-        return{'FINISHED'}
+        return {'FINISHED'}

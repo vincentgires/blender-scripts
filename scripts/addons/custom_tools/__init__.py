@@ -1,11 +1,7 @@
 import bpy
 from bpy.types import Operator
-from . import image, movieclip, render, sequencer, node
-#from . import lighting
-#from . import animation
-#from . import look_through
-#from . import node
-
+from . import (
+    animation, image, movieclip, render, sequencer, node, viewport, lighting)
 
 bl_info = {
     'name': 'Custom tools',
@@ -69,7 +65,7 @@ class ResetExposure(Operator):
 
     def execute(self, context):
         context.scene.view_settings.exposure = 0
-        return{'FINISHED'}
+        return {'FINISHED'}
 
 
 class ResetGamma(Operator):
@@ -79,13 +75,14 @@ class ResetGamma(Operator):
 
     def execute(self, context):
         context.scene.view_settings.gamma = 1
-        return{'FINISHED'}
+        return {'FINISHED'}
 
 
 keymaps = list()
 classes = (
     ResetExposure,
     ResetGamma,
+    animation.PoseToEmpty,
     image.SetImageInputTransform,
     movieclip.SetMovieClipInputTransform,
     node.SetImageNodeInputTransform,
@@ -98,7 +95,9 @@ classes = (
     sequencer.CreateAdjustmentStrip,
     sequencer.AddMultipleMovies,
     sequencer.SetStripInputTransform,
-    sequencer.SetStripProxyQuality)
+    sequencer.SetStripProxyQuality,
+    viewport.AimNormal,
+    viewport.LookThroughSelected)
 
 
 def register():

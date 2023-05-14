@@ -1,13 +1,12 @@
 import bpy
 import bgl
-import blf
 import math
 from .colorspace import SetInputTransform
 
 
 class GetMaskFromNode(bpy.types.Operator):
     bl_idname = 'scene.get_mask_from_compositor_node'
-    bl_label = 'Get mask'
+    bl_label = 'Get Mask'
     bl_description = 'Get mask from active node'
 
     @classmethod
@@ -19,13 +18,12 @@ class GetMaskFromNode(bpy.types.Operator):
         target_mask = context.scene.node_tree.nodes.active.mask
         context.space_data.mask = target_mask
         context.space_data.mode = 'MASK'
-
-        return{'FINISHED'}
+        return {'FINISHED'}
 
 
 class GetImageFromCompositorNode(bpy.types.Operator):
     bl_idname = 'scene.get_image_from_compositor_node'
-    bl_label = 'Get image'
+    bl_label = 'Get Image'
     bl_description = 'Get image from active node'
 
     @classmethod
@@ -36,13 +34,12 @@ class GetImageFromCompositorNode(bpy.types.Operator):
     def execute(self, context):
         target_image = context.scene.node_tree.nodes.active.image
         context.space_data.image = target_image
-
-        return{'FINISHED'}
+        return {'FINISHED'}
 
 
 class GetImageFromMaterialNode(bpy.types.Operator):
     bl_idname = 'scene.get_image_from_material_node'
-    bl_label = 'Get image'
+    bl_label = 'Get Image'
     bl_description = 'Get image from active node'
 
     @classmethod
@@ -61,74 +58,63 @@ class GetImageFromMaterialNode(bpy.types.Operator):
         active_material = context.object.active_material
         target_image = active_material.node_tree.nodes.active.image
         context.space_data.image = target_image
-
-        return{'FINISHED'}
+        return {'FINISHED'}
 
 
 class CreateMaskNode(bpy.types.Operator):
     bl_idname = 'scene.create_mask_node'
-    bl_label = 'Create Mask node'
-    bl_description = 'Create Mask node in the compositor'
+    bl_label = 'Create Mask Node'
+    bl_description = 'Create mask mode in the compositor'
 
     @classmethod
     def poll(cls, context):
         return (context.space_data.mode == 'MASK')
 
     def execute(self, context):
-
         mask_from_image_editor = context.area.spaces.active.mask
         node_tree = context.scene.node_tree
         mask_node = node_tree.nodes.new(type='CompositorNodeMask')
         mask_node.mask = mask_from_image_editor
-
         active_node = context.scene.node_tree.nodes.active
         if active_node:
             mask_node.location.x = active_node.location.x + 200
             mask_node.location.y = active_node.location.y - 100
-
-        return{'FINISHED'}
+        return {'FINISHED'}
 
 
 class DoubleClick(bpy.types.Operator):
     bl_idname = 'node.double_click'
-    bl_label = 'Double Click on a node'
+    bl_label = 'Node Double Click'
     bl_options = {'UNDO'}
 
     def execute(self, context):
         active_node = context.active_node
-
         for area in context.screen.areas:
             if area.type == 'IMAGE_EDITOR':
                 for space in area.spaces:
                     if space.type == 'IMAGE_EDITOR':
-
-                        # IMAGE
+                        # Image
                         if active_node.type in ['IMAGE', 'TEX_IMAGE']:
                             space.image = active_node.image
-
-                        # MASK
+                        # Mask
                         elif active_node.type == 'MASK':
                             space.mask = active_node.mask
                             space.mode = 'MASK'
-
-                        # VIEWER
+                        # Viewer
                         elif active_node.type == 'VIEWER':
                             space.image = bpy.data.images['Viewer Node']
-
-                        # COMPOSITE
+                        # Composite
                         elif active_node.type == 'COMPOSITE':
                             space.image = bpy.data.images['Render Result']
-
         return {'FINISHED'}
 
 
-class CompoNodeColorPicker(bpy.types.Operator):
-    bl_idname = 'scene.compo_node_color_picker'
+class CompostorNodeColorPicker(bpy.types.Operator):
+    bl_idname = 'scene.compositor_node_color_picker'
     bl_label = 'Color Picker'
     bl_description = 'Pick the color and set the value to the selected node'
 
-    # Properties
-    input_name = bpy.props.StringProperty()
+    input_name: bpy.props.StringProperty()
 
     @classmethod
     def poll(cls, context):
@@ -243,9 +229,9 @@ def draw_callback_axis(self, context):
     bgl.glColor4f(0.0, 0.0, 0.0, 1.0)
 
 
-class CustomToolsCompoNodeTransformGrab(bpy.types.Operator):
-    bl_idname = 'scene.compo_node_transform_grab'
-    bl_label = 'Transform node grab modal'
+class CompositorNodeTransformGrab(bpy.types.Operator):
+    bl_idname = 'scene.compositor_node_transform_grab'
+    bl_label = 'Transform Node Grab'
 
     region_x_init = None
     region_y_init = None
@@ -272,8 +258,7 @@ class CustomToolsCompoNodeTransformGrab(bpy.types.Operator):
         self.distance_y_axis = _distance2d(
             self.mouse_pos_xy, (self.init_pos_x, self.mouse_pos_xy[1]))
 
-        # MOVE
-        # X
+        # Move X
         if self.region_x_init:
             if not self.snap_axis_y:
                 target_value_x = self.value_x_init \
@@ -285,7 +270,7 @@ class CustomToolsCompoNodeTransformGrab(bpy.types.Operator):
             self.region_x_init = event.mouse_region_x
             self.value_x_init = active_node.inputs['X'].default_value
 
-        # Y
+        # Move Y
         if self.region_y_init:
             if not self.snap_axis_x:
                 target_value_y = self.value_y_init \
@@ -297,18 +282,18 @@ class CustomToolsCompoNodeTransformGrab(bpy.types.Operator):
             self.region_y_init = event.mouse_region_y
             self.value_y_init = active_node.inputs['Y'].default_value
 
-        # SNAP AXIS
+        # Snap axis
         if self.middlemouse:
-            # X AXIS
+            # X
             if self.distance_x_axis < self.distance_y_axis:
                 self.snap_axis_x = True
                 self.snap_axis_y = False
-            # Y AXIS
+            # Y
             elif self.distance_y_axis < self.distance_x_axis:
                 self.snap_axis_y = True
                 self.snap_axis_x = False
 
-        # EVENT
+        # Event
         if event.type in ('RET', 'NUMPAD_ENTER', 'LEFTMOUSE'):
             w.cursor_modal_restore()
             context.area.header_text_set()

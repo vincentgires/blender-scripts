@@ -36,7 +36,7 @@ class RenderToGif(bpy.types.Operator):
         # Set back settings and clean temporary files
         shutil.rmtree(render_tmp)
         scene.render.filepath = output
-        return{'FINISHED'}
+        return {'FINISHED'}
 
     def invoke(self, context, event):
         return context.window_manager.invoke_props_dialog(self)
