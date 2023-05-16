@@ -1,7 +1,6 @@
 import bpy
 from bpy.types import Operator
-from . import (
-    animation, image, movieclip, render, sequencer, node, viewport, lighting)
+from . import animation, image, movieclip, render, sequencer, node, viewport
 
 bl_info = {
     'name': 'Custom tools',
