@@ -22,6 +22,10 @@ parser.add_argument(
     help='Footage colorspace',
     required=False)
 parser.add_argument(
+    '-displaydevice',
+    help='OCIO Display Device',
+    required=False)
+parser.add_argument(
     '-viewtransform',
     help='OCIO View Transform',
     required=False)
@@ -67,6 +71,8 @@ for f in args.inputs:
     scene.render.image_settings.file_format = 'JPEG'
     scene.render.image_settings.color_mode = 'RGB'
     scene.render.image_settings.quality = 95
+    if args.displaydevice:
+        scene.display_settings.display_device = args.displaydevice
     if args.viewtransform:
         scene.view_settings.view_transform = args.viewtransform
 

@@ -39,6 +39,10 @@ parser.add_argument(
     help='Footage colorspace',
     required=False)
 parser.add_argument(
+    '-displaydevice',
+    help='OCIO Display Device',
+    required=False)
+parser.add_argument(
     '-viewtransform',
     help='OCIO View Transform',
     required=False)
@@ -105,6 +109,8 @@ def process():
     scene.render.resolution_percentage = 100
     if args.fps:
         scene.render.fps = args.fps
+    if args.displaydevice:
+        scene.display_settings.display_device = args.displaydevice
     if args.viewtransform:
         scene.view_settings.view_transform = args.viewtransform
     if args.colordepth:
