@@ -51,17 +51,17 @@ def draw_info(layout, xml_info):
 
 def set_colorspace(strip, xml_path):
     """Match camera colorspace to ACES OCIO config"""
-    GAMMA = {
-        'rec2100-hlg': 'hlg',
-        's-log2': 'slog2',
-        's-log3': 'slog3',
-        's-log3-cine': 'slog3'}
-    PRIMARIES = {
-        'rec709': 'rec709',
-        'rec2020': 'rec2020',
-        's-gamut': 'sgamut',
-        's-gamut3': 'sgamut3',
-        's-gamut3-cine': 'sgamutcine'}
+    gamma = {
+        'rec2100-hlg': 'HLG',
+        's-log2': 'S-Log2',
+        's-log3': 'S-Log3',
+        's-log3-cine': 'S-Log3'}
+    primaries = {
+        'rec709': 'Rec.709',
+        'rec2020': 'Rec.2020',
+        's-gamut': 'S-Gamut',
+        's-gamut3': 'S-Gamut3',
+        's-gamut3-cine': 'S-Gamut.Cine'}
     tree = ET.parse(xml_path)
     root = tree.getroot()
     colorspace = {}
@@ -70,8 +70,8 @@ def set_colorspace(strip, xml_path):
             colorspace['gamma'] = c.attrib['value']
         if c.attrib['name'] == 'CaptureColorPrimaries':
             colorspace['primaries'] = c.attrib['value']
-    ocio_colorspace = '{}_{}'.format(
-        GAMMA[colorspace['gamma']], PRIMARIES[colorspace['primaries']])
+    ocio_colorspace = '{} {}'.format(
+        gamma[colorspace['gamma']], primaries[colorspace['primaries']])
     strip.colorspace_settings.name = ocio_colorspace
 
 
