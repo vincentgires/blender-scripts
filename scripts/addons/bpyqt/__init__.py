@@ -4,7 +4,7 @@ import os
 import logging
 import importlib
 
-qt_binding = os.environ.get('QT_PREFERRED_BINDING', 'PySide2')
+qt_binding = os.environ.get('QT_BINDING', 'PySide2')
 QtWidgets = importlib.import_module(f'{qt_binding}.QtWidgets')
 QtCore = importlib.import_module(f'{qt_binding}.QtCore')
 
