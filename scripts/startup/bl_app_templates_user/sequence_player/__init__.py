@@ -3,7 +3,7 @@ import sys
 import bpy
 from bpy.app.handlers import persistent
 from vgblender.path import normpath
-from vgblender.render.render import render_movie
+from vgblender.render import render_movie
 
 filepath = normpath(sys.argv[-1])
 
