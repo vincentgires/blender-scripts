@@ -4,9 +4,7 @@ import blf
 import gpu
 from gpu_extras.batch import batch_for_shader
 
-FONT_SANS = '/usr/share/fonts/TTF/DejaVuSans.ttf'
-DPI = 72
-TEXT_MARGIN = 10
+dpi = 72
 
 shader_2d_uniform = (
     gpu.shader.from_builtin('2D_UNIFORM_COLOR')
@@ -57,7 +55,7 @@ def draw_rectangle(v1, v2, color):
 
 def draw_text(text, position, color, size, font_id):
     bgl.glEnable(bgl.GL_BLEND)
-    blf.size(font_id, size, DPI)
+    blf.size(font_id, size, dpi)
     blf.position(font_id, *position)
     blf.color(font_id, *color)
     blf.draw(font_id, text)
@@ -65,7 +63,7 @@ def draw_text(text, position, color, size, font_id):
 
 
 def draw_text_line(packed_strings, x, y, size, font_id):
-    blf.size(font_id, size, DPI)
+    blf.size(font_id, size, dpi)
     x_offset = 0
     for pstr, pcol in packed_strings:
         text_width, text_height = blf.dimensions(font_id, pstr)
