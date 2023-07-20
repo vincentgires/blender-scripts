@@ -19,7 +19,7 @@ def load_file_as_image():
             space = area.spaces.active
             space.image = image
             space.image_user.frame_duration = image.frame_duration
-            bpy.context.scene.frame_end = image.frame_duration
+    bpy.context.scene.frame_end = image.frame_duration
 
 
 @persistent
