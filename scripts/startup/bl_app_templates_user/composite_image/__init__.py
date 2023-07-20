@@ -3,6 +3,7 @@ import sys
 import bpy
 from bpy.app.handlers import persistent
 from vgblender.path import normpath
+from vgblender.timeline import view_all
 
 filepath = normpath(sys.argv[-1])
 
@@ -43,6 +44,7 @@ def load_file_as_image():
 @persistent
 def load_handler(dummy):
     load_file_as_image()
+    view_all()
 
 
 def register():

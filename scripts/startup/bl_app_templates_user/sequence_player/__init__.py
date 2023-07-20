@@ -4,6 +4,7 @@ import bpy
 from bpy.app.handlers import persistent
 from vgblender.path import normpath
 from vgblender.render import render_movie
+from vgblender.timeline import view_all
 
 filepath = normpath(sys.argv[-1])
 
@@ -60,6 +61,7 @@ def load_file_as_clip():
 @persistent
 def load_handler(dummy):
     load_file_as_clip()
+    view_all()
 
 
 def register():

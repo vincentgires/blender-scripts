@@ -3,6 +3,7 @@ import sys
 import bpy
 from bpy.app.handlers import persistent
 from vgblender.path import normpath
+from vgblender.timeline import view_all
 
 filepath = normpath(sys.argv[-1])
 
@@ -17,11 +18,14 @@ def load_file_as_image():
         if area.type == 'IMAGE_EDITOR':
             space = area.spaces.active
             space.image = image
+            space.image_user.frame_duration = image.frame_duration
+            bpy.context.scene.frame_end = image.frame_duration
 
 
 @persistent
 def load_handler(dummy):
     load_file_as_image()
+    view_all()
 
 
 def register():
