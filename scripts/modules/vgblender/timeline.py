@@ -22,10 +22,8 @@ def view_all(context=None):
         if area.type == 'DOPESHEET_EDITOR':
             for region in area.regions:
                 if region.type == 'WINDOW':
-                    ctx = context.copy()
-                    ctx['area'] = area
-                    ctx['region'] = region
-                    bpy.ops.action.view_all(ctx)
+                    with context.temp_override(area=area, region=region):
+                        bpy.ops.action.view_all()
 
 
 class InteractiveTimeline(Operator):
