@@ -6,7 +6,7 @@ import bpy
 def normpath(path):
     """Set path to correct OS and Blender convention"""
 
-    # Remove double slash to be able to use it in Blender
+    # Remove double slash to be able to use for absolute path
     if sys.platform.startswith('linux'):
         path = path.replace('//', '/')
     # Result: /my/path
