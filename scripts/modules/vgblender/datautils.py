@@ -1,7 +1,14 @@
-def get_enum_values(obj, prop_name):
-    return [
-        item.identifier
-        for item in obj.bl_rna.properties[prop_name].enum_items]
+def get_enum_values(property, name):
+    enum_items = property.bl_rna.properties[name].enum_items
+    return [item.identifier for item in enum_items]
+
+
+def get_enum_index(property, name, identifier):
+    enum_items = property.bl_rna.properties[name].enum_items
+    result = [
+        item.value for item in enum_items if item.identifier == identifier]
+    if result:
+        return result[0]
 
 
 def remove_item_from_collection(collection, properties, index_name):
