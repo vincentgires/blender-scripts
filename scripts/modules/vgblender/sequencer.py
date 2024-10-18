@@ -28,7 +28,7 @@ def clean_sequencer(scene):
         sequences.remove(seq)
 
 
-def get_current_strip(scene, channel=DEFAULT_CHANNEL):
+def get_current_strip(scene, channel=DEFAULT_CHANNEL, exclude_meta=True):
     if not scene.sequence_editor:
         return None
     frame_current = scene.frame_current
@@ -37,7 +37,9 @@ def get_current_strip(scene, channel=DEFAULT_CHANNEL):
         display_channel = space_data.display_channel
         if display_channel != 0:
             channel = display_channel
-    for strip in scene.sequence_editor.sequences:
+    for strip in scene.sequence_editor.sequences_all:
+        if strip.type == 'META' and exclude_meta:
+            continue
         frame_end = strip.frame_start + strip.frame_final_duration
         if strip.frame_start <= frame_current < frame_end:
             if strip.channel == channel:
