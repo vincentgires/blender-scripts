@@ -1,5 +1,7 @@
 import bpy
 import os
+import queue
+from functools import partial
 from .path import normpath
 
 DEFAULT_CHANNEL = 1
@@ -294,3 +296,37 @@ def mute_channel(scene, channel, unmute=False):
     for strip in sequences:
         if strip.channel == channel:
             strip.mute = not unmute
+
+
+class AsyncMovieLoader:
+    def __init__(self, files):
+        self.files_queue = queue.Queue()
+        for file in files:
+            self.files_queue.put(file)
+
+    def load_next_movie(self, scene):
+        if self.files_queue.empty():
+            return
+
+        file = self.files_queue.get()
+        load_movie_strip(scene, file)
+
+        # Set timer for next file
+        if not self.files_queue.empty():
+            return 0.1
+
+
+def start_async_movie_loading(scene, files):
+    loader = AsyncMovieLoader(files)
+    bpy.app.timers.register(partial(loader.load_next_movie, scene=scene))
+
+
+if __name__ == '__main__':
+    def test_loading():
+        files = [
+            '/path.mkv',
+            '/path.mkv',
+            '/path.mkv']
+        start_async_movie_loading(scene=bpy.context.scene, files=files)
+
+    test_loading()
