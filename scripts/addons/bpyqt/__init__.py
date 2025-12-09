@@ -60,6 +60,8 @@ class QtWindowEventLoop(bpy.types.Operator):
         if 'stylesheet' in self._kwargs:
             stylesheet = self._kwargs['stylesheet']
             self.set_stylesheet(self.app, stylesheet)
+        elif stylesheet := os.environ.get('QT_STYLESHEET'):
+            self.set_stylesheet(self.app, stylesheet)
 
         self.event_loop = QtCore.QEventLoop()
         self.widget = self._widget(*self._args, **self._kwargs)
