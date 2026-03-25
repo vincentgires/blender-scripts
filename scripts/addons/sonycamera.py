@@ -86,8 +86,8 @@ class SetColorspace(Operator):
 
     def execute(self, context):
         scene = context.scene
-        sequences = scene.sequence_editor.sequences_all
-        for strip in sequences:
+        strips = scene.sequence_editor.strips_all
+        for strip in strips:
             if strip.select:
                 xml_path = find_xml(strip.filepath)
                 if not xml_path:

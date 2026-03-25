@@ -44,8 +44,8 @@ def load_file_as_clip():
         return
     scene = bpy.context.scene
     clip = bpy.data.movieclips.load(filepath)
-    sequences = scene.sequence_editor.sequences
-    sequences.new_clip(
+    strips = scene.sequence_editor.strips
+    strips.new_clip(
         name=os.path.basename(filepath),
         clip=clip,
         channel=1,

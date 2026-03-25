@@ -12,8 +12,8 @@ DEFAULT_LENGTH = 24
 def is_available_sequences(scene):
     if not scene.sequence_editor:
         return False
-    sequences = scene.sequence_editor.sequences
-    if sequences:
+    strips = scene.sequence_editor.strips
+    if strips:
         return True
 
 
@@ -25,9 +25,9 @@ def enable_sequence_editor(scene):
 def clean_sequencer(scene):
     if not scene.sequence_editor:
         return
-    sequences = scene.sequence_editor.sequences
-    for seq in sequences:
-        sequences.remove(seq)
+    strips = scene.sequence_editor.strips
+    for seq in strips:
+        strips.remove(seq)
 
 
 def get_current_strip(scene, channel=DEFAULT_CHANNEL, exclude_meta=True):
@@ -39,34 +39,34 @@ def get_current_strip(scene, channel=DEFAULT_CHANNEL, exclude_meta=True):
         display_channel = space_data.display_channel
         if display_channel != 0:
             channel = display_channel
-    for strip in scene.sequence_editor.sequences_all:
+    for strip in scene.sequence_editor.strips_all:
         if strip.type == 'META' and exclude_meta:
             continue
-        frame_end = strip.frame_start + strip.frame_final_duration
-        if strip.frame_start <= frame_current < frame_end:
+        frame_end = strip.content_start + strip.duration
+        if strip.content_start <= frame_current < frame_end:
             if strip.channel == channel:
                 return strip
 
 
 def get_current_strips(scene):
     def frame_end(strip):
-        return strip.frame_start + strip.frame_final_duration
+        return strip.content_start + strip.duration
     frame_current = scene.frame_current
     if not scene.sequence_editor:
         return None
     strips = [
-        strip for strip in scene.sequence_editor.sequences_all
-        if strip.frame_start <= frame_current < frame_end(strip)]
+        strip for strip in scene.sequence_editor.strips_all
+        if strip.content_start <= frame_current < frame_end(strip)]
     return strips
 
 
 def get_first_strip(scene):
     if not is_available_sequences(scene):
         return
-    sequences = scene.sequence_editor.sequences
-    first_strip = sequences[0]
-    for strip in sequences:
-        if strip.frame_start < first_strip.frame_start:
+    strips = scene.sequence_editor.strips
+    first_strip = strips[0]
+    for strip in strips:
+        if strip.content_start < first_strip.content_start:
             first_strip = strip
     return first_strip
 
@@ -74,10 +74,10 @@ def get_first_strip(scene):
 def get_last_strip(scene):
     if not is_available_sequences(scene):
         return
-    sequences = scene.sequence_editor.sequences
-    last_strip = sequences[0]
-    for strip in sequences:
-        if strip.frame_start > last_strip.frame_start:
+    strips = scene.sequence_editor.strips
+    last_strip = strips[0]
+    for strip in strips:
+        if strip.content_start > last_strip.content_start:
             last_strip = strip
     return last_strip
 
@@ -86,14 +86,14 @@ def set_frame_range(scene):
     first_strip = get_first_strip(scene)
     last_strip = get_last_strip(scene)
     if first_strip and last_strip:
-        scene.frame_start = int(first_strip.frame_start)
-        scene.frame_end = last_strip.frame_final_end - 1
+        scene.frame_start = int(first_strip.content_start)
+        scene.frame_end = last_strip.right_handle - 1
 
 
 def _get_next_frame_start(scene):
     last_strip = get_last_strip(scene)
     frame_start = (
-        last_strip.frame_start + last_strip.frame_final_duration
+        last_strip.content_start + last_strip.duration
         if last_strip else 1)
     return int(frame_start)
 
@@ -101,26 +101,26 @@ def _get_next_frame_start(scene):
 def load_image_strip(
         scene, image, channel=DEFAULT_CHANNEL, blend_type=DEFAULT_BLEND_TYPE,
         length=DEFAULT_LENGTH, frame_start=None):
-    sequences = scene.sequence_editor.sequences
+    strips = scene.sequence_editor.strips
     frame_start = frame_start or _get_next_frame_start(scene)
-    strip = sequences.new_image(
+    strip = strips.new_image(
         name=os.path.basename(image),
         filepath=normpath(image),
         channel=channel,
         frame_start=int(frame_start))
     strip.select = False
     strip.blend_type = blend_type
-    strip.frame_final_duration = length
+    strip.duration = length
     return strip
 
 
 def load_image_sequence_strip(
         scene, images, channel=DEFAULT_CHANNEL, blend_type=DEFAULT_BLEND_TYPE,
         frame_start=None, colorspace=None):
-    sequences = scene.sequence_editor.sequences
+    strips = scene.sequence_editor.strips
     frame_start = frame_start or _get_next_frame_start(scene)
     first_frame = images[0]
-    strip = sequences.new_image(
+    strip = strips.new_image(
         name=os.path.basename(first_frame),
         filepath=normpath(first_frame),
         channel=channel,
@@ -138,9 +138,9 @@ def load_image_sequence_strip(
 def load_movie_strip(
         scene, moviepath, channel=DEFAULT_CHANNEL,
         blend_type=DEFAULT_BLEND_TYPE, frame_start=None):
-    sequences = scene.sequence_editor.sequences
+    strips = scene.sequence_editor.strips
     frame_start = frame_start or _get_next_frame_start(scene)
-    strip = sequences.new_movie(
+    strip = strips.new_movie(
         name=os.path.basename(moviepath),
         filepath=normpath(moviepath),
         channel=channel,
@@ -153,9 +153,9 @@ def load_movie_strip(
 def load_sound_strip(
         scene, soundpath, channel=DEFAULT_CHANNEL, frame_start=None,
         show_waveform=False):
-    sequences = scene.sequence_editor.sequences
+    strips = scene.sequence_editor.strips
     frame_start = frame_start or _get_next_frame_start(scene)
-    strip = sequences.new_sound(
+    strip = strips.new_sound(
         name=os.path.basename(soundpath),
         filepath=normpath(soundpath),
         channel=channel,
@@ -169,16 +169,16 @@ def load_scene_strip(
         scene, strip_scene, channel=DEFAULT_CHANNEL,
         blend_type=DEFAULT_BLEND_TYPE, length=DEFAULT_LENGTH,
         frame_start=None):
-    sequences = scene.sequence_editor.sequences
+    strips = scene.sequence_editor.strips
     frame_start = frame_start or _get_next_frame_start(scene)
-    strip = sequences.new_scene(
+    strip = strips.new_scene(
         name=strip_scene.name,
         scene=strip_scene,
         channel=channel,
         frame_start=int(frame_start))
     strip.select = False
     strip.blend_type = blend_type
-    strip.frame_final_duration = length
+    strip.duration = length
     return strip
 
 
@@ -188,23 +188,23 @@ def load_multiple_movie_strips(scene, filepaths):
             continue
         movie_strip = load_movie_strip(scene, path)
         sound_channel = movie_strip.channel + 1
-        sound_frame_start = movie_strip.frame_start
+        sound_frame_start = movie_strip.content_start
         load_sound_strip(
             scene, path, channel=sound_channel, frame_start=sound_frame_start)
 
 
 def create_adjustment_strip(scene):
     active_strip = scene.sequence_editor.active_strip
-    active_start = int(active_strip.frame_start)
+    active_start = int(active_strip.content_start)
     if not active_strip:
         return
-    sequences = scene.sequence_editor.sequences
-    strip = sequences.new_effect(
+    strips = scene.sequence_editor.strips
+    strip = strips.new_effect(
         name='Adjustment',
         type='ADJUSTMENT',
         channel=active_strip.channel + 1,
         frame_start=active_start,
-        frame_end=active_start + active_strip.frame_final_duration)
+        frame_end=active_start + active_strip.duration)
     strip.select = True
     scene.sequence_editor.active_strip = strip
     return strip
@@ -246,9 +246,9 @@ def normalise_mouse_position(context, position):
 def iterate_over_selected_strips(scene):
     if not scene.sequence_editor:
         return
-    sequences = scene.sequence_editor.sequences
-    sequences = sorted(sequences, key=lambda x: x.frame_start)
-    for strip in sequences:
+    strips = scene.sequence_editor.strips
+    strips = sorted(strips, key=lambda x: x.content_start)
+    for strip in strips:
         if strip.select:
             yield strip
 
@@ -292,8 +292,8 @@ def get_strip_filepath(strip, image_index=0):
 
 
 def mute_channel(scene, channel, unmute=False):
-    sequences = scene.sequence_editor.sequences
-    for strip in sequences:
+    strips = scene.sequence_editor.strips
+    for strip in strips:
         if strip.channel == channel:
             strip.mute = not unmute
 

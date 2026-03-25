@@ -42,7 +42,7 @@ class OpenStripAsMovieclip(Operator):
         data = bpy.data
         strip = scene.sequence_editor.active_strip
         movie = data.movieclips.load(filepath=strip.filepath)
-        movie.frame_start = strip.frame_start
+        movie.frame_start = strip.content_start
         return {'FINISHED'}
 
 
@@ -95,7 +95,7 @@ class DisableSceneStrips(Operator):
 
     def execute(self, context):
         scene = context.scene
-        for strip in scene.sequence_editor.sequences_all:
+        for strip in scene.sequence_editor.strips_all:
             if strip.type == 'SCENE':
                 strip.mute = self.mute
         return {'FINISHED'}
@@ -160,12 +160,12 @@ class SetStripInputTransform(SetInputTransform):
 
     @classmethod
     def poll(cls, context):
-        sequences = context.scene.sequence_editor.sequences
-        return [s for s in sequences if s.select]
+        strips = context.scene.sequence_editor.strips
+        return [s for s in strips if s.select]
 
     def get_datablocks(self, context):
-        sequences = context.scene.sequence_editor.sequences
-        selected_strips = [s for s in sequences if s.select]
+        strips = context.scene.sequence_editor.strips
+        selected_strips = [s for s in strips if s.select]
         for strip in selected_strips:
             yield strip
 
@@ -178,12 +178,12 @@ class SetStripProxyQuality(Operator):
 
     @classmethod
     def poll(cls, context):
-        sequences = context.scene.sequence_editor.sequences
-        return [s for s in sequences if s.select]
+        strips = context.scene.sequence_editor.strips
+        return [s for s in strips if s.select]
 
     def execute(self, context):
-        sequences = context.scene.sequence_editor.sequences
-        selected_strips = [s for s in sequences if s.select]
+        strips = context.scene.sequence_editor.strips
+        selected_strips = [s for s in strips if s.select]
         for strip in selected_strips:
             set_strip_proxy_quality(strip, self.quality)
         return {'FINISHED'}

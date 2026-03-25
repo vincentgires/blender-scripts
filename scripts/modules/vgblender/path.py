@@ -38,8 +38,8 @@ def conform_data_paths():
         scene.render.filepath = convert_os_path(scene.render.filepath)
         if not scene.sequence_editor:
             continue
-        sequences = scene.sequence_editor.sequences_all
-        for strip in sequences:
+        strips = scene.sequence_editor.strips_all
+        for strip in strips:
             match strip.type:
                 case 'MOVIE':
                     strip.filepath = convert_os_path(strip.filepath)
