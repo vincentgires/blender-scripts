@@ -11,9 +11,10 @@ def get_all_data_nodes():
     data = bpy.data
     # Compositing tree
     for scene in data.scenes:
-        if scene.node_tree is None:
+        node_tree = scene.compositing_node_group
+        if node_tree is None:
             continue
-        for node in scene.node_tree.nodes:
+        for node in node_tree.nodes:
             nodes.append(node)
     # Material trees
     for material in data.materials:

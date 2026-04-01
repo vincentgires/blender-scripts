@@ -19,10 +19,10 @@ bl_info = {
     'name': 'Data Nodes',
     'author': 'Vincent Girès',
     'description': (
-        'Node utils for Cycles, the compositor'
+        'Node utils for shading network, the compositor '
         'and a custom Data Node Tree'),
     'version': (0, 0, 3),
-    'blender': (2, 80, 0),
+    'blender': (5, 1, 0),
     'location': 'Node Editor',
     'category': 'Node'}
 

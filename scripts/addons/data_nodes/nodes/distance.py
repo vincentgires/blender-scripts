@@ -1,5 +1,4 @@
 import bpy
-import bgl
 import math
 from bpy.types import Node, SpaceView3D
 from ..utils import set_sockets
@@ -7,7 +6,7 @@ import gpu
 from gpu_extras.batch import batch_for_shader
 
 shader_3d_uniform = (
-    gpu.shader.from_builtin('3D_UNIFORM_COLOR')
+    gpu.shader.from_builtin('UNIFORM_COLOR')
     if not bpy.app.background else None)
 draw_handler = {}
 
@@ -15,15 +14,18 @@ draw_handler = {}
 def draw_line(v1, v2, color, width=1):
     if shader_3d_uniform is None:
         return
-    bgl.glEnable(bgl.GL_BLEND)
-    bgl.glLineWidth(width)
+    prev_blend = gpu.state.blend_get()
+    prev_width = gpu.state.line_width_get()
+    gpu.state.blend_set('ALPHA')
+    gpu.state.line_width_set(width)
     coords = [(v1[0], v1[1], v1[2]), (v2[0], v2[1], v2[2])]
     batch = batch_for_shader(shader_3d_uniform, 'LINES', {'pos': coords})
     shader_3d_uniform.bind()
     shader_3d_uniform.uniform_float('color', color)
     batch.draw(shader_3d_uniform)
-    bgl.glLineWidth(1)
-    bgl.glDisable(bgl.GL_BLEND)
+    # Restore
+    gpu.state.line_width_set(prev_width)
+    gpu.state.blend_set(prev_blend)
 
 
 def draw_distance_opengl(node, context):
