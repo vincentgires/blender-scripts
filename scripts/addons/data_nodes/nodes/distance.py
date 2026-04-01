@@ -16,7 +16,9 @@ def draw_line(v1, v2, color, width=1):
         return
     prev_blend = gpu.state.blend_get()
     prev_width = gpu.state.line_width_get()
+    prev_depth = gpu.state.depth_test_get()
     gpu.state.blend_set('ALPHA')
+    gpu.state.depth_test_set('LESS_EQUAL')
     gpu.state.line_width_set(width)
     coords = [(v1[0], v1[1], v1[2]), (v2[0], v2[1], v2[2])]
     batch = batch_for_shader(shader_3d_uniform, 'LINES', {'pos': coords})
@@ -26,6 +28,7 @@ def draw_line(v1, v2, color, width=1):
     # Restore
     gpu.state.line_width_set(prev_width)
     gpu.state.blend_set(prev_blend)
+    gpu.state.depth_test_set(prev_depth)
 
 
 def draw_distance_opengl(node, context):
