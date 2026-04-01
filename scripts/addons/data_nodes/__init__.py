@@ -103,23 +103,11 @@ class DataNodeCategory(NodeCategory):
         return context.space_data.tree_type in AVAILABLE_NTREES
 
 
-classes = (
-    operators.DataNodesUpdate,
-    operators.DataNodesGetObject,
-    operators.DataNodesRemoveSockets,
-    operators.DataNodesRemoveSocket,
-    operators.DataNodesRemoveInputSocket,
-    operators.DataNodesRemoveOutputSocket,
-    operators.DataNodesAddSocket,
+node_classes = [
     boolean.Boolean,
     color.Color,
     color_combine.ColorCombine,
-    color_palette.TemplateColorPaletteCollectionUL,
     color_palette.ColorPalette,
-    color_palette.ColorPaletteAdd,
-    color_palette.ColorPaletteRemove,
-    color_palette.ColorPaletteAddColor,
-    color_palette.ColorPaletteRemoveColor,
     color_split.ColorSplit,
     condition.Condition,
     data_input.DataInputNode,
@@ -143,12 +131,61 @@ classes = (
     scene.SceneNode,
     time.Time,
     vector.Vector,
-    vector_split.VectorSplit,
+    vector_split.VectorSplit]
+
+menu_label = 'Data'
+tree_types = ['CompositorNodeTree', 'ShaderNodeTree', 'GeometryNodeTree']
+
+class AddCustomNode(bpy.types.Operator):
+    bl_idname = 'node.add_custom_node'
+    bl_label = 'Add Custom Node'
+
+    node_type: bpy.props.StringProperty()
+
+    def execute(self, context):
+        tree = context.space_data.node_tree
+        tree.nodes.new(self.node_type)
+        return {'FINISHED'}
+
+class CustomSubmenu(bpy.types.Menu):
+    bl_label = menu_label
+    bl_idname = 'DATANODES_MT_custom_submenu'
+
+    def draw(self, context):
+        layout = self.layout
+        for node_class in node_classes:
+            op = layout.operator(
+                'node.add_custom_node',
+                text=node_class.bl_label)
+            op.node_type = node_class.bl_idname
+
+
+def draw_custom_nodes(self, context):
+    if context.space_data.tree_type not in tree_types:
+        return
+    layout = self.layout
+    layout.separator()
+    layout.menu('DATANODES_MT_custom_submenu', icon='NODE')
+
+
+classes = node_classes + [
+    operators.DataNodesUpdate,
+    operators.DataNodesGetObject,
+    operators.DataNodesRemoveSockets,
+    operators.DataNodesRemoveSocket,
+    operators.DataNodesRemoveInputSocket,
+    operators.DataNodesRemoveOutputSocket,
+    operators.DataNodesAddSocket,
+    color_palette.TemplateColorPaletteCollectionUL,
+    color_palette.ColorPaletteAdd,
+    color_palette.ColorPaletteRemove,
+    color_palette.ColorPaletteAddColor,
+    color_palette.ColorPaletteRemoveColor,
     ColorPaletteColorProperty,
     ColorPaletteProperties,
     NodeEditorDataTree,
     NodeEditorDataNodesPanel,
-    SocketsPanel)
+    SocketsPanel]
 
 node_categories = [
     # identifier, label, items list
@@ -162,6 +199,10 @@ def register():
     bpy.types.Scene.color_palettes = CollectionProperty(
         type=ColorPaletteProperties)
 
+    bpy.utils.register_class(AddCustomNode)
+    bpy.utils.register_class(CustomSubmenu)
+    bpy.types.NODE_MT_add.append(draw_custom_nodes)
+
     bpy.app.handlers.frame_change_post.append(frame_change)
     bpy.app.handlers.depsgraph_update_post.append(scene_update)
     bpy.app.handlers.render_pre.append(render_pre_update)
@@ -173,6 +214,10 @@ def unregister():
         bpy.utils.unregister_class(cls)
     nodeitems_utils.unregister_node_categories('DATA_NODES')
     del bpy.types.Scene.color_palettes
+
+    bpy.types.NODE_MT_add.remove(draw_custom_nodes)
+    bpy.utils.unregister_class(CustomSubmenu)
+    bpy.utils.unregister_class(AddCustomNode)
 
     bpy.app.handlers.frame_change_post.remove(frame_change)
     bpy.app.handlers.depsgraph_update_post.remove(scene_update)
