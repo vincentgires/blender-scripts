@@ -110,7 +110,8 @@ def load_image_strip(
         frame_start=int(frame_start))
     strip.select = False
     strip.blend_type = blend_type
-    strip.duration = length
+    # Duration
+    strip.right_handle = strip.left_handle + length
     return strip
 
 
@@ -178,7 +179,8 @@ def load_scene_strip(
         frame_start=int(frame_start))
     strip.select = False
     strip.blend_type = blend_type
-    strip.duration = length
+    # Duration
+    strip.right_handle = strip.left_handle + length
     return strip
 
 
