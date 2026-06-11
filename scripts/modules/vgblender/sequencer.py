@@ -100,7 +100,7 @@ def _get_next_frame_start(scene):
 
 def load_image_strip(
         scene, image, channel=DEFAULT_CHANNEL, blend_type=DEFAULT_BLEND_TYPE,
-        length=DEFAULT_LENGTH, frame_start=None):
+        length=DEFAULT_LENGTH, frame_start=None, colorspace=None):
     strips = scene.sequence_editor.strips
     frame_start = frame_start or _get_next_frame_start(scene)
     strip = strips.new_image(
@@ -112,6 +112,8 @@ def load_image_strip(
     strip.blend_type = blend_type
     # Duration
     strip.right_handle = strip.left_handle + length
+    if colorspace is not None:
+        strip.colorspace_settings.name = colorspace
     return strip
 
 
@@ -138,7 +140,7 @@ def load_image_sequence_strip(
 
 def load_movie_strip(
         scene, moviepath, channel=DEFAULT_CHANNEL,
-        blend_type=DEFAULT_BLEND_TYPE, frame_start=None):
+        blend_type=DEFAULT_BLEND_TYPE, frame_start=None, colorspace=None):
     strips = scene.sequence_editor.strips
     frame_start = frame_start or _get_next_frame_start(scene)
     strip = strips.new_movie(
@@ -148,6 +150,8 @@ def load_movie_strip(
         frame_start=int(frame_start))
     strip.select = False
     strip.blend_type = blend_type
+    if colorspace is not None:
+        strip.colorspace_settings.name = colorspace
     return strip
 
 
